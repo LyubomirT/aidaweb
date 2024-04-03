@@ -1,50 +1,32 @@
 from flask import Flask, request, jsonify, render_template, redirect
-from flask_sqlalchemy import SQLAlchemy
+import cohere
+import dotenv
+import os
+
+# Load the environment variables from the .env file
+dotenv.load_dotenv()
+
+# Create a new Cohere client
+client = cohere.Client(os.getenv("CKEY"))
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
-db = SQLAlchemy(app)
-
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), nullable=False)
-    email = db.Column(db.String(120), nullable=False)
-    pw = db.Column(db.String(50), nullable=False)
-
-    def __repr__(self):
-        return f'<User {self.name}>'
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
-@app.route('/register', methods=['POST'])
-def register():
-    name = request.form['name']
-    email = request.form['email']
-    pw = request.form['pw']
-
-    user = User(name=name, email=email, pw=pw)
-    db.session.add(user)
-    db.session.commit()
-
-    return redirect('/')
-
-@app.route('/auth', methods=['POST'])
-def auth():
-    email = request.form['email']
-    pw = request.form['pw']
-
-    user = User.query.filter_by(email=email, pw=pw).first()
-    if user:
-        return 'Logged in'
-    else:
-        return 'Invalid credentials'
-
-@app.route('/login')
-def login():
-    return render_template('login.html')
+@app.route('/chat', methods=['POST'])
+def chat():
+    data = request.json
+    message = data['message']
+    chat_history = data['chat_history'] # must be a list of dicts that look like this: [{"role": "USER", "message": "..."}, {"role": "ASSISTANT", "message": "..."}]
+    
+    response = client.chat(message=message, 
+                                  chat_history=chat_history,
+                                  temperature=0.5, max_tokens=150)
+    response = response.text
+    
+    return jsonify({'responses': response})
 
 if __name__ == '__main__':
-    db.create_all()
-    app.run(debug=True)
+    app.run(debug=False)

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chat with Cohere</title>
+<style>
+  body { font-family: Arial, sans-serif; }
+  #chat-container { max-width: 800px; margin: auto; }
+  #chat-box { height: 300px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px; }
+  #chat-input { width: 100%; padding: 10px; }
+</style>
+</head>
+<body>
+<div id="chat-container">
+  <div id="chat-box"></div>
+  <input type="text" id="chat-input" placeholder="Type your message here..." />
+</div>
+
+<script>
+  const chatBox = document.getElementById('chat-box');
+  const chatInput = document.getElementById('chat-input');
+
+  chatInput.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      const message = chatInput.value;
+      chatInput.value = '';
+      postMessage(message);
+    }
+  });
+
+  function postMessage(message) {
+    fetch('/chat', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        message: message,
+        chat_history: [] // You'll need to implement chat history tracking
+      }),
+    })
+    .then(response => response.json())
+    .then(data => {
+      const responseMessage = data.responses;
+      chatBox.innerHTML += '<div>User: ' + message + '</div>';
+      chatBox.innerHTML += '<div>Assistant: ' + responseMessage + '</div>';
+      chatBox.scrollTop = chatBox.scrollHeight;
+    })
+    .catch(error => console.error('Error:', error));
+  }
+</script>
+</body>
+</html>
