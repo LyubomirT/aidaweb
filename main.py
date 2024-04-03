@@ -18,4 +18,3 @@ for event in response:
         str_ = ''.join(responses)
         print(str_)
         time.sleep(0.1)
-    
