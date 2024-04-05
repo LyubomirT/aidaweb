@@ -13,7 +13,11 @@
 </head>
 <body>
 <div id="chat-container">
-  <div id="chat-box"></div>
+  <div id="chat-box">
+    {% for message in chat_history %}
+      <div>{{ message['role'] }}: {{ message['message'] }}</div>
+    {% endfor %}
+  </div>
   <input type="text" id="chat-input" placeholder="Type your message here..." />
 </div>
 
@@ -36,15 +40,15 @@
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        message: message,
-        chat_history: [] // You'll need to implement chat history tracking
+        message: message
       }),
     })
     .then(response => response.json())
     .then(data => {
-      const responseMessage = data.responses;
+      const rawResponse = data.raw_response;
+      const htmlResponse = data.html_response;
       chatBox.innerHTML += '<div>User: ' + message + '</div>';
-      chatBox.innerHTML += '<div>Assistant: ' + responseMessage + '</div>';
+      chatBox.innerHTML += '<div>Assistant: ' + htmlResponse + '</div>';
       chatBox.scrollTop = chatBox.scrollHeight;
     })
     .catch(error => console.error('Error:', error));
