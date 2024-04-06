@@ -1,3 +1,4 @@
+<!-- Some important info 
 from flask import Flask, request, jsonify, render_template, redirect
 import cohere
 import markdown2  # for converting markdown to HTML
@@ -58,3 +59,57 @@ def auth_discord_callback():
 
 if __name__ == '__main__':
     app.run(debug=False)
+
+-->
+
+<!--
+    <!DOCTYPE html>
+<html>
+<head>
+  <title>Login With Discord (test)</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+  <div class="login-btn">
+    <a href="https://discord.com/oauth2/authorize?client_id=1155512630627270727&response_type=token&redirect_uri=http%3A%2F%2Flocalhost%3A5000%2Fauth%2Fdiscord%2Fcallback&scope=identify+guilds+guilds.members.read">
+      <img src="https://seeklogo.com/images/D/discord-logo-7A1EC3216C-seeklogo.com.png" alt="Login With Discord">
+    </a>
+</html>
+-->
+
+<!-- This page is the callback one and uses the token-->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Basic Info List</title>
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+  <div class="basic-info-list">
+    <h1>Basic Information List</h1>
+    <ul>
+      <li>Username: </li>
+      <li><img id='pfp'></li>
+
+    <div class="logout-btn">
+        <a href="/logout">Logout</a>    
+    </div>
+    <script>
+        const urlParams = new URLSearchParams(window.location.hash.substr(1));
+        const token = urlParams.get('access_token');
+        console.log(token);
+        fetch('https://discord.com/api/users/@me', {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            document.querySelector('li').textContent = `Username: ${data.username}#${data.discriminator}`;
+            document.getElementById('pfp').src = `https://cdn.discordapp.com/avatars/${data.id}/${data.avatar}.png`;
+        })
+        .catch(error => console.error('Error:', error));
+    </script>
+</body>
+</html>
