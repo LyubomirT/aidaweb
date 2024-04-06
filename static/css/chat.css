@@ -10,6 +10,7 @@ body {
     padding: 20px;
     box-sizing: border-box;
     float: left;
+    height: 100vh;
   }
   
   #chat-container {

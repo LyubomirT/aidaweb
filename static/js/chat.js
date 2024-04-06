@@ -4,6 +4,24 @@ const newConvButton = document.getElementById('new-conv-button');
 const sendButton = document.getElementById('send-button');
 let chatHistory = [];  // Retrieve chat history from server
 let convId = null;  // Conversation ID
+// Try to get a token from the local storage (AUTH_TOKEN_KEY)
+/*
+let token = localStorage.getItem("AUTH_TOKEN_KEY");
+if (token == null) {
+  // If there is no token, redirect to the login page
+  window.location.href = "/auth/discord";
+}
+// If there is a token, try to get the user's information
+fetch('https://discord.com/api/users/@me', {
+  headers: {
+    'Authorization': `Bearer ${token}`
+  }
+})
+.then(response => response.json())
+.then(data => {
+
+})
+*/
 
 newConvButton.addEventListener('click', function() {
   fetch('/new_conv', {
