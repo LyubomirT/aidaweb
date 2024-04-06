@@ -1,4 +1,3 @@
-<!-- This page is the callback one and uses the token-->
 <!DOCTYPE html>
 <html>
 <head>
@@ -16,38 +15,53 @@
                 <a href="/logout">Logout</a>    
         </div>
         <script>
+            // Function to get token from URL or local storage
+            function getToken() {
                 const urlParams = new URLSearchParams(window.location.hash.substr(1));
                 const token = urlParams.get('access_token');
-                console.log(token);
+                if (token) {
+                    localStorage.setItem('token', token); // Save token to local storage
+                    return token;
+                } else {
+                    return localStorage.getItem('token'); // Try to read token from local storage
+                }
+            }
+
+            const token = getToken(); // Get token
+
+            if (token) {
                 fetch('https://discord.com/api/users/@me', {
-                        headers: {
-                                'Authorization': `Bearer ${token}`
-                        }
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
                 })
                 .then(response => response.json())
                 .then(data => {
-                        console.log(data);
-                        document.querySelector('li').textContent = `Username: ${data.username}#${data.discriminator}`;
-                        document.getElementById('pfp').src = `https://cdn.discordapp.com/avatars/${data.id}/${data.avatar}.png`;
+                    console.log(data);
+                    document.querySelector('li').textContent = `Username: ${data.username}#${data.discriminator}`;
+                    document.getElementById('pfp').src = `https://cdn.discordapp.com/avatars/${data.id}/${data.avatar}.png`;
 
-                        // Check if user is on guild 1079761115636043926
-                        fetch('https://discord.com/api/users/@me/guilds', {
-                                headers: {
-                                        'Authorization': `Bearer ${token}`
-                                }
-                        })
-                        .then(response => response.json())
-                        .then(guilds => {
-                                const guildIds = guilds.map(guild => guild.id);
-                                if (guildIds.includes('1079761115636043926')) {
-                                        console.log('User is on guild 1079761115636043926');
-                                } else {
-                                        console.log('User is not on guild 1079761115636043926');
-                                }
-                        })
-                        .catch(error => console.error('Error:', error));
+                    // Check if user is on guild 1079761115636043926
+                    fetch('https://discord.com/api/users/@me/guilds', {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(guilds => {
+                        const guildIds = guilds.map(guild => guild.id);
+                        if (guildIds.includes('1079761115636043926')) {
+                            console.log('User is on guild 1079761115636043926');
+                        } else {
+                            console.log('User is not on guild 1079761115636043926');
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
                 })
                 .catch(error => console.error('Error:', error));
+            } else {
+                console.log('No token found.');
+            }
         </script>
 </body>
 </html>
