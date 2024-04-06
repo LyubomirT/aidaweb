@@ -34,14 +34,14 @@ body {
     box-sizing: border-box;
     border: none;
     border-radius: 5px;
-    background-color: #7289da;
+    background-color: #5865F2;
     color: #fff;
     text-decoration: none;
     cursor: pointer;
 }
 
 .discord-btn:hover {
-    background-color: #5b6eae;
+    background-color: #4054b2;
 }
 
 .discord-btn img {
