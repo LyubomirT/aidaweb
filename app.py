@@ -50,7 +50,7 @@ def chat():
 
 @app.route('/auth/discord')
 def auth_discord():
-    return render_template('logintest.html')
+    return render_template('login.html')
 
 @app.route('/auth/discord/callback')
 def auth_discord_callback():
