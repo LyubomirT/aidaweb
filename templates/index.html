@@ -4,76 +4,24 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Chat with Cohere</title>
-<style>
-  body { font-family: Arial, sans-serif; }
-  #chat-container { max-width: 800px; margin: auto; }
-  #chat-box { height: 300px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px; }
-  #chat-input { width: 100%; padding: 10px; }
-</style>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/chat.css') }}">
 </head>
 <body>
-<div id="chat-container">
+<div id="sidebar">
   <button id="new-conv-button">Start New Conversation</button>
+</div>
+<div id="chat-container">
   <div id="chat-box">
     {% for message in chat_history %}
       <div>{{ message['role'] }}: {{ message['message'] }}</div>
     {% endfor %}
   </div>
-  <input type="text" id="chat-input" placeholder="Type your message here..." />
+  <div id="input-container">
+    <input type="text" id="chat-input" placeholder="Type your message here..." />
+    <button id="send-button">Send</button>
+  </div>
 </div>
 
-<script>
-  const chatBox = document.getElementById('chat-box');
-  const chatInput = document.getElementById('chat-input');
-  const newConvButton = document.getElementById('new-conv-button');
-  let chatHistory = [];  // Retrieve chat history from server
-  let convId = null;  // Conversation ID
-
-  newConvButton.addEventListener('click', function() {
-    fetch('/new_conv', {
-      method: 'POST',
-    })
-    .then(response => response.json())
-    .then(data => {
-      convId = data.conv_id;
-      chatBox.innerHTML = '';
-      chatHistory = [];
-    })
-    .catch(error => console.error('Error:', error));
-  });
-
-  chatInput.addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-      const message = chatInput.value;
-      chatInput.value = '';
-      postMessage(message);
-    }
-  });
-
-  function postMessage(message) {
-    fetch('/chat', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        message: message,
-        conv_id: convId,
-        chat_history: chatHistory  // Send chat history to server
-      }),
-    })
-    .then(response => response.json())
-    .then(data => {
-      const rawResponse = data.raw_response;
-      const htmlResponse = data.html_response;
-      chatHistory = data.chat_history;  // Update chat history from server
-      console.log('Chat history:', chatHistory);
-      chatBox.innerHTML += '<div>User: ' + message + '</div>';
-      chatBox.innerHTML += '<div>Assistant: ' + htmlResponse + '</div>';
-      chatBox.scrollTop = chatBox.scrollHeight;
-    })
-    .catch(error => console.error('Error:', error));
-  }
-</script>
+<script src="{{ url_for('static', filename='js/chat.js') }}"></script>
 </body>
 </html>
