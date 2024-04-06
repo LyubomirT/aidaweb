@@ -13,6 +13,7 @@
 </head>
 <body>
 <div id="chat-container">
+  <button id="new-conv-button">Start New Conversation</button>
   <div id="chat-box">
     {% for message in chat_history %}
       <div>{{ message['role'] }}: {{ message['message'] }}</div>
@@ -24,7 +25,22 @@
 <script>
   const chatBox = document.getElementById('chat-box');
   const chatInput = document.getElementById('chat-input');
+  const newConvButton = document.getElementById('new-conv-button');
   let chatHistory = [];  // Retrieve chat history from server
+  let convId = null;  // Conversation ID
+
+  newConvButton.addEventListener('click', function() {
+    fetch('/new_conv', {
+      method: 'POST',
+    })
+    .then(response => response.json())
+    .then(data => {
+      convId = data.conv_id;
+      chatBox.innerHTML = '';
+      chatHistory = [];
+    })
+    .catch(error => console.error('Error:', error));
+  });
 
   chatInput.addEventListener('keypress', function(e) {
     if (e.key === 'Enter') {
@@ -42,6 +58,7 @@
       },
       body: JSON.stringify({
         message: message,
+        conv_id: convId,
         chat_history: chatHistory  // Send chat history to server
       }),
     })

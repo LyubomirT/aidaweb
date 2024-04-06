@@ -13,16 +13,27 @@ client = cohere.Client(os.getenv("CKEY"))
 
 app = Flask(__name__)
 
+# Dictionary to store conversations
+conversations = {}
+
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/new_conv', methods=['POST'])
+def new_conv():
+    # Generate a new conversation ID
+    conv_id = str(random.randint(100000, 999999))
+    # Initialize the conversation in the dictionary
+    conversations[conv_id] = []
+    return jsonify({'conv_id': conv_id})
 
 @app.route('/chat', methods=['POST'])
 def chat():
     data = request.json
     message = data['message']
-    chat_history = data['chat_history']
-    print(chat_history)
+    conv_id = data['conv_id']
+    chat_history = conversations[conv_id]
     chat_history.append({"role": "USER", "message": message})  # Add user message to history
 
     # Send the updated chat history
