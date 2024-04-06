@@ -24,6 +24,7 @@
 <script>
   const chatBox = document.getElementById('chat-box');
   const chatInput = document.getElementById('chat-input');
+  let chatHistory = [];  // Retrieve chat history from server
 
   chatInput.addEventListener('keypress', function(e) {
     if (e.key === 'Enter') {
@@ -40,13 +41,16 @@
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        message: message
+        message: message,
+        chat_history: chatHistory  // Send chat history to server
       }),
     })
     .then(response => response.json())
     .then(data => {
       const rawResponse = data.raw_response;
       const htmlResponse = data.html_response;
+      chatHistory = data.chat_history;  // Update chat history from server
+      console.log('Chat history:', chatHistory);
       chatBox.innerHTML += '<div>User: ' + message + '</div>';
       chatBox.innerHTML += '<div>Assistant: ' + htmlResponse + '</div>';
       chatBox.scrollTop = chatBox.scrollHeight;

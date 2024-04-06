@@ -13,16 +13,16 @@ client = cohere.Client(os.getenv("CKEY"))
 
 app = Flask(__name__)
 
-chat_history = []  # Stores the chat history
-
 @app.route('/')
 def index():
-    return render_template('index.html', chat_history=chat_history)
+    return render_template('index.html')
 
 @app.route('/chat', methods=['POST'])
 def chat():
     data = request.json
     message = data['message']
+    chat_history = data['chat_history']
+    print(chat_history)
     chat_history.append({"role": "USER", "message": message})  # Add user message to history
 
     # Send the updated chat history
@@ -35,7 +35,7 @@ def chat():
     # Convert markdown response to HTML
     html_response = markdown2.markdown(response, extras=["tables"])
 
-    return jsonify({'raw_response': response, 'html_response': html_response})
+    return jsonify({'raw_response': response, 'html_response': html_response, 'chat_history': chat_history})
 
 if __name__ == '__main__':
     app.run(debug=False)
