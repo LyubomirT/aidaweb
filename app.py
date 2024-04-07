@@ -52,9 +52,5 @@ def chat():
 def auth_discord():
     return render_template('login.html')
 
-@app.route('/auth/discord/callback')
-def auth_discord_callback():
-    return render_template('index.html')
-
 if __name__ == '__main__':
     app.run(debug=True, port=5000, host='0.0.0.0')

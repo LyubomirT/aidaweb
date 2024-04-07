@@ -2,26 +2,42 @@ const chatBox = document.getElementById('chat-box');
 const chatInput = document.getElementById('chat-input');
 const newConvButton = document.getElementById('new-conv-button');
 const sendButton = document.getElementById('send-button');
+const username = document.getElementById('user_name');
+const userAvatar = document.getElementById('user_avatar');
 let chatHistory = [];  // Retrieve chat history from server
 let convId = null;  // Conversation ID
-// Try to get a token from the local storage (AUTH_TOKEN_KEY)
-/*
-let token = localStorage.getItem("AUTH_TOKEN_KEY");
-if (token == null) {
-  // If there is no token, redirect to the login page
-  window.location.href = "/auth/discord";
+// If there is a Discord access token in the URL, save it in local storage as OAUTH2_TOKEN
+const urlParams = new URLSearchParams(window.location.hash.substr(1));
+const discordToken = urlParams.get('access_token');
+if (discordToken) {
+  localStorage.setItem('OAUTH2_TOKEN', discordToken);
 }
-// If there is a token, try to get the user's information
-fetch('https://discord.com/api/users/@me', {
-  headers: {
-    'Authorization': `Bearer ${token}`
-  }
-})
-.then(response => response.json())
-.then(data => {
+console.log('Discord token:', discordToken);
 
-})
-*/
+// If there is a discord token in local storage, use it to authenticate
+const oauth2Token = localStorage.getItem('OAUTH2_TOKEN');
+if (oauth2Token) {
+  fetch('https://discord.com/api/users/@me', {
+    headers: {
+      Authorization: `Bearer ${oauth2Token}`,
+    },
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log('Discord user:', data);
+    username.innerHTML = data.username;
+    userAvatar.src = `https://cdn.discordapp.com/avatars/${data.id}/${data.avatar}.png`;
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    localStorage.removeItem('OAUTH2_TOKEN');
+    // Redirect to the home page if there is an error with the token  
+    window.location.href = '/auth/discord';
+  });
+} else {
+  // Redirect to the home page if there is no token
+  window.location.href = '/auth/discord';
+}
 
 newConvButton.addEventListener('click', function() {
   fetch('/new_conv', {
