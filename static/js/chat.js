@@ -42,6 +42,10 @@ if (oauth2Token) {
 newConvButton.addEventListener('click', function() {
   fetch('/new_conv', {
     method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({token: oauth2Token,}),  // Send the Discord token to the server
   })
   .then(response => response.json())
   .then(data => {
@@ -79,7 +83,8 @@ function postMessage(message) {
     body: JSON.stringify({
       message: message,
       conv_id: convId,
-      chat_history: chatHistory  // Send chat history to server
+      chat_history: chatHistory,  // Send chat history to server,
+      token: oauth2Token,
     }),
   })
   .then(response => response.json())

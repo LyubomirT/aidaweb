@@ -4,6 +4,7 @@ import markdown2  # for converting markdown to HTML
 import dotenv
 import os
 import random   # for randomizing id for characters
+import requests
 
 # Load the environment variables from the .env file
 dotenv.load_dotenv()
@@ -22,10 +23,19 @@ def index():
 
 @app.route('/new_conv', methods=['POST'])
 def new_conv():
+    data_json = request.json
+    token = data_json['token']
+    g1 = requests.get(f"https://discord.com/api/users/@me", headers={"Authorization": f"Bearer {token}"})
+    g1 = g1.json()
+    # get the id of the user
+    userid = int(g1['id'])
     # Generate a new conversation ID
     conv_id = str(random.randint(100000, 999999))
     # Initialize the conversation in the dictionary
-    conversations[conv_id] = []
+    if userid not in conversations:
+        conversations[userid] = {}
+    conversations[userid][conv_id] = []
+    print(conversations)
     return jsonify({'conv_id': conv_id})
 
 @app.route('/chat', methods=['POST'])
@@ -33,7 +43,12 @@ def chat():
     data = request.json
     message = data['message']
     conv_id = data['conv_id']
-    chat_history = conversations[conv_id]
+    token = data['token']
+    g1 = requests.get(f"https://discord.com/api/users/@me", headers={"Authorization": f"Bearer {token}"})
+    g1 = g1.json()
+    # get the id of the user
+    userid = int(g1['id'])
+    chat_history = conversations[userid][conv_id]
     chat_history.append({"role": "USER", "message": message})  # Add user message to history
 
     # Send the updated chat history
@@ -47,6 +62,48 @@ def chat():
     html_response = markdown2.markdown(response, extras=["tables"])
 
     return jsonify({'raw_response': response, 'html_response': html_response, 'chat_history': chat_history})
+
+
+@app.route('/joined_server', methods=['POST'])
+def joined_server():
+    data = request.json
+    authtoken = data['authtoken']
+    serverid = 1079761115636043926
+    g1 = requests.post(f"https://discord.com/api/users/@me/guilds", headers={"Authorization": f"Bearer {authtoken}"})
+    g1 = g1.json()
+    """
+                        .then(guilds => {
+                        const guildIds = guilds.map(guild => guild.id);
+                        if (guildIds.includes('1079761115636043926')) {
+                            console.log('User is on guild 1079761115636043926');
+                        } else {
+                            console.log('User is not on guild 1079761115636043926');
+                        }
+                    })
+    """
+    if serverid in g1:
+        return jsonify({'joined': True})
+    else:
+        return jsonify({'joined': False})
+
+@app.route('/get_convs', methods=['POST'])
+def get_convs():
+    data = request.json
+    token = data['token']
+    g1 = requests.get(f"https://discord.com/api/users/@me", headers={"Bearer": token})
+    g1 = g1.json()
+    # get the id of the user
+    userid = int(g1['id'])
+    # get all conversations associated with the user
+    user_convs = conversations[userid]
+    return jsonify({'conversations': user_convs})
+
+@app.route('/get_conv', methods=['POST'])
+def get_conv():
+    data = request.json
+    conv_id = data['conv_id']
+    chat_history = conversations[conv_id]
+    return jsonify({'chat_history': chat_history})
 
 @app.route('/auth/discord')
 def auth_discord():
