@@ -72,4 +72,26 @@ body {
     background-color: #e0e0e0;
     border-left: 3px solid #8346f3;
   }
+
+  #sidebar {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    /* existing styles */
+  }
   
+  #user_info {
+    display: flex;
+    align-items: center;
+  }
+
+  #user_info img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+
+  #user_info #user_name {
+    font-weight: bold;
+  }
