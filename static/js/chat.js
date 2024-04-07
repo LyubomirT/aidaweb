@@ -99,3 +99,23 @@ function postMessage(message) {
   })
   .catch(error => console.error('Error:', error));
 }
+
+function verify() {
+  fetch('/joined_server', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({authtoken: oauth2Token,}),
+  }).then(response => response.json())
+  .then(data => {
+    if (data.joined === false) {
+      window.location.href = '/join';
+    } else {
+      console.log('User has joined the server');
+    }
+  })
+  .catch(error => console.error('Error:', error));
+}
+
+verify();  // Verify that the user has joined the server

@@ -35,7 +35,6 @@ def new_conv():
     if userid not in conversations:
         conversations[userid] = {}
     conversations[userid][conv_id] = []
-    print(conversations)
     return jsonify({'conv_id': conv_id})
 
 @app.route('/chat', methods=['POST'])
@@ -68,23 +67,12 @@ def chat():
 def joined_server():
     data = request.json
     authtoken = data['authtoken']
-    serverid = 1079761115636043926
-    g1 = requests.post(f"https://discord.com/api/users/@me/guilds", headers={"Authorization": f"Bearer {authtoken}"})
+    serverid = '1079761115636043926'
+    g1 = requests.get(f"https://discord.com/api/users/@me/guilds", headers={"Authorization": f"Bearer {authtoken}"})
     g1 = g1.json()
-    """
-                        .then(guilds => {
-                        const guildIds = guilds.map(guild => guild.id);
-                        if (guildIds.includes('1079761115636043926')) {
-                            console.log('User is on guild 1079761115636043926');
-                        } else {
-                            console.log('User is not on guild 1079761115636043926');
-                        }
-                    })
-    """
-    if serverid in g1:
-        return jsonify({'joined': True})
-    else:
-        return jsonify({'joined': False})
+    for i in g1:
+        if i['id'] == serverid:
+            return jsonify({'joined': True})
 
 @app.route('/get_convs', methods=['POST'])
 def get_convs():
