@@ -52,6 +52,8 @@ newConvButton.addEventListener('click', function() {
   .catch(error => console.error('Error:', error));
 });
 
+newConvButton.click();
+
 chatInput.addEventListener('keypress', function(e) {
   if (e.key === 'Enter') {
     sendMessage();
