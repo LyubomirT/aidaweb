@@ -97,5 +97,9 @@ def get_conv():
 def auth_discord():
     return render_template('login.html')
 
+@app.route('/join')
+def join():
+    return render_template('jointos.html')
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000, host='0.0.0.0')
