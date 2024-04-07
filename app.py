@@ -25,6 +25,8 @@ def index():
 def new_conv():
     data_json = request.json
     token = data_json['token']
+    if not check_join(token):
+        return redirect('/join')
     g1 = requests.get(f"https://discord.com/api/users/@me", headers={"Authorization": f"Bearer {token}"})
     g1 = g1.json()
     # get the id of the user
@@ -43,6 +45,8 @@ def chat():
     message = data['message']
     conv_id = data['conv_id']
     token = data['token']
+    if not check_join(token):
+        return redirect('/join')
     g1 = requests.get(f"https://discord.com/api/users/@me", headers={"Authorization": f"Bearer {token}"})
     g1 = g1.json()
     # get the id of the user
@@ -62,6 +66,15 @@ def chat():
 
     return jsonify({'raw_response': response, 'html_response': html_response, 'chat_history': chat_history})
 
+def check_join(token):
+    g1 = requests.get(f"https://discord.com/api/users/@me/guilds", headers={"Authorization": f"Bearer {token}"})
+    g1 = g1.json()
+    serverid = '1079761115636043926'
+    for i in g1:
+        if i['id'] == serverid:
+            return True
+    return False
+
 
 @app.route('/joined_server', methods=['POST'])
 def joined_server():
@@ -78,6 +91,8 @@ def joined_server():
 def get_convs():
     data = request.json
     token = data['token']
+    if not check_join(token):
+        return redirect('/join')
     g1 = requests.get(f"https://discord.com/api/users/@me", headers={"Bearer": token})
     g1 = g1.json()
     # get the id of the user

@@ -56,7 +56,10 @@ newConvButton.addEventListener('click', function() {
   .catch(error => console.error('Error:', error));
 });
 
-newConvButton.click();
+// Wait for 3 seconds before creating a new conversation
+setTimeout(() => {
+  newConvButton.click();
+}, 3000);
 
 chatInput.addEventListener('keypress', function(e) {
   if (e.key === 'Enter') {
