@@ -52,6 +52,8 @@ newConvButton.addEventListener('click', function() {
     convId = data.conv_id;
     chatBox.innerHTML = '';
     chatHistory = [];
+    sendButton.disabled = false;
+    chatInput.disabled = false;
   })
   .catch(error => console.error('Error:', error));
 });

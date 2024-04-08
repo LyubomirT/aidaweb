@@ -116,3 +116,15 @@ body {
     background-color: #e6e6e6;
     border-left: 10px solid #8346f3;
   }
+
+  :disabled {
+    cursor: not-allowed;
+    background-color: #e6e6e6;
+    color: #434343;
+  }
+
+  #send-button:disabled {
+    background-color: #55475a;
+    color: #ffffff;
+    cursor: not-allowed;
+  }
