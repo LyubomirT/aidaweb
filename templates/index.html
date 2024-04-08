@@ -20,7 +20,7 @@
 <div id="chat-container">
   <div id="chat-box">
     {% for message in chat_history %}
-      <div>{{ message['role'] }}: {{ message['message'] }}</div>
+      <div class="{{ message['role'] }} message">{{ message['message'] }}</div>
     {% endfor %}
   </div>
   <div id="input-container">

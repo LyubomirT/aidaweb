@@ -103,3 +103,16 @@ body {
     font-weight: bold;
     font-family: inherit;
   }
+
+  .message {
+    margin: 10px 0;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #f0f0f0;
+    font-family: inherit;
+  }
+
+  .message .ASSISTANT {
+    background-color: #e6e6e6;
+    border-left: 10px solid #8346f3;
+  }
