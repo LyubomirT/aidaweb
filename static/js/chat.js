@@ -56,11 +56,6 @@ newConvButton.addEventListener('click', function() {
   .catch(error => console.error('Error:', error));
 });
 
-// Wait for 3 seconds before creating a new conversation
-setTimeout(() => {
-  newConvButton.click();
-}, 3000);
-
 chatInput.addEventListener('keypress', function(e) {
   if (e.key === 'Enter') {
     sendMessage();
@@ -75,6 +70,10 @@ function sendMessage() {
   const message = chatInput.value;
   chatInput.value = '';
   postMessage(message);
+}
+
+function constructMessage(message, role) {  
+  return `<div class="${role}" message>${message}</div>`;
 }
 
 function postMessage(message) {
@@ -96,8 +95,8 @@ function postMessage(message) {
     const htmlResponse = data.html_response;
     chatHistory = data.chat_history;  // Update chat history from server
     console.log('Chat history:', chatHistory);
-    chatBox.innerHTML += '<div>User: ' + message + '</div>';
-    chatBox.innerHTML += '<div>Assistant: ' + htmlResponse + '</div>';
+    chatBox.innerHTML += constructMessage(message, 'USER');
+    chatBox.innerHTML += constructMessage(htmlResponse, 'ASSISTANT');
     chatBox.scrollTop = chatBox.scrollHeight;
   })
   .catch(error => console.error('Error:', error));
