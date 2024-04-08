@@ -112,9 +112,9 @@ body {
     font-family: inherit;
   }
 
-  .message .ASSISTANT {
-    background-color: #e6e6e6;
-    border-left: 10px solid #8346f3;
+  .message.ASSISTANT {
+    border-left: 3px solid #8346f3;
+    padding-left: 15px;
   }
 
   :disabled {
