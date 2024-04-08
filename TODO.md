@@ -1,8 +1,8 @@
 --------------------- STAGE 1 --------------------- <-> CURRENT
 
 - [ ] Chat Message Redesign
-  - [ ] Message Bubble
-    - [ ] Remove name
+  - [x] Message Bubble
+    - [x] Remove name
   - [ ] Add PFPs to messages
   - [ ] Use a proper Markdown CSS for messages, or write our own
 
