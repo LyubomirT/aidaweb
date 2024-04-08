@@ -75,7 +75,7 @@ function sendMessage() {
 }
 
 function constructMessage(message, role) {  
-  return `<div class="${role}" message>${message}</div>`;
+  return `<div class="${role} message">${message}</div>`;
 }
 
 function postMessage(message) {
