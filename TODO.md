@@ -1,4 +1,4 @@
---------------------- STAGE 1 ---------------------
+--------------------- STAGE 1 --------------------- <-> CURRENT
 
 - [ ] Chat Message Redesign
   - [ ] Message Bubble
