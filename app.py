@@ -57,7 +57,7 @@ def chat():
     # Send the updated chat history
     response = client.chat(message=message, 
                             chat_history=chat_history,
-                            temperature=0.5, max_tokens=150)
+                            temperature=0.5, max_tokens=400)
     response = response.text
     chat_history.append({"role": "ASSISTANT", "message": response})  # Add assistant response to history
     

@@ -113,6 +113,7 @@ function postMessage(message) {
     console.log('Chat history:', chatHistory);
     chatBox.innerHTML += constructMessage(message, 'USER');
     chatBox.innerHTML += constructMessage(htmlResponse, 'ASSISTANT');
+    hljs.highlightAll();
     chatBox.scrollTop = chatBox.scrollHeight;
   })
   .catch(error => console.error('Error:', error));
