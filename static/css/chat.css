@@ -32,15 +32,16 @@ body {
   
   #input-container {
     margin-top: 20px;
+    height: 50px;
   }
   
   #chat-input {
     width: calc(100% - 70px);
-    padding: 10px;
     box-sizing: border-box;
     border: 1px solid #ccc;
     border-radius: 5px 0 0 5px;
     font-family: inherit;
+    padding: 20px;
   }
   
   #send-button {
@@ -53,6 +54,8 @@ body {
     color: #fff;
     cursor: pointer;
     font-family: inherit;
+    padding-top: 20px;
+    padding-bottom: 20px;
   }
   
   #send-button:hover {
