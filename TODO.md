@@ -3,7 +3,8 @@
 - [ ] Chat Message Redesign
   - [x] Message Bubble
     - [x] Remove name
-  - [ ] Add PFPs to messages
+    - [x] Reuse name
+  - [x] Add PFPs to messages
   - [ ] Use a proper Markdown CSS for messages, or write our own
 
 --------------------- STAGE 2 ---------------------
