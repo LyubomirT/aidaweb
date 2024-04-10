@@ -1,13 +1,13 @@
---------------------- STAGE 1 --------------------- <-> CURRENT
+--------------------- STAGE 1 ---------------------
 
-- [ ] Chat Message Redesign
+- [x] Chat Message Redesign
   - [x] Message Bubble
     - [x] Remove name
     - [x] Reuse name
   - [x] Add PFPs to messages
-  - [ ] Use a proper Markdown CSS for messages, or write our own
+  - [x] Use a proper Markdown CSS for messages, or write our own
 
---------------------- STAGE 2 ---------------------
+--------------------- STAGE 2 --------------------- <-> CURRENT
 
 - [ ] Add Regeneration
  - [ ] Add a `regen` route
