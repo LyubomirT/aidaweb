@@ -78,7 +78,8 @@ function constructMessage(message, role) {
   if (role === "USER") {
     imgsrc = userAvatar.src;
   } else {
-    imgsrc = `{{ url_for('static', filename='img/assistant.png')}}`;
+    const assistanthidden = document.getElementById('assistant-hidden');
+    imgsrc = assistanthidden.src;
   }
   return `
   <img class="msg-avatar" src="${imgsrc}" alt="${role} avatar">
