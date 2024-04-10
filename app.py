@@ -62,7 +62,7 @@ def chat():
     chat_history.append({"role": "ASSISTANT", "message": response})  # Add assistant response to history
     
     # Convert markdown response to HTML
-    html_response = markdown2.markdown(response, extras=["tables"])
+    html_response = markdown2.markdown(response, extras=["tables", "fenced-code-blocks", "spoiler", "strike"])
 
     return jsonify({'raw_response': response, 'html_response': html_response, 'chat_history': chat_history})
 
