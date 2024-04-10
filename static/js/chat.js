@@ -75,7 +75,15 @@ function sendMessage() {
 }
 
 function constructMessage(message, role) {  
-  return `<div class="${role} message">${message}</div>`;
+  if (role === "USER") {
+    imgsrc = userAvatar.src;
+  } else {
+    imgsrc = `/static/img/${role.toLowerCase()}.png`;
+  }
+  return `
+  <img class="avatar" src="${imgsrc}" alt="${role} avatar">
+  <div class="${role} message">${message}</div>
+  `;
 }
 
 function postMessage(message) {
