@@ -161,62 +161,34 @@ body {
     background-color: #f0f0f0;
     padding: 10px;
     font-family: inherit;
-  }
-
-  #chat-box td {
-    border-bottom: 1px solid #ccc;
-    padding: 10px;
-    font-family: inherit;
-  }
-
-  #chat-box tr:hover {
-    background-color: #f9f9f9;
-  }
-
-  #chat-box tr {
-    transition: all 0.1s cubic-bezier(0.445, 0.05, 0.55, 0.95);
-  }
-
-  #chat-box th:first-child, #chat-box td:first-child {
-    border-top-left-radius: 5px;
-    border-bottom-left-radius: 5px;
-  }
-
-  #chat-box th:last-child, #chat-box td:last-child {
-    border-top-right-radius: 5px;
-    border-bottom-right-radius: 5px;
-  }
-
-  #chat-box th {
     text-align: left;
-  }
-
-  #chat-box td {
-    text-align: left;
-  }
-
-  #chat-box th:first-child, #chat-box td:first-child {
-    padding-left: 20px;
-  }
-
-  #chat-box th:last-child, #chat-box td:last-child {
-    padding-right: 20px;
-  }
-
-  #chat-box th {
     font-weight: bold;
-  }
-
-  #chat-box td {
-    font-weight: normal;
-  }
-
-  #chat-box th {
     border-bottom: 2px solid #f0f0f0;
   }
 
   #chat-box td {
     border-bottom: 1px solid #f0f0f0;
+    padding: 10px;
+    font-family: inherit;
+    text-align: left;
+  }
+
+  #chat-box tr:hover {
+    background-color: #f9f9f9;
+  }
+
+  #chat-box th:first-child,
+  #chat-box td:first-child {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    padding-left: 20px;
+  }
+
+  #chat-box th:last-child,
+  #chat-box td:last-child {
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    padding-right: 20px;
   }
 
   #chat-box tr {
@@ -227,6 +199,21 @@ body {
     background-color: #f9f9f9;
   }
 
-  #chat-box th {
-    background-color: #f0f0f0;
-  }
+/* Table styles */
+#chat-box table {
+  width: 100%;
+  border-collapse: separate; /* Use 'separate' to apply spacing between cells */
+  border-spacing: 0; /* Optional: Adjust spacing between cells */
+}
+
+#chat-box th, #chat-box td {
+  border: 1px solid #ccc; /* Add border to each cell */
+  padding: 10px;
+  font-family: inherit;
+  text-align: left;
+}
+
+#chat-box th {
+  background-color: #e6e6e6; /* Different background color for header */
+  font-weight: bold;
+}
