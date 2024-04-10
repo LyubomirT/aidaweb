@@ -78,10 +78,10 @@ function constructMessage(message, role) {
   if (role === "USER") {
     imgsrc = userAvatar.src;
   } else {
-    imgsrc = `/static/img/${role.toLowerCase()}.png`;
+    imgsrc = `{{ url_for('static', filename='img/assistant.png')}}`;
   }
   return `
-  <img class="avatar" src="${imgsrc}" alt="${role} avatar">
+  <img class="msg-avatar" src="${imgsrc}" alt="${role} avatar">
   <div class="${role} message">${message}</div>
   `;
 }
