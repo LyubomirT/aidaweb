@@ -77,12 +77,17 @@ function sendMessage() {
 function constructMessage(message, role) {  
   if (role === "USER") {
     imgsrc = userAvatar.src;
+    var _username = username.innerHTML;
   } else {
     const assistanthidden = document.getElementById('assistant-hidden');
     imgsrc = assistanthidden.src;
+    var _username = "Assistant"
   }
   return `
-  <img class="msg-avatar" src="${imgsrc}" alt="${role} avatar">
+  <div class="infocontainer">
+    <img class="msg-avatar" src="${imgsrc}" alt="${role} avatar">
+    <div class="${role} username">${_username}</div>
+  </div>
   <div class="${role} message">${message}</div>
   `;
 }

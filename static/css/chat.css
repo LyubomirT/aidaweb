@@ -129,9 +129,21 @@ body {
     cursor: not-allowed;
   }
 
-  .msg-avatar {
+  .infocontainer {
+    display: flex;
+    align-items: left;
+  }
+
+  .infocontainer img {
     width: 30px;
     height: 30px;
     border-radius: 50%;
     margin-right: 10px;
+  }
+
+  .infocontainer .username {
+    font-weight: bold;
+    font-family: inherit;
+    vertical-align: middle;
+    margin-top: 5px;
   }
