@@ -10,9 +10,9 @@
 --------------------- STAGE 2 --------------------- <-> CURRENT
 
 - [ ] Add Regeneration
- - [ ] Add a `regen` route
-    - [ ] Implement candidates and selected "routes"
-    - [ ] Split the convdata into "total" and "used" data
+ - [x] Add a `regen` route
+    - [x] Implement candidates and selected "routes"
+    - [x] Split the convdata into "total" and "used" data
  - [ ] Add a regeneration button to each last message of the AI
     - [ ] Add candidate selection if there are multiple
     - [ ] Limit the number of regenerations per message to 10
