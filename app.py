@@ -39,6 +39,11 @@ def new_conv():
     conversations[userid][conv_id] = []
     return jsonify({'conv_id': conv_id})
 
+config={
+    "temperature": 0.5,
+    "max_tokens": 400
+}
+
 @app.route('/chat', methods=['POST'])
 def chat():
     data = request.json
@@ -57,7 +62,7 @@ def chat():
     # Send the updated chat history
     response = client.chat(message=message, 
                             chat_history=chat_history,
-                            temperature=0.5, max_tokens=400)
+                            temperature=config['temperature'], max_tokens=config['max_tokens'])
     response = response.text
     chat_history.append({"role": "ASSISTANT", "message": response})  # Add assistant response to history
     
@@ -66,7 +71,7 @@ def chat():
 
     return jsonify({'raw_response': response, 'html_response': html_response, 'chat_history': chat_history})
 
-# this route regenerates the last AI response
+# this route regenerates (deletes and then generates) the last AI response
 @app.route('/regen', methods=['POST'])
 def regen():
     data = request.json
@@ -79,12 +84,17 @@ def regen():
     # get the id of the user
     userid = int(g1['id'])
     chat_history = conversations[userid][conv_id]
-    response = chat_history[-1]['message']
-    response = client.chat(message=response, 
-                            chat_history=chat_history,
-                            temperature=0.5, max_tokens=400)
+    chat_history.pop()  # Remove the last assistant response
+    response = client.chat(message=chat_history[-1]['message'],
+                            chat_history=chat_history[:-1],
+                            temperature=config['temperature'], max_tokens=config['max_tokens'])
     response = response.text
-    chat_history.append({"role": "ASSISTANT", "message": response})
+    chat_history.append({"role": "ASSISTANT", "message": response})  # Add assistant response to history
+
+    # Convert markdown response to HTML
+    html_response = markdown2.markdown(response, extras=["tables", "fenced-code-blocks", "spoiler", "strike"])
+
+    return jsonify({'raw_response': response, 'html_response': html_response, 'chat_history': chat_history})
 
 
 def check_join(token):
