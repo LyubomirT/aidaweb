@@ -66,6 +66,27 @@ def chat():
 
     return jsonify({'raw_response': response, 'html_response': html_response, 'chat_history': chat_history})
 
+# this route regenerates the last AI response
+@app.route('/regen', methods=['POST'])
+def regen():
+    data = request.json
+    conv_id = data['conv_id']
+    token = data['token']
+    if not check_join(token):
+        return redirect('/join')
+    g1 = requests.get(f"https://discord.com/api/users/@me", headers={"Authorization": f"Bearer {token}"})
+    g1 = g1.json()
+    # get the id of the user
+    userid = int(g1['id'])
+    chat_history = conversations[userid][conv_id]
+    response = chat_history[-1]['message']
+    response = client.chat(message=response, 
+                            chat_history=chat_history,
+                            temperature=0.5, max_tokens=400)
+    response = response.text
+    chat_history.append({"role": "ASSISTANT", "message": response})
+
+
 def check_join(token):
     g1 = requests.get(f"https://discord.com/api/users/@me/guilds", headers={"Authorization": f"Bearer {token}"})
     g1 = g1.json()
