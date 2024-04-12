@@ -89,8 +89,18 @@ function constructMessage(message, role) {
     <div class="${role} username">${_username}</div>
   </div>
   <div class="${role} message">${message}</div>
-  <div id="regen">Regenerate</div>
+  <div class="regen" onclick="regenerate()">Regenerate</div>
   `;
+}
+
+function cleanRegen() {
+  const regen = document.querySelectorAll('.regen');
+  regen.forEach((element) => {
+    element.addEventListener('click', function() {
+      const message = element.previousElementSibling.innerHTML;
+      postMessage(message);
+    });
+  });
 }
 
 function postMessage(message) {
