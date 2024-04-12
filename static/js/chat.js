@@ -96,10 +96,42 @@ function constructMessage(message, role) {
 function cleanRegen() {
   const regen = document.querySelectorAll('.regen');
   regen.forEach((element) => {
-    element.addEventListener('click', function() {
-      const message = element.previousElementSibling.innerHTML;
-      postMessage(message);
-    });
+    element.remove();
+  });
+}
+
+function regenerate() {
+  // this function heads to the regenerate route and deletes the last message (if it's an assistant message)
+  // it also receives a new message from the server and appends it to the chatbox
+  chatInput.disabled = true;
+  sendButton.disabled = true;
+  cleanRegen();
+  fetch('/regenerate', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      conv_id: convId,
+      chat_history: chatHistory,
+      token: oauth2Token,
+    }),
+  })
+  .then(response => response.json())
+  .then(data => {
+    const rawResponse = data.raw_response;
+    const htmlResponse = data.html_response;
+    chatHistory = data.chat_history;  // Update chat history from server
+    console.log('Chat history:', chatHistory);
+    chatBox.innerHTML += constructMessage(rawResponse, 'USER');
+    chatBox.innerHTML += constructMessage(htmlResponse, 'ASSISTANT');
+    hljs.highlightAll();
+    chatBox.scrollTop = chatBox.scrollHeight;
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    chatInput.disabled = false;
+    sendButton.disabled = false;
   });
 }
 
