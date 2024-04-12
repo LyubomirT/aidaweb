@@ -217,3 +217,15 @@ body {
   background-color: #e6e6e6; /* Different background color for header */
   font-weight: bold;
 }
+
+.msgbtn {
+  color: rgb(255, 0, 0);
+  border: none;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  cursor: pointer;
+  width: 15px;
+  height: 15px;
+}

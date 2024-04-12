@@ -13,6 +13,10 @@ if (discordToken) {
   localStorage.setItem('OAUTH2_TOKEN', discordToken);
 }
 console.log('Discord token:', discordToken);
+const iconimport = document.getElementById('svgimport');
+// child of iconimport
+const regenlink_ = document.querySelector('#svgimport > #regen');
+const regenlink = regenlink_.textContent;
 
 // If there is a discord token in local storage, use it to authenticate
 const oauth2Token = localStorage.getItem('OAUTH2_TOKEN');
@@ -84,7 +88,11 @@ function constructMessage(message, role) {
     const assistanthidden = document.getElementById('assistant-hidden');
     imgsrc = assistanthidden.src;
     var _username = "Assistant"
-    regenstring = `<div class="regen" onclick="regenerate()">Regenerate</div>`;
+    // get the svg from the file at regenlink
+    var svg = document.createElement('div');
+    regenstring = `<div class="regen" onclick="regenerate()">
+    <img src="${regenlink}" class="msgbtn" alt="regenerate">
+    </div>`;
   }
   return `
   <div class="messagecontainer">

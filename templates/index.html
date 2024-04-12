@@ -11,6 +11,9 @@
 </head>
 <body>
 <img src="{{ url_for('static', filename='img/assistant.png') }}" alt="Assistant" id="assistant-hidden" style="display: none;">
+<div id="svgimport">
+  <p id="regen" style="display: none;">{{ url_for('static', filename='svg/refresh.svg') }}</p>
+</div>
 <div id="sidebar">
   <button id="new-conv-button">Start New Conversation</button>
   <!-- Divider -->
