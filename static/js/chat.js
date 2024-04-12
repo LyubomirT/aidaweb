@@ -75,21 +75,26 @@ function sendMessage() {
 }
 
 function constructMessage(message, role) {  
+  var regenstring;
   if (role === "USER") {
     imgsrc = userAvatar.src;
     var _username = username.innerHTML;
+    regenstring = ``;
   } else {
     const assistanthidden = document.getElementById('assistant-hidden');
     imgsrc = assistanthidden.src;
     var _username = "Assistant"
+    regenstring = `<div class="regen" onclick="regenerate()">Regenerate</div>`;
   }
   return `
-  <div class="infocontainer">
-    <img class="msg-avatar" src="${imgsrc}" alt="${role} avatar">
-    <div class="${role} username">${_username}</div>
+  <div class="messagecontainer">
+    <div class="infocontainer">
+      <img class="msg-avatar" src="${imgsrc}" alt="${role} avatar">
+      <div class="${role} username">${_username}</div>
+    </div>
+    <div class="${role} message">${message}</div>
+    ${regenstring}
   </div>
-  <div class="${role} message">${message}</div>
-  <div class="regen" onclick="regenerate()">Regenerate</div>
   `;
 }
 
@@ -100,12 +105,18 @@ function cleanRegen() {
   });
 }
 
+function deleteLast() {
+  // deletes last message
+  const messages = document.querySelectorAll('.messagecontainer');
+  const lastMessage = messages[messages.length - 1];
+  lastMessage.remove();
+}
+
 function regenerate() {
   // this function heads to the regenerate route and deletes the last message (if it's an assistant message)
   // it also receives a new message from the server and appends it to the chatbox
   chatInput.disabled = true;
   sendButton.disabled = true;
-  cleanRegen();
   fetch('/regen', {
     method: 'POST',
     headers: {
@@ -119,11 +130,12 @@ function regenerate() {
   })
   .then(response => response.json())
   .then(data => {
+    deleteLast();
+    cleanRegen();
     const rawResponse = data.raw_response;
     const htmlResponse = data.html_response;
     chatHistory = data.chat_history;  // Update chat history from server
     console.log('Chat history:', chatHistory);
-    chatBox.innerHTML += constructMessage(rawResponse, 'USER');
     chatBox.innerHTML += constructMessage(htmlResponse, 'ASSISTANT');
     hljs.highlightAll();
     chatBox.scrollTop = chatBox.scrollHeight;
