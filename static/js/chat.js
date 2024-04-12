@@ -139,6 +139,8 @@ function regenerate() {
     chatBox.innerHTML += constructMessage(htmlResponse, 'ASSISTANT');
     hljs.highlightAll();
     chatBox.scrollTop = chatBox.scrollHeight;
+    chatInput.disabled = false;
+    sendButton.disabled = false;
   })
   .catch(error => {
     console.error('Error:', error);
