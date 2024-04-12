@@ -89,6 +89,7 @@ function constructMessage(message, role) {
     <div class="${role} username">${_username}</div>
   </div>
   <div class="${role} message">${message}</div>
+  <div id="regen">Regenerate</div>
   `;
 }
 
