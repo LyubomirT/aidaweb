@@ -13,9 +13,9 @@
  - [x] Add a `regen` route
     - [x] Implement candidates and selected "routes"
     - [x] Split the convdata into "total" and "used" data
- - [ ] Add a regeneration button to each last message of the AI
-    - [ ] Add candidate selection if there are multiple
-    - [ ] Limit the number of regenerations per message to 10
+ - [x] Add a regeneration button to each last message of the AI
+    - [x] Add candidate selection if there are multiple
+    - [x] Limit the number of regenerations per message to 10
 
 - [ ] Let the user edit their messages
   - [ ] Add an `edit` route
