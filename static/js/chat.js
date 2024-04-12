@@ -106,7 +106,7 @@ function regenerate() {
   chatInput.disabled = true;
   sendButton.disabled = true;
   cleanRegen();
-  fetch('/regenerate', {
+  fetch('/regen', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
