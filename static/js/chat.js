@@ -158,6 +158,10 @@ function regenerate() {
 }
 
 function postMessage(message) {
+
+  chatInput.disabled = true;
+  sendButton.disabled = true;
+
   fetch('/chat', {
     method: 'POST',
     headers: {
@@ -180,8 +184,14 @@ function postMessage(message) {
     chatBox.innerHTML += constructMessage(htmlResponse, 'ASSISTANT');
     hljs.highlightAll();
     chatBox.scrollTop = chatBox.scrollHeight;
+    chatInput.disabled = false;
+    sendButton.disabled = false;
   })
-  .catch(error => console.error('Error:', error));
+  .catch(error => {
+    console.error('Error:', error);
+    chatInput.disabled = false;
+    sendButton.disabled = false;
+  });
 }
 
 function verify() {
