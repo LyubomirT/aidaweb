@@ -9,7 +9,7 @@
 
 --------------------- STAGE 2 --------------------- <-> CURRENT
 
-- [ ] Add Regeneration
+- [x] Add Regeneration
  - [x] Add a `regen` route
     - [x] Implement candidates and selected "routes"
     - [x] Split the convdata into "total" and "used" data
