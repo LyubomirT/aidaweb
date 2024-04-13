@@ -18,8 +18,8 @@
     - [x] Limit the number of regenerations per message to 10
 
 - [ ] Let the user edit their messages
-  - [ ] Add an `edit` route
-    - [ ] Implement the `edit` route
+  - [x] Add an `edit` route
+    - [x] Implement the `edit` route
     - [ ] Implement proper callbacks
   - [ ] Add an edit button to each message
   - [ ] Add a "edited" tag to each message
