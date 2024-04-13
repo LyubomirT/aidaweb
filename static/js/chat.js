@@ -91,7 +91,7 @@ function constructMessage(message, role) {
     // get the svg from the file at regenlink
     var svg = document.createElement('div');
     regenstring = `<div class="regen" onclick="regenerate()">
-    <img src="${regenlink}" class="msgbtn" alt="regenerate">
+    <i class="fi fi-rr-refresh"></i>
     </div>`;
   }
   return `
