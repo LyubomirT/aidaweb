@@ -99,14 +99,6 @@ window.onclick = function(event) {
   });
 }
 
-// Edit Button Click Event
-document.addEventListener('click', function(event) {
-  if (event.target.matches('.edit')) {
-    const message = event.target.dataset.message;
-    openModal(document.getElementById('editModal'), message);
-  }
-});
-
 // Save Edit Button Click Event
 document.getElementById('save-edit').addEventListener('click', function() {
   const editedMessage = document.getElementById('edit-message').value;
@@ -154,6 +146,10 @@ function postEdit(editedMessage) {
     sendButton.disabled = false;
   });
 }
+
+document.getElementById('edit-modal-close').addEventListener('click', function() {
+  closeModal(document.getElementById('editModal'));
+});
 
 
 function constructMessage(message, role) {  

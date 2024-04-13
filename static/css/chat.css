@@ -251,6 +251,9 @@ body {
   padding: 20px;
   border: 1px solid #888;
   width: 80%; /* Could be more or less, depending on screen size */
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Close Button */
@@ -265,5 +268,15 @@ body {
 .close:focus {
   color: black;
   text-decoration: none;
+  cursor: pointer;
+}
+
+#save-edit {
+  background-color: #8346f3;
+  color: white;
+  padding: 10px 15px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 5px;
   cursor: pointer;
 }
