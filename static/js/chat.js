@@ -83,7 +83,11 @@ function constructMessage(message, role) {
   if (role === "USER") {
     imgsrc = userAvatar.src;
     var _username = username.innerHTML;
-    regenstring = ``;
+    regenstring = `
+    <div class="edit" onclick="openModal(editModal, '${message}')">
+    <i class="fi fi-rr-edit"></i>
+    </div>
+    `;
   } else {
     const assistanthidden = document.getElementById('assistant-hidden');
     imgsrc = assistanthidden.src;
