@@ -96,6 +96,33 @@ def regen():
 
     return jsonify({'raw_response': response, 'html_response': html_response, 'chat_history': chat_history})
 
+# this route edits the last user message and regenerates the last AI response that goes after it
+@app.route('/edit', methods=['POST'])
+def edit():
+    data = request.json
+    new_message = data['new_message']
+    conv_id = data['conv_id']
+    token = data['token']
+    if not check_join(token):
+        return redirect('/join')
+    g1 = requests.get(f"https://discord.com/api/users/@me", headers={"Authorization": f"Bearer {token}"})
+    g1 = g1.json()
+    # get the id of the user
+    userid = int(g1['id'])
+    chat_history = conversations[userid][conv_id]
+    chat_history[-2] = {"role": "USER", "message": new_message}
+    response = client.chat(message=new_message,
+                            chat_history=chat_history[:-1],
+                            temperature=config['temperature'], max_tokens=config['max_tokens'])
+    response = response.text
+    chat_history.pop()
+    chat_history.append({"role": "ASSISTANT", "message": response})  # Add assistant response to history
+
+    # Convert markdown response to HTML
+    html_response = markdown2.markdown(response, extras=["tables", "fenced-code-blocks", "spoiler", "strike"])
+
+    return jsonify({'raw_response': response, 'html_response': html_response, 'chat_history': chat_history})
+
 
 def check_join(token):
     g1 = requests.get(f"https://discord.com/api/users/@me/guilds", headers={"Authorization": f"Bearer {token}"})
