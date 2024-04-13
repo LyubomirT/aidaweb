@@ -12,6 +12,14 @@
 </head>
 <body>
 <img src="{{ url_for('static', filename='img/assistant.png') }}" alt="Assistant" id="assistant-hidden" style="display: none;">
+<!-- Modal Dialog for Edit -->
+<div id="editModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <textarea id="edit-message" rows="4" cols="50"></textarea>
+    <button id="save-edit">Save</button>
+  </div>
+</div>
 <div id="svgimport">
   <p id="regen" style="display: none;">{{ url_for('static', filename='svg/refresh.svg') }}</p>
 </div>

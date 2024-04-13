@@ -78,6 +78,84 @@ function sendMessage() {
   postMessage(message);
 }
 
+// Open Modal Dialog for Editing Message
+function openModal(modal, message) {
+  modal.style.display = "block";
+  document.getElementById('edit-message').value = message;
+}
+
+// Close Modal Dialog
+function closeModal(modal) {
+  modal.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+  const modals = document.querySelectorAll('.modal');
+  modals.forEach(modal => {
+    if (event.target == modal) {
+      closeModal(modal);
+    }
+  });
+}
+
+// Edit Button Click Event
+document.addEventListener('click', function(event) {
+  if (event.target.matches('.edit')) {
+    const message = event.target.dataset.message;
+    openModal(document.getElementById('editModal'), message);
+  }
+});
+
+// Save Edit Button Click Event
+document.getElementById('save-edit').addEventListener('click', function() {
+  const editedMessage = document.getElementById('edit-message').value;
+  postEdit(editedMessage);
+  closeModal(document.getElementById('editModal'));
+});
+
+// Function to Send Edited Message to Server
+function postEdit(editedMessage) {
+  chatInput.disabled = true;
+  sendButton.disabled = true;
+
+
+  fetch('/edit', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      new_message: editedMessage,
+      conv_id: convId,
+      token: oauth2Token,
+    }),
+  })
+  .then(response => response.json())
+  .then(data => {
+    const rawResponse = data.raw_response;
+    const htmlResponse = data.html_response;
+    chatHistory = data.chat_history;  // Update chat history from server
+    console.log('Chat history:', chatHistory);
+    // Remove the last two messages (edited message and assistant response)
+    deleteLast();
+    deleteLast();
+    // Append the edited message and the assistant response
+    chatBox.innerHTML += constructMessage(editedMessage, 'USER');
+    chatBox.innerHTML += constructMessage(htmlResponse, 'ASSISTANT');
+    hljs.highlightAll();
+    chatBox.scrollTop = chatBox.scrollHeight;
+    chatInput.disabled = false;
+    sendButton.disabled = false;
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    chatInput.disabled = false;
+    sendButton.disabled = false;
+  });
+}
+
+
 function constructMessage(message, role) {  
   var regenstring;
   if (role === "USER") {
