@@ -7,7 +7,7 @@
   - [x] Add PFPs to messages
   - [x] Use a proper Markdown CSS for messages, or write our own
 
---------------------- STAGE 2 --------------------- <-> CURRENT
+--------------------- STAGE 2 ---------------------
 
 - [x] Add Regeneration
  - [x] Add a `regen` route
@@ -26,10 +26,10 @@
 
 BONUS:
 
-- [ ] Make the user edits appear BEFORE the AI message
-  - [ ] Do some magic with the frontend
+- [x] Make the user edits appear BEFORE the AI message
+  - [x] Do some magic with the frontend
 
---------------------- STAGE 3 ---------------------
+--------------------- STAGE 3 --------------------- <-> CURRENT
 
 - [ ] List All Conversations on the left sidebar
     - [ ] Get the `getconvs` and `getconv` routes to work
