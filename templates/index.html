@@ -20,6 +20,12 @@
     <button id="save-edit">Save</button>
   </div>
 </div>
+<div id="errorModal" class="modal">
+  <div class="modal-content">
+    <span class="close" id="error-modal-close">&times;</span>
+    <p id="error-message"></p>
+  </div>
+</div>
 <div id="svgimport">
   <p id="regen" style="display: none;">{{ url_for('static', filename='svg/refresh.svg') }}</p>
 </div>

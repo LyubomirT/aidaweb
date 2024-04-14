@@ -79,9 +79,14 @@ function sendMessage() {
 }
 
 // Open Modal Dialog for Editing Message
-function openModal(modal, message) {
+function openEditModal(modal, message) {
   modal.style.display = "block";
   document.getElementById('edit-message').value = message;
+}
+
+function openErrorModal(modal, message) {
+  modal.style.display = "block";
+  document.getElementById('error-message').innerHTML = message;
 }
 
 // Close Modal Dialog
@@ -158,7 +163,7 @@ function constructMessage(message, role) {
     imgsrc = userAvatar.src;
     var _username = username.innerHTML;
     regenstring = `
-    <div class="edit" onclick="openModal(editModal, '${message}')">
+    <div class="edit" onclick="openEditModal(editModal, '${message}')">
     <i class="fi fi-rr-edit"></i>
     </div>
     `;
