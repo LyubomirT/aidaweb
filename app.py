@@ -17,6 +17,8 @@ app = Flask(__name__)
 # Dictionary to store conversations
 conversations = {}
 
+progresses = {}
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -56,6 +58,9 @@ def chat():
     g1 = g1.json()
     # get the id of the user
     userid = int(g1['id'])
+    if userid in progresses and progresses[userid]:
+        return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
+    progresses[userid] = True
     chat_history = conversations[userid][conv_id]
     chat_history.append({"role": "USER", "message": message})  # Add user message to history
 
@@ -68,6 +73,7 @@ def chat():
     
     # Convert markdown response to HTML
     html_response = markdown2.markdown(response, extras=["tables", "fenced-code-blocks", "spoiler", "strike"])
+    progresses[userid] = False
 
     return jsonify({'raw_response': response, 'html_response': html_response, 'chat_history': chat_history})
 
@@ -84,6 +90,9 @@ def regen():
     # get the id of the user
     userid = int(g1['id'])
     chat_history = conversations[userid][conv_id]
+    if userid in progresses and progresses[userid]:
+        return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
+    progresses[userid] = True
     chat_history.pop()  # Remove the last assistant response
     response = client.chat(message=chat_history[-1]['message'],
                             chat_history=chat_history[:-1],
@@ -93,6 +102,7 @@ def regen():
 
     # Convert markdown response to HTML
     html_response = markdown2.markdown(response, extras=["tables", "fenced-code-blocks", "spoiler", "strike"])
+    progresses[userid] = False
 
     return jsonify({'raw_response': response, 'html_response': html_response, 'chat_history': chat_history})
 
@@ -110,6 +120,9 @@ def edit():
     # get the id of the user
     userid = int(g1['id'])
     chat_history = conversations[userid][conv_id]
+    if userid in progresses and progresses[userid]:
+        return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
+    progresses[userid] = True
     chat_history[-2] = {"role": "USER", "message": new_message}
     response = client.chat(message=new_message,
                             chat_history=chat_history[:-1],
@@ -120,6 +133,7 @@ def edit():
 
     # Convert markdown response to HTML
     html_response = markdown2.markdown(response, extras=["tables", "fenced-code-blocks", "spoiler", "strike"])
+    progresses[userid] = False
 
     return jsonify({'raw_response': response, 'html_response': html_response, 'chat_history': chat_history})
 
