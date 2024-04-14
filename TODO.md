@@ -21,8 +21,8 @@
   - [x] Add an `edit` route
     - [x] Implement the `edit` route
     - [ ] Implement proper callbacks
-  - [ ] Add an edit button to each message
-  - [ ] Add a "edited" tag to each message
+  - [x] Add an edit button to each message
+  - [x] Add a "edited" tag to each message
 
 --------------------- STAGE 3 ---------------------
 
