@@ -193,7 +193,7 @@ def get_convs():
         return redirect('/join')
     userid = get_user_id(token)
     # get all conversations associated with the user
-    user_convs = conversations[userid]
+    user_convs = [{'conv_id': conv_id, 'name': convnames[userid][conv_id]} for conv_id in conversations[userid]]
     return jsonify({'conversations': user_convs})
 
 
@@ -201,8 +201,11 @@ def get_convs():
 def get_conv():
     data = request.json
     conv_id = data['conv_id']
-    chat_history = conversations[conv_id]
-    return jsonify({'chat_history': chat_history})
+    token = data['token']
+    id = get_user_id(token)
+    chat_history = conversations[id][conv_id]
+    name = convnames[id][conv_id]
+    return jsonify({'chat_history': chat_history, 'name': name})
 
 
 @app.route('/auth/discord')
