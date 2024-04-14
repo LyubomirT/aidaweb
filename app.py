@@ -19,6 +19,7 @@ app = Flask(__name__)
 conversations = {}
 progresses = {}
 savedtokens = {}
+convnames = {}
 # data structure for savedtokens
 # {"id": {"token": "token", "expiry": "expiry_time"}}
 
@@ -45,7 +46,12 @@ def new_conv():
     # Initialize the conversation in the dictionary
     if userid not in conversations:
         conversations[userid] = {}
+    if userid not in convnames:
+        convnames[userid] = {}
     conversations[userid][conv_id] = []
+    # DEBUG: GENERATE RANDOM STRING FOR CONVERSATION NAME
+    convnames[userid][conv_id] = "Conversation " + str(random.randint(1000, 9999))
+    # DELETE THAT WHEN WE HAVE A WAY TO NAME CONVERSATIONS
     return jsonify({'conv_id': conv_id})
 
 
