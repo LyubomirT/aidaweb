@@ -117,6 +117,11 @@ function postEdit(editedMessage) {
   chatInput.disabled = true;
   sendButton.disabled = true;
 
+  // Remove the last two messages (edited message and assistant response)
+  var lastUsr = document.querySelectorAll('.messagecontainer')[document.querySelectorAll('.messagecontainer').length - 1].querySelector('.USER').innerHTML;
+  var lastAsst = document.querySelectorAll('.messagecontainer')[document.querySelectorAll('.messagecontainer').length - 1].querySelector('.ASSISTANT').innerHTML;
+  deleteLast();
+  deleteLast();
 
   fetch('/edit', {
     method: 'POST',
@@ -135,6 +140,9 @@ function postEdit(editedMessage) {
       openErrorModal(errorModal, 'Error: ' + data.error);
       chatInput.disabled = false;
       sendButton.disabled = false;
+      // Restore the last two messages (edited message and assistant response)
+      chatBox.innerHTML += constructMessage(lastUsr, 'USER');
+      chatBox.innerHTML += constructMessage(lastAsst, 'ASSISTANT');
       return;
     }
     const rawResponse = data.raw_response;
@@ -157,6 +165,9 @@ function postEdit(editedMessage) {
     chatInput.disabled = false;
     sendButton.disabled = false;
     openErrorModal(errorModal, 'Error: ' + error);
+    // Restore the last two messages (edited message and assistant response)
+    chatBox.innerHTML += constructMessage(lastUsr, 'USER');
+    chatBox.innerHTML += constructMessage(lastAsst, 'ASSISTANT');
   });
 }
 
@@ -259,6 +270,8 @@ function postMessage(message) {
 
   chatInput.disabled = true;
   sendButton.disabled = true;
+  // Create a preview of the message
+  chatBox.innerHTML += constructMessage(message, 'USER');
 
   fetch('/chat', {
     method: 'POST',
@@ -278,13 +291,14 @@ function postMessage(message) {
       openErrorModal(errorModal, 'Error: ' + data.error);
       chatInput.disabled = false;
       sendButton.disabled = false;
+      // Remove the last message (user message) if there is an error
+      deleteLast();
       return;
     }
     const rawResponse = data.raw_response;
     const htmlResponse = data.html_response;
     chatHistory = data.chat_history;  // Update chat history from server
     console.log('Chat history:', chatHistory);
-    chatBox.innerHTML += constructMessage(message, 'USER');
     chatBox.innerHTML += constructMessage(htmlResponse, 'ASSISTANT');
     hljs.highlightAll();
     chatBox.scrollTop = chatBox.scrollHeight;
@@ -296,6 +310,8 @@ function postMessage(message) {
     chatInput.disabled = false;
     sendButton.disabled = false;
     openErrorModal(errorModal, 'Error: ' + error);
+    // Remove the last message (user message) if there is an error
+    deleteLast();
   });
 }
 
