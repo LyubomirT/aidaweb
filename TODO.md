@@ -17,12 +17,17 @@
     - [x] Add candidate selection if there are multiple
     - [x] Limit the number of regenerations per message to 10
 
-- [ ] Let the user edit their messages
+- [x] Let the user edit their messages
   - [x] Add an `edit` route
     - [x] Implement the `edit` route
-    - [ ] Implement proper callbacks
+    - [x] Implement proper callbacks
   - [x] Add an edit button to each message
   - [x] Add a "edited" tag to each message
+
+BONUS:
+
+- [ ] Make the user edits appear BEFORE the AI message
+  - [ ] Do some magic with the frontend
 
 --------------------- STAGE 3 ---------------------
 
