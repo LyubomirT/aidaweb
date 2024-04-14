@@ -4,6 +4,7 @@ const newConvButton = document.getElementById('new-conv-button');
 const sendButton = document.getElementById('send-button');
 const username = document.getElementById('user_name');
 const userAvatar = document.getElementById('user_avatar');
+const errorModal = document.getElementById('errorModal');
 let chatHistory = [];  // Retrieve chat history from server
 let convId = null;  // Conversation ID
 // If there is a Discord access token in the URL, save it in local storage as OAUTH2_TOKEN
@@ -130,6 +131,12 @@ function postEdit(editedMessage) {
   })
   .then(response => response.json())
   .then(data => {
+    if (data.error) {
+      openErrorModal(errorModal, 'Error: ' + data.error);
+      chatInput.disabled = false;
+      sendButton.disabled = false;
+      return;
+    }
     const rawResponse = data.raw_response;
     const htmlResponse = data.html_response;
     chatHistory = data.chat_history;  // Update chat history from server
@@ -149,6 +156,7 @@ function postEdit(editedMessage) {
     console.error('Error:', error);
     chatInput.disabled = false;
     sendButton.disabled = false;
+    openErrorModal(errorModal, 'Error: ' + error);
   });
 }
 
@@ -221,6 +229,12 @@ function regenerate() {
   })
   .then(response => response.json())
   .then(data => {
+    if (data.error) {
+      openErrorModal(errorModal, 'Error: ' + data.error);
+      chatInput.disabled = false;
+      sendButton.disabled = false;
+      return;
+    }
     deleteLast();
     cleanRegen();
     const rawResponse = data.raw_response;
@@ -237,6 +251,7 @@ function regenerate() {
     console.error('Error:', error);
     chatInput.disabled = false;
     sendButton.disabled = false;
+    openErrorModal(errorModal, 'Error: ' + error);
   });
 }
 
@@ -259,6 +274,12 @@ function postMessage(message) {
   })
   .then(response => response.json())
   .then(data => {
+    if (data.error) {
+      openErrorModal(errorModal, 'Error: ' + data.error);
+      chatInput.disabled = false;
+      sendButton.disabled = false;
+      return;
+    }
     const rawResponse = data.raw_response;
     const htmlResponse = data.html_response;
     chatHistory = data.chat_history;  // Update chat history from server
@@ -274,6 +295,7 @@ function postMessage(message) {
     console.error('Error:', error);
     chatInput.disabled = false;
     sendButton.disabled = false;
+    openErrorModal(errorModal, 'Error: ' + error);
   });
 }
 
