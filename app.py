@@ -42,7 +42,7 @@ def new_conv():
     # get the id of the user
     userid = int(g1['id'])
     # Generate a new conversation ID
-    conv_id = str(random.randint(100000, 999999))
+    conv_id = random.randint(100000, 999999)
     # Initialize the conversation in the dictionary
     if userid not in conversations:
         conversations[userid] = {}
@@ -66,6 +66,7 @@ def chat():
     data = request.json
     message = data['message']
     conv_id = data['conv_id']
+    conv_id = int(conv_id)
     token = data['token']
     if not check_join(token):
         return redirect('/join')
@@ -73,7 +74,11 @@ def chat():
     if userid in progresses and progresses[userid]:
         return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
     progresses[userid] = True
-    chat_history = conversations[userid][conv_id]
+    try:
+        chat_history = conversations[userid][conv_id]
+    except:
+        progresses[userid] = False
+        return jsonify({'error': 'Conversation not found.'}), 404
     chat_history.append({"role": "USER", "message": message})  # Add user message to history
 
     # Send the updated chat history
@@ -177,11 +182,15 @@ def joined_server():
     serverid = '1079761115636043926'
     g1 = requests.get(f"https://discord.com/api/users/@me/guilds", headers={"Authorization": f"Bearer {authtoken}"})
     g1 = g1.json()
+    g2 = requests.get(f"https://discord.com/api/users/@me", headers={"Authorization": f"Bearer {authtoken}"})
+    g2 = g2.json()
     for i in g1:
         if i['id'] == serverid:
+            savedtokens[authtoken] = {'id': None, 'expiry': None}
             if authtoken not in savedtokens:
                 savedtokens[authtoken] = {'id': None, 'expiry': None}
             savedtokens[authtoken]['expiry'] = time.time() + TOKEN_EXPIRY_TIME
+            savedtokens[authtoken]['id'] = int(g2['id'])
             return jsonify({'joined': True})
 
 
