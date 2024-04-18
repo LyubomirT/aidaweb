@@ -317,6 +317,52 @@ function postMessage(message) {
   });
 }
 
+function constructConversation(conv) {
+  /*
+  @app.route('/get_conv', methods=['POST'])
+def get_conv():
+    data = request.json
+    conv_id = data['conv_id']
+    token = data['token']
+    id = get_user_id(token)
+    chat_history = conversations[id][conv_id]
+    name = convnames[id][conv_id]
+    return jsonify({'chat_history': chat_history, 'name': name})
+
+  */
+ // On click, get the conversation history from the server and display it in the chat box
+  conv.addEventListener('click', function() {
+    fetch('/get_conv', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        conv_id: conv.conv_id,
+        token: oauth2Token,
+      }),
+    })
+    .then(response => response.json())
+    .then(data => {
+      const chatHistory = data.chat_history;
+      chatBox.innerHTML = '';
+      chatHistory.forEach(message => {
+        if (message.role === 'USER') {
+          chatBox.innerHTML += constructMessage(message.message, 'USER');
+        } else {
+          chatBox.innerHTML += constructMessage(message.message, 'ASSISTANT');
+        }
+      });
+      hljs.highlightAll();
+      chatBox.scrollTop = chatBox.scrollHeight;
+
+      // Enable the chat input and send button
+      chatInput.disabled = false;
+      sendButton.disabled = false;
+    }).catch(error => console.error('Error:', error));
+  });
+}
+
 function verify() {
   fetch('/joined_server', {
     method: 'POST',
@@ -348,14 +394,9 @@ function verify() {
           const convElement = document.createElement('div');
           convElement.classList.add('conversation');
           convElement.innerHTML = conv.name;
-          convElement.addEventListener('click', function() {
-            convId = conv.conv_id;
-            chatBox.innerHTML = '';
-            chatHistory = [];
-            sendButton.disabled = false;
-            chatInput.disabled = false;
-          });
+          convElement.conv_id = conv.conv_id;
           conversationsList.appendChild(convElement);
+          constructConversation(convElement);
         });
       })
       .catch(error => console.error('Error:', error));
