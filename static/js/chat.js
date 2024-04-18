@@ -318,18 +318,6 @@ function postMessage(message) {
 }
 
 function constructConversation(conv) {
-  /*
-  @app.route('/get_conv', methods=['POST'])
-def get_conv():
-    data = request.json
-    conv_id = data['conv_id']
-    token = data['token']
-    id = get_user_id(token)
-    chat_history = conversations[id][conv_id]
-    name = convnames[id][conv_id]
-    return jsonify({'chat_history': chat_history, 'name': name})
-
-  */
  // On click, get the conversation history from the server and display it in the chat box
   conv.addEventListener('click', function() {
     fetch('/get_conv', {

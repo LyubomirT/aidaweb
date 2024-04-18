@@ -280,3 +280,28 @@ body {
   border-radius: 5px;
   cursor: pointer;
 }
+
+
+#conversations {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  margin-top: 20px;
+}
+
+#conversations .conversations-list {
+  overflow-y: scroll;
+  height: 100%;
+}
+
+.conversation {
+  padding: 10px;
+  border-bottom: 1px solid #f0f0f0;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.conversation:hover {
+  background-color: #f9f9f9;
+}
