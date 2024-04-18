@@ -110,8 +110,8 @@ window.onclick = function(event) {
 // Save Edit Button Click Event
 document.getElementById('save-edit').addEventListener('click', function() {
   const editedMessage = document.getElementById('edit-message').value;
-  postEdit(editedMessage);
   closeModal(document.getElementById('editModal'));
+  postEdit(editedMessage);
 });
 
 // Function to Send Edited Message to Server
@@ -119,9 +119,9 @@ function postEdit(editedMessage) {
   chatInput.disabled = true;
   sendButton.disabled = true;
 
-  // Remove the last two messages (edited message and assistant response)
-  var lastUsr = document.querySelectorAll('.messagecontainer')[document.querySelectorAll('.messagecontainer').length - 1].querySelector('.USER').innerHTML;
-  var lastAsst = document.querySelectorAll('.messagecontainer')[document.querySelectorAll('.messagecontainer').length - 1].querySelector('.ASSISTANT').innerHTML;
+  
+  var lastUsr = document.querySelectorAll('.messagecontainer')[document.querySelectorAll('.messagecontainer').length - 1].querySelector('.USER.message').innerHTML;
+  var lastAsst = document.querySelectorAll('.messagecontainer')[document.querySelectorAll('.messagecontainer').length - 1].querySelector('.ASSISTANT.message').innerHTML;
   deleteLast();
   deleteLast();
 
@@ -347,6 +347,9 @@ function constructConversation(conv) {
       // Enable the chat input and send button
       chatInput.disabled = false;
       sendButton.disabled = false;
+
+      // Set the conversation ID
+      convId = conv.conv_id;
     }).catch(error => console.error('Error:', error));
   });
 }
