@@ -119,9 +119,15 @@ function postEdit(editedMessage) {
   chatInput.disabled = true;
   sendButton.disabled = true;
 
-  
-  var lastUsr = document.querySelectorAll('.messagecontainer')[document.querySelectorAll('.messagecontainer').length - 1].querySelector('.USER.message').innerHTML;
-  var lastAsst = document.querySelectorAll('.messagecontainer')[document.querySelectorAll('.messagecontainer').length - 1].querySelector('.ASSISTANT.message').innerHTML;
+  var lastUsr = null;
+  var lastAsst = null;
+  var tmp_ch = null;
+
+  // Save the last two messages (edited message and assistant response)
+  const messages = document.querySelectorAll('.messagecontainer');
+  lastUsr = messages[messages.length - 2].querySelector('.USER.message').textContent;
+  lastAsst = messages[messages.length - 1].querySelector('.ASSISTANT.message').textContent;
+
   deleteLast();
   deleteLast();
 
@@ -151,9 +157,6 @@ function postEdit(editedMessage) {
     const htmlResponse = data.html_response;
     chatHistory = data.chat_history;  // Update chat history from server
     console.log('Chat history:', chatHistory);
-    // Remove the last two messages (edited message and assistant response)
-    deleteLast();
-    deleteLast();
     // Append the edited message and the assistant response
     chatBox.innerHTML += constructMessage(editedMessage, 'USER');
     chatBox.innerHTML += constructMessage(htmlResponse, 'ASSISTANT');
@@ -169,6 +172,18 @@ function postEdit(editedMessage) {
     openErrorModal(errorModal, 'Error: ' + error);
     // Restore the last two messages (edited message and assistant response)
     chatBox.innerHTML += constructMessage(lastUsr, 'USER');
+    fetch('/textmanager/to_html', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({text: lastAsst}),
+    })
+    .then(response => response.json())
+    .then(data => {
+      lastAsst = data.html;
+    })
+    .catch(error => console.error('Error:', error));
     chatBox.innerHTML += constructMessage(lastAsst, 'ASSISTANT');
   });
 }

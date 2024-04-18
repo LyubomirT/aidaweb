@@ -121,6 +121,24 @@ def regen():
 
     return jsonify({'raw_response': response, 'html_response': html_response, 'chat_history': chat_history})
 
+@app.route('/textmanager/to_html', methods=['POST'])
+def to_html():
+    data = request.json
+    text = data['text']
+    html = markdown2.markdown(text, extras=["tables", "fenced-code-blocks", "spoiler", "strike"])
+    return jsonify({'html': html})
+
+@app.route('/chatmanager/get_history', methods=['POST'])
+def get_history():
+    data = request.json
+    conv_id = data['conv_id']
+    token = data['token']
+    if not check_join(token):
+        return redirect('/join')
+    userid = get_user_id(token)
+    chat_history = conversations[userid][conv_id]
+    return jsonify({'chat_history': chat_history})
+
 
 # this route edits the last user message and regenerates the last AI response that goes after it
 @app.route('/edit', methods=['POST'])
@@ -129,8 +147,6 @@ def edit():
     new_message = data['new_message']
     conv_id = data['conv_id']
     token = data['token']
-    if not check_join(token):
-        return redirect('/join')
     userid = get_user_id(token)
     chat_history = conversations[userid][conv_id]
     if userid in progresses and progresses[userid]:
