@@ -19,6 +19,8 @@ const iconimport = document.getElementById('svgimport');
 const regenlink_ = document.querySelector('#svgimport > #regen');
 const regenlink = regenlink_.textContent;
 
+const conversationsList = document.getElementById('conversations-list');
+
 // If there is a discord token in local storage, use it to authenticate
 const oauth2Token = localStorage.getItem('OAUTH2_TOKEN');
 if (oauth2Token) {
@@ -329,6 +331,35 @@ function verify() {
     } else {
       console.log('User has joined the server');
     }
+    // after 3 seconds, get the conversations list
+    setTimeout(function() {
+      fetch('/get_convs', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({token: oauth2Token,}),
+      }).then(response => response.json())
+      .then(data => {
+        console.log(data);
+        const conversations = data.conversations;
+        conversationsList.innerHTML = '';
+        conversations.forEach(conv => {
+          const convElement = document.createElement('div');
+          convElement.classList.add('conversation');
+          convElement.innerHTML = conv.name;
+          convElement.addEventListener('click', function() {
+            convId = conv.conv_id;
+            chatBox.innerHTML = '';
+            chatHistory = [];
+            sendButton.disabled = false;
+            chatInput.disabled = false;
+          });
+          conversationsList.appendChild(convElement);
+        });
+      })
+      .catch(error => console.error('Error:', error));
+    }, 3000);
   })
   .catch(error => console.error('Error:', error));
 }

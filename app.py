@@ -202,7 +202,10 @@ def get_convs():
         return redirect('/join')
     userid = get_user_id(token)
     # get all conversations associated with the user
-    user_convs = [{'conv_id': conv_id, 'name': convnames[userid][conv_id]} for conv_id in conversations[userid]]
+    try:
+        user_convs = [{'conv_id': conv_id, 'name': convnames[userid][conv_id]} for conv_id in conversations[userid]]
+    except:
+        user_convs = []
     return jsonify({'conversations': user_convs})
 
 
