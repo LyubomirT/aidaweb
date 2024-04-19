@@ -34,7 +34,7 @@ BONUS:
 - [ ] List All Conversations on the left sidebar
     - [x] Get the `getconvs` and `getconv` routes to work
     - [x] List all conversations on the left sidebar
-    - [ ] Allow switching between conversations
+    - [x] Allow switching between conversations
     - [ ] Each new conversation simply clears the chat for now, but if a user sends a message, it should be saved to the conversation db
 
 --------------------- STAGE 4 ---------------------
