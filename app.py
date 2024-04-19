@@ -52,7 +52,7 @@ def new_conv():
     # DEBUG: GENERATE RANDOM STRING FOR CONVERSATION NAME
     convnames[userid][conv_id] = "Conversation " + str(random.randint(1000, 9999))
     # DELETE THAT WHEN WE HAVE A WAY TO NAME CONVERSATIONS
-    return jsonify({'conv_id': conv_id})
+    return jsonify({'conv_id': conv_id, 'name': convnames[userid][conv_id]})
 
 
 config = {

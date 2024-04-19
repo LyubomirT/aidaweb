@@ -57,10 +57,18 @@ newConvButton.addEventListener('click', function() {
   .then(response => response.json())
   .then(data => {
     convId = data.conv_id;
+    var LconvName = data.name;
     chatBox.innerHTML = '';
     chatHistory = [];
     sendButton.disabled = false;
     chatInput.disabled = false;
+    // Create a new conversation element and add it to the TOP of the conversations list
+    const convElement = document.createElement('div');
+    convElement.classList.add('conversation');
+    convElement.innerHTML = LconvName;
+    convElement.conv_id = convId;
+    conversationsList.prepend(convElement);
+    constructConversation(convElement);
   })
   .catch(error => console.error('Error:', error));
 });
