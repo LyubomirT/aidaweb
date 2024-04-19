@@ -73,6 +73,8 @@ def chat():
     userid = get_user_id(token)
     if userid in progresses and progresses[userid]:
         return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
+    if message.strip() == "":
+        return jsonify({'error': 'Message cannot be empty.'}), 400
     progresses[userid] = True
     try:
         chat_history = conversations[userid][conv_id]
