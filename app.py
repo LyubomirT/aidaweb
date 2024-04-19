@@ -153,6 +153,8 @@ def edit():
     chat_history = conversations[userid][conv_id]
     if userid in progresses and progresses[userid]:
         return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
+    if new_message.strip() == "":
+        return jsonify({'error': 'Message cannot be empty.'}), 400
     progresses[userid] = True
     chat_history[-2] = {"role": "USER", "message": new_message}
     response = client.chat(message=new_message,
