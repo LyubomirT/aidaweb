@@ -316,6 +316,7 @@ body {
   justify-content: left;
   align-items: left;
   flex-direction: row;
+  margin-left: 8px;
 }
 
 .msgcontrol {
