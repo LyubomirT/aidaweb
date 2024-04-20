@@ -166,8 +166,8 @@ function postEdit(editedMessage) {
     chatHistory = data.chat_history;  // Update chat history from server
     console.log('Chat history:', chatHistory);
     // Append the edited message and the assistant response
-    chatBox.innerHTML += constructMessage(editedMessage, 'USER');
-    response = constructMessage(htmlResponse, 'ASSISTANT');
+    chatBox.innerHTML += constructMessage(editedMessage, editedMessage, 'USER');
+    response = constructMessage(htmlResponse, rawResponse, 'ASSISTANT');
     response.raw = rawResponse;
     chatBox.innerHTML += response;
     hljs.highlightAll();
@@ -203,7 +203,7 @@ document.getElementById('edit-modal-close').addEventListener('click', function()
 });
 
 
-function constructMessage(message, role) {  
+function constructMessage(message, rawmsg, role) {  
   var regenstring;
   if (role === "USER") {
     imgsrc = userAvatar.src;
@@ -223,6 +223,13 @@ function constructMessage(message, role) {
     <i class="fi fi-rr-refresh"></i>
     </div>`;
   }
+  console.log(rawmsg);
+  if (rawmsg.message !== undefined) {
+    rawmsg = rawmsg.message;
+  } else {
+    rawmsg = rawmsg;
+  }
+
   return `
   <div class="messagecontainer">
     <div class="infocontainer">
@@ -231,6 +238,9 @@ function constructMessage(message, role) {
     </div>
     <div class="${role} message">${message}</div>
     ${regenstring}
+    <div class="copy" onclick="navigator.clipboard.writeText('${rawmsg}')">
+    <i class="fi fi-rr-copy"></i>
+    </div>
   </div>
   `;
 }
@@ -279,7 +289,7 @@ function regenerate() {
     const htmlResponse = data.html_response;
     chatHistory = data.chat_history;  // Update chat history from server
     console.log('Chat history:', chatHistory);
-    response = constructMessage(htmlResponse, 'ASSISTANT');
+    response = constructMessage(htmlResponse, rawResponse, 'ASSISTANT');
     response.raw = rawResponse;
     chatBox.innerHTML += response;
     hljs.highlightAll();
@@ -300,7 +310,7 @@ function postMessage(message) {
   chatInput.disabled = true;
   sendButton.disabled = true;
   // Create a preview of the message
-  chatBox.innerHTML += constructMessage(message, 'USER');
+  chatBox.innerHTML += constructMessage(message, message, 'USER');
 
   fetch('/chat', {
     method: 'POST',
@@ -328,7 +338,7 @@ function postMessage(message) {
     const htmlResponse = data.html_response;
     chatHistory = data.chat_history;  // Update chat history from server
     console.log('Chat history:', chatHistory);
-    response = constructMessage(htmlResponse, 'ASSISTANT');
+    response = constructMessage(htmlResponse, rawResponse, 'ASSISTANT');
     response.raw = rawResponse;
     chatBox.innerHTML += response;
     hljs.highlightAll();
@@ -366,9 +376,9 @@ function constructConversation(conv) {
       const chatHistory = data.chat_history;
       chatHistory.forEach(message => {
         if (message.role === 'USER') {
-          chatBox.innerHTML += constructMessage(message.message, 'USER');
+          chatBox.innerHTML += constructMessage(message.message, message, 'USER');
         } else {
-          chatBox.innerHTML += constructMessage(message.message, 'ASSISTANT');
+          chatBox.innerHTML += constructMessage(message.message, message, 'ASSISTANT');
         }
       });
       hljs.highlightAll();
