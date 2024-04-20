@@ -343,6 +343,7 @@ function postMessage(message) {
 function constructConversation(conv) {
  // On click, get the conversation history from the server and display it in the chat box
   conv.addEventListener('click', function() {
+    chatBox.innerHTML = '';
     fetch('/get_conv', {
       method: 'POST',
       headers: {
@@ -356,7 +357,6 @@ function constructConversation(conv) {
     .then(response => response.json())
     .then(data => {
       const chatHistory = data.chat_history;
-      chatBox.innerHTML = '';
       chatHistory.forEach(message => {
         if (message.role === 'USER') {
           chatBox.innerHTML += constructMessage(message.message, 'USER');

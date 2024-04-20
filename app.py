@@ -216,6 +216,7 @@ def joined_server():
                 # get all conversations associated with the user
                 try:
                     user_convs = [{'conv_id': conv_id, 'name': convnames[userid][conv_id]} for conv_id in conversations[userid]]
+                    print(user_convs)
                 except:
                     user_convs = []
                 return jsonify({'joined': True, 'conversations': user_convs})
