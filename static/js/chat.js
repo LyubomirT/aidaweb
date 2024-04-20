@@ -344,13 +344,14 @@ function constructConversation(conv) {
  // On click, get the conversation history from the server and display it in the chat box
   conv.addEventListener('click', function() {
     chatBox.innerHTML = '';
+    console.log('Conversation ID:', conv.conv_id);
     fetch('/get_conv', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        conv_id: conv.conv_id,
+        conv_id: parseInt(conv.conv_id),
         token: oauth2Token,
       }),
     })
@@ -396,7 +397,7 @@ function verify() {
       const convElement = document.createElement('div');
       convElement.classList.add('conversation');
       convElement.innerHTML = conv.name;
-      convElement.conv_id = conv.id;
+      convElement.conv_id = conv.conv_id;
       conversationsList.appendChild(convElement);
       constructConversation(convElement);
     });
