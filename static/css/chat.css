@@ -305,3 +305,10 @@ body {
 .conversation:hover {
   background-color: #f9f9f9;
 }
+
+/* chatbox */
+#chat-box.fi {
+  font-size: 15px;
+  color: #a0a0a0;
+  cursor: pointer;
+}
