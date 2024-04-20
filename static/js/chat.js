@@ -383,7 +383,7 @@ function verify() {
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({authtoken: oauth2Token,}),
+    body: JSON.stringify({authtoken: oauth2Token, give_convs: true,}),
   }).then(response => response.json())
   .then(data => {
     if (data.joined === false) {
@@ -391,30 +391,15 @@ function verify() {
     } else {
       console.log('User has joined the server');
     }
-    // after 3 seconds, get the conversations list
-    setTimeout(function() {
-      fetch('/get_convs', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({token: oauth2Token,}),
-      }).then(response => response.json())
-      .then(data => {
-        console.log(data);
-        const conversations = data.conversations;
-        conversationsList.innerHTML = '';
-        conversations.forEach(conv => {
-          const convElement = document.createElement('div');
-          convElement.classList.add('conversation');
-          convElement.innerHTML = conv.name;
-          convElement.conv_id = conv.conv_id;
-          conversationsList.appendChild(convElement);
-          constructConversation(convElement);
-        });
-      })
-      .catch(error => console.error('Error:', error));
-    }, 3000);
+    // Create conversation elements for each conversation
+    data.conversations.forEach(conv => {
+      const convElement = document.createElement('div');
+      convElement.classList.add('conversation');
+      convElement.innerHTML = conv.name;
+      convElement.conv_id = conv.id;
+      conversationsList.appendChild(convElement);
+      constructConversation(convElement);
+    });
   })
   .catch(error => console.error('Error:', error));
 }

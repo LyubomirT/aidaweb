@@ -211,6 +211,14 @@ def joined_server():
                 savedtokens[authtoken] = {'id': None, 'expiry': None}
             savedtokens[authtoken]['expiry'] = time.time() + TOKEN_EXPIRY_TIME
             savedtokens[authtoken]['id'] = int(g2['id'])
+            if data.get('give_convs', True):
+                userid = savedtokens[authtoken]['id']
+                # get all conversations associated with the user
+                try:
+                    user_convs = [{'conv_id': conv_id, 'name': convnames[userid][conv_id]} for conv_id in conversations[userid]]
+                except:
+                    user_convs = []
+                return jsonify({'joined': True, 'conversations': user_convs})
             return jsonify({'joined': True})
 
 
