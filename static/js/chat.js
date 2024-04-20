@@ -167,7 +167,9 @@ function postEdit(editedMessage) {
     console.log('Chat history:', chatHistory);
     // Append the edited message and the assistant response
     chatBox.innerHTML += constructMessage(editedMessage, 'USER');
-    chatBox.innerHTML += constructMessage(htmlResponse, 'ASSISTANT');
+    response = constructMessage(htmlResponse, 'ASSISTANT');
+    response.raw = rawResponse;
+    chatBox.innerHTML += response;
     hljs.highlightAll();
     chatBox.scrollTop = chatBox.scrollHeight;
     chatInput.disabled = false;
@@ -277,7 +279,9 @@ function regenerate() {
     const htmlResponse = data.html_response;
     chatHistory = data.chat_history;  // Update chat history from server
     console.log('Chat history:', chatHistory);
-    chatBox.innerHTML += constructMessage(htmlResponse, 'ASSISTANT');
+    response = constructMessage(htmlResponse, 'ASSISTANT');
+    response.raw = rawResponse;
+    chatBox.innerHTML += response;
     hljs.highlightAll();
     chatBox.scrollTop = chatBox.scrollHeight;
     chatInput.disabled = false;
@@ -324,7 +328,9 @@ function postMessage(message) {
     const htmlResponse = data.html_response;
     chatHistory = data.chat_history;  // Update chat history from server
     console.log('Chat history:', chatHistory);
-    chatBox.innerHTML += constructMessage(htmlResponse, 'ASSISTANT');
+    response = constructMessage(htmlResponse, 'ASSISTANT');
+    response.raw = rawResponse;
+    chatBox.innerHTML += response;
     hljs.highlightAll();
     chatBox.scrollTop = chatBox.scrollHeight;
     chatInput.disabled = false;
