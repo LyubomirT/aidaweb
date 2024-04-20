@@ -306,13 +306,6 @@ body {
   background-color: #f9f9f9;
 }
 
-/* chatbox */
-#chat-box .fi {
-  font-size: 15px;
-  color: #a0a0a0;
-  cursor: pointer;
-}
-
 .messagecontainer {
   margin-bottom: 40px;
 }
@@ -328,4 +321,12 @@ body {
 .msgcontrol {
   /* each control is a flex item */
   margin-right: 10px;
+  font-size: 15px;
+  color: #a0a0a0;
+  cursor: pointer;
+  transition: all 0.1s cubic-bezier(0.445, 0.05, 0.55, 0.95);
+}
+
+.msgcontrol:hover {
+  color: #434343;
 }
