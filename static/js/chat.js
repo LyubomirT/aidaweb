@@ -209,7 +209,7 @@ function constructMessage(message, rawmsg, role) {
     imgsrc = userAvatar.src;
     var _username = username.innerHTML;
     regenstring = `
-    <div class="edit" onclick="openEditModal(editModal, '${message}')">
+    <div class="msgcontrol edit" onclick="openEditModal(editModal, '${message}')">
     <i class="fi fi-rr-edit"></i>
     </div>
     `;
@@ -219,7 +219,7 @@ function constructMessage(message, rawmsg, role) {
     var _username = "Assistant"
     // get the svg from the file at regenlink
     var svg = document.createElement('div');
-    regenstring = `<div class="regen" onclick="regenerate()">
+    regenstring = `<div class="msgcontrol regen" onclick="regenerate()">
     <i class="fi fi-rr-refresh"></i>
     </div>`;
   }
@@ -237,9 +237,11 @@ function constructMessage(message, rawmsg, role) {
       <div class="${role} username">${_username}</div>
     </div>
     <div class="${role} message">${message}</div>
-    ${regenstring}
-    <div class="copy" onclick="navigator.clipboard.writeText('${rawmsg}')">
-    <i class="fi fi-rr-copy"></i>
+    <div class="msgcontrols">
+      ${regenstring}
+      <div class="msgcontrol copy" onclick="navigator.clipboard.writeText('${rawmsg}')">
+      <i class="fi fi-rr-copy"></i>
+      </div>
     </div>
   </div>
   `;

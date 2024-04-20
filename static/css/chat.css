@@ -316,3 +316,16 @@ body {
 .messagecontainer {
   margin-bottom: 40px;
 }
+
+.msgcontrols {
+  /* row aligned to the left */
+  display: flex;
+  justify-content: left;
+  align-items: left;
+  flex-direction: row;
+}
+
+.msgcontrol {
+  /* each control is a flex item */
+  margin-right: 10px;
+}
