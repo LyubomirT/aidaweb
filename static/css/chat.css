@@ -307,8 +307,12 @@ body {
 }
 
 /* chatbox */
-#chat-box.fi {
+#chat-box .fi {
   font-size: 15px;
   color: #a0a0a0;
   cursor: pointer;
+}
+
+.messagecontainer {
+  margin-bottom: 40px;
 }
