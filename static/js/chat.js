@@ -236,9 +236,17 @@ function constructMessage(message, rawmsg, role) {
   } else {
     rawmsg = rawmsg;
   }
+  // Find ID by calculating its position in the chat history
+  if (chatHistory.length > 0) {
+    var id = chatHistory.length;
+  } else {
+    var id = 0;
+  }
+
+  chatHistory.push({id: id, message: rawmsg, role: role});
 
   return `
-  <div class="messagecontainer">
+  <div class="messagecontainer" id="${rawmsg}">
     <div class="infocontainer">
       <img class="msg-avatar" src="${imgsrc}" alt="${role} avatar">
       <div class="${role} username">${_username}</div>
@@ -246,12 +254,21 @@ function constructMessage(message, rawmsg, role) {
     <div class="${role} message">${message}</div>
     <div class="msgcontrols">
       ${regenstring}
-      <div class="msgcontrol copy" onclick="navigator.clipboard.writeText('${rawmsg}')">
+      <div class="msgcontrol copy" onclick="navigator.clipboard.writeText('${getItem(id).message}')">
       <i class="fi fi-rr-copy"></i>
       </div>
     </div>
   </div>
   `;
+}
+
+function getItem(id) {
+  // Get from chat history
+  for (var i = 0; i < chatHistory.length; i++) {
+    if (chatHistory[i].id === id) {
+      return chatHistory[i];
+    }
+  }
 }
 
 function cleanRegen() {
