@@ -382,7 +382,7 @@ function constructConversation(conv) {
     })
     .then(response => response.json())
     .then(data => {
-      const chatHistory = data.chat_history;
+      const chatHistory = data.chat_history_html;
       chatHistory.forEach(message => {
         if (message.role === 'USER') {
           chatBox.innerHTML += constructMessage(message.message, message, 'USER');
