@@ -47,6 +47,8 @@ if (oauth2Token) {
 }
 
 newConvButton.addEventListener('click', function() {
+  newConvButton.disabled = true;
+  chatBox.innerHTML = '';
   fetch('/new_conv', {
     method: 'POST',
     headers: {
@@ -69,8 +71,13 @@ newConvButton.addEventListener('click', function() {
     convElement.conv_id = convId;
     conversationsList.prepend(convElement);
     constructConversation(convElement);
+    newConvButton.disabled = false;
   })
-  .catch(error => console.error('Error:', error));
+  .catch(error => {
+    console.error('Error:', error);
+    openErrorModal(errorModal, 'Error: ' + error);
+    newConvButton.disabled = false;
+  });
 });
 
 chatInput.addEventListener('keypress', function(e) {
