@@ -246,7 +246,13 @@ def get_conv():
     id = get_user_id(token)
     chat_history = conversations[id][conv_id]
     name = convnames[id][conv_id]
-    return jsonify({'chat_history': chat_history, 'name': name})
+    chat_history_html = []
+    for message in chat_history:
+        if message['role'] == 'ASSISTANT':
+            chat_history_html.append({'role': 'ASSISTANT', 'message': markdown2.markdown(message['message'], extras=["tables", "fenced-code-blocks", "spoiler", "strike"])})
+        else:
+            chat_history_html.append({'role': 'USER', 'message': message['message']})
+    return jsonify({'chat_history': chat_history, 'chat_history_html': chat_history_html, 'name': name})
 
 
 @app.route('/auth/discord')
