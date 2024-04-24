@@ -246,7 +246,7 @@ function constructMessage(message, rawmsg, role) {
   chatHistory.push({id: id, message: rawmsg, role: role});
 
   return `
-  <div class="messagecontainer" id="${rawmsg}">
+  <div class="messagecontainer">
     <div class="infocontainer">
       <img class="msg-avatar" src="${imgsrc}" alt="${role} avatar">
       <div class="${role} username">${_username}</div>
@@ -254,7 +254,7 @@ function constructMessage(message, rawmsg, role) {
     <div class="${role} message">${message}</div>
     <div class="msgcontrols">
       ${regenstring}
-      <div class="msgcontrol copy" onclick="navigator.clipboard.writeText('${getItem(id).message}')">
+      <div class="msgcontrol copy" onclick="copy_(${id})">
       <i class="fi fi-rr-copy"></i>
       </div>
     </div>
@@ -269,6 +269,23 @@ function getItem(id) {
       return chatHistory[i];
     }
   }
+}
+
+function copy_(id = null) {
+  // Copy the message to the clipboard
+  if (id === null) {
+    return;
+  }
+  const item = getItem(id);
+  if (item === undefined) {
+    return;
+  }
+  const message = item.message;
+  navigator.clipboard.writeText(message).then(function() {
+    console.log('Copied to clipboard:', message);
+  }, function(err) {
+    console.error('Error:', err);
+  });
 }
 
 function cleanRegen() {
