@@ -29,15 +29,15 @@ BONUS:
 - [x] Make the user edits appear BEFORE the AI message
   - [x] Do some magic with the frontend
 
---------------------- STAGE 3 --------------------- <-> CURRENT
+--------------------- STAGE 3 --------------------- 
 
-- [ ] List All Conversations on the left sidebar
+- [x] List All Conversations on the left sidebar
     - [x] Get the `getconvs` and `getconv` routes to work
     - [x] List all conversations on the left sidebar
     - [x] Allow switching between conversations
-    - [ ] Each new conversation simply clears the chat for now, but if a user sends a message, it should be saved to the conversation db
+    - [x] Each new conversation simply clears the chat for now, but if a user sends a message, it should be saved to the conversation db
 
---------------------- STAGE 4 ---------------------
+--------------------- STAGE 4 --------------------- <-> CURRENT
 
 - [ ] Make another AI name the conversation somehow when sending the first message in a new one
     - [ ] Implement a `name` route
