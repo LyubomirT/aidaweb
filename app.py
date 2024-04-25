@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template, redirect
+from flask import Flask, request, jsonify, render_template, redirect, make_response
 import cohere
 import markdown2  # for converting markdown to HTML
 import dotenv
@@ -6,6 +6,8 @@ import os
 import random   # for randomizing id for characters
 import requests
 import time
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 # Load the environment variables from the .env file
 dotenv.load_dotenv()
@@ -14,6 +16,7 @@ dotenv.load_dotenv()
 client = cohere.Client(os.getenv("CKEY"))
 
 app = Flask(__name__)
+limiter = Limiter(get_remote_address, app=app, storage_uri='memory://')
 
 # Dictionary to store conversations
 conversations = {}
@@ -32,6 +35,7 @@ def index():
 
 
 @app.route('/new_conv', methods=['POST'])
+@limiter.limit("5/minute")
 def new_conv():
     data_json = request.json
     token = data_json['token']
@@ -53,6 +57,13 @@ def new_conv():
     convnames[userid][conv_id] = "Conversation " + str(random.randint(1000, 9999))
     # DELETE THAT WHEN WE HAVE A WAY TO NAME CONVERSATIONS
     return jsonify({'conv_id': conv_id, 'name': convnames[userid][conv_id]})
+
+@app.errorhandler(429)
+def handle_too_many_requests(error):
+  # You can customize the message here
+  message = "You've exceeded the request limit, please try again later."
+  return make_response(jsonify({"error": message}), 429)
+
 
 
 config = {

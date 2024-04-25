@@ -58,6 +58,12 @@ newConvButton.addEventListener('click', function() {
   })
   .then(response => response.json())
   .then(data => {
+    if (data.error) {
+      console.error('Error:', data.error);
+      openErrorModal(errorModal, data.error);
+      newConvButton.disabled = false;
+      return;
+    }
     convId = data.conv_id;
     var LconvName = data.name;
     chatBox.innerHTML = '';
