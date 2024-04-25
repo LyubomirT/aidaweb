@@ -288,11 +288,41 @@ body {
   justify-content: space-between;
   height: 100%;
   margin-top: 20px;
+  overflow: hidden;
 }
 
-#conversations .conversations-list {
-  overflow-y: scroll;
+#conversations #conversations-list {
   height: 100%;
+  max-height: 100%;
+  font-family: inherit;
+}
+
+#conversations-list {
+  position: relative;
+  overflow-y: scroll;
+}
+
+#conversations-list::-webkit-scrollbar {
+  width: 10px;
+}
+
+#conversations-list::-webkit-scrollbar-thumb {
+  background-color: #f0f0f0;
+  border-radius: 5px;
+}
+
+#conversations-list::-webkit-scrollbar-track {
+  background-color: #f0f0f0;
+  border-radius: 10px;
+}
+
+#conversations-list::-webkit-scrollbar-thumb:hover {
+  background-color: #e6e6e6;
+  border-radius: 10px;
+}
+
+#conversations-list::-webkit-scrollbar-thumb:active {
+  background-color: #dcdcdc;
 }
 
 .conversation {
