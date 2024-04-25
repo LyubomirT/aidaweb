@@ -70,6 +70,7 @@ config = {
 
 
 @app.route('/chat', methods=['POST'])
+@limiter.limit("100/hour")
 def chat():
     data = request.json
     message = data['message']
@@ -107,6 +108,7 @@ def chat():
 
 # this route regenerates (deletes and then generates) the last AI response
 @app.route('/regen', methods=['POST'])
+@limiter.limit("100/hour")
 def regen():
     data = request.json
     conv_id = data['conv_id']
@@ -152,6 +154,7 @@ def get_history():
 
 # this route edits the last user message and regenerates the last AI response that goes after it
 @app.route('/edit', methods=['POST'])
+@limiter.limit("100/hour")
 def edit():
     data = request.json
     new_message = data['new_message']
@@ -202,6 +205,7 @@ def get_user_id(token):
 
 
 @app.route('/joined_server', methods=['POST'])
+@limiter.limit("5/10minute")
 def joined_server():
     data = request.json
     if 'authtoken' not in data:
@@ -232,6 +236,7 @@ def joined_server():
 
 
 @app.route('/get_convs', methods=['POST'])
+@limiter.limit("5/5minute")
 def get_convs():
     data = request.json
     token = data['token']
@@ -247,6 +252,7 @@ def get_convs():
 
 
 @app.route('/get_conv', methods=['POST'])
+@limiter.limit("10/minute")
 def get_conv():
     data = request.json
     conv_id = data['conv_id']
