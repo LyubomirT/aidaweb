@@ -13,6 +13,7 @@ const discordToken = urlParams.get('access_token');
 if (discordToken) {
   localStorage.setItem('OAUTH2_TOKEN', discordToken);
 }
+const errorModalClose = document.getElementById('error-modal-close');
 console.log('Discord token:', discordToken);
 const iconimport = document.getElementById('svgimport');
 // child of iconimport
@@ -20,6 +21,10 @@ const regenlink_ = document.querySelector('#svgimport > #regen');
 const regenlink = regenlink_.textContent;
 
 const conversationsList = document.getElementById('conversations-list');
+
+errorModalClose.addEventListener('click', function() {
+  closeModal(errorModal);
+});
 
 // If there is a discord token in local storage, use it to authenticate
 const oauth2Token = localStorage.getItem('OAUTH2_TOKEN');
