@@ -340,6 +340,12 @@ body {
   background-color: #f9f9f9;
 }
 
+.conversation:disabled {
+  cursor: not-allowed;
+  background-color: #e6e6e6;
+  color: #434343;
+}
+
 .messagecontainer {
   margin-bottom: 40px;
 }

@@ -133,6 +133,80 @@ window.onclick = function(event) {
   });
 }
 
+/* Lock Convs */
+function lockConvs() {
+  for (let i = 0; i < conversationsList.children.length; i++) {
+    conversationsList.children[i].disabled = true;
+  }
+  fetch('/lock', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({token: oauth2Token,}),
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.error) {
+      console.error('Error:', data.error);
+      openErrorModal(errorModal, data.error);
+      for (let i = 0; i < conversationsList.children.length; i++) {
+        conversationsList.children[i].disabled = false;
+      }
+      return;
+    }
+    console.log('Conversations locked:', data.locked);
+    if (data.locked === true) {
+      newConvButton.disabled = true;
+    } else {
+      newConvButton.disabled = false;
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    openErrorModal(errorModal, 'Error: ' + error);
+    for (let i = 0; i < conversationsList.children.length; i++) {
+      conversationsList.children[i].disabled = false;
+    }
+  });
+}
+
+/* Unlock Convs */
+function unlockConvs() {
+  for (let i = 0; i < conversationsList.children.length; i++) {
+    conversationsList.children[i].disabled = false;
+  }
+  fetch('/unlock', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({token: oauth2Token,}),
+  }).then(response => response.json())
+  .then(data => {
+    if (data.error) {
+      console.error('Error:', data.error);
+      openErrorModal(errorModal, data.error);
+      for (let i = 0; i < conversationsList.children.length; i++) {
+        conversationsList.children[i].disabled = true;
+      }
+      return;
+    }
+    console.log('Conversations unlocked:', data.locked);
+    if (data.locked === true) {
+      newConvButton.disabled = true;
+    } else {
+      newConvButton.disabled = false;
+    }
+  }).then(error => {
+    console.error('Error:', error);
+    openErrorModal(errorModal, 'Error: ' + error);
+    for (let i = 0; i < conversationsList.children.length; i++) {
+      conversationsList.children[i].disabled = true;
+    }
+  });
+}
+
 // Save Edit Button Click Event
 document.getElementById('save-edit').addEventListener('click', function() {
   const editedMessage = document.getElementById('edit-message').value;

@@ -41,10 +41,9 @@ def new_conv():
     token = data_json['token']
     if not check_join(token):
         return redirect('/join')
-    g1 = requests.get(f"https://discord.com/api/users/@me", headers={"Authorization": f"Bearer {token}"})
-    g1 = g1.json()
-    # get the id of the user
-    userid = int(g1['id'])
+    userid = get_user_id(token)
+    if userid in progresses and progresses[userid]:
+        return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
     # Generate a new conversation ID
     conv_id = random.randint(100000, 999999)
     # Initialize the conversation in the dictionary
@@ -63,8 +62,6 @@ def handle_too_many_requests(error):
   # You can customize the message here
   message = "You've exceeded the request limit, please try again later."
   return make_response(jsonify({"error": message}), 429)
-
-
 
 config = {
     "temperature": 0.5,
@@ -258,6 +255,8 @@ def get_conv():
     chat_history = conversations[id][conv_id]
     name = convnames[id][conv_id]
     chat_history_html = []
+    if id in progresses and progresses[id]:
+        return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
     for message in chat_history:
         if message['role'] == 'ASSISTANT':
             chat_history_html.append({'role': 'ASSISTANT', 'message': markdown2.markdown(message['message'], extras=["tables", "fenced-code-blocks", "spoiler", "strike"])})
