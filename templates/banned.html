@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Banned</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:400,500,600,700,800,900&display=swap">
+<style>
+  body {
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f5f5f5;
+    overflow: hidden;
+  }
+
+  .container {
+    text-align: center;
+    max-width: 500px;
+    padding: 40px;
+    padding-top: 0px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    animation: fadein 0.3s cubic-bezier(0.39, 0.575, 0.565, 1) both;
+  }
+
+  @keyframes fadein {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  h1 {
+    color: #333;
+    font-size: 32px;
+    margin-bottom: 20px;
+  }
+
+  p {
+    color: #555;
+    font-size: 18px;
+    line-height: 1.6;
+    margin-bottom: 30px;
+    margin-top: 20px !important;
+  }
+
+  a {
+    color: #fe820f;
+    text-decoration: none;
+    font-weight: bold;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  .decor-line {
+    width: 300px;
+    height: 2px;
+    background-color: #fe820f;
+    margin: 20px auto;
+  }
+
+  .decor-bar {
+    width: 100%;
+    height: 10px;
+    background-color: #fe820f;
+    animation: wipe 1s ease-in-out;
+  }
+
+  @keyframes wipe {
+    0% {
+      width: 0;
+    }
+    100% {
+      width: 100%;
+    }
+  }
+
+  .try-again {
+    margin-top: 30px;
+  }
+
+  .try-again button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #fe820f;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  .try-again button:hover {
+    background-color: #e57300;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="decor-bar"></div>
+  <h1>You are banned</h1>
+  <div class="decor-line"></div>
+  <p>
+    You are banned from AIDA Web for violating our rules and/or abusing the AI. If you believe this is a mistake, please contact us on The Orange Squad and see if we can resolve the issue.
+  </p>
+  <div class="decor-line"></div>
+  <div class="try-again">
+    <button id="action">Join The Orange Squad</button>
+  </div>
+</div>
+<script>
+  document.getElementById('action').addEventListener('click', function() {
+    window.location.href = 'https://discord.gg/9XTyEPy7Dj';
+  });
+</script>
+</body>
+</html>

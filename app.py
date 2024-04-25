@@ -23,10 +23,16 @@ conversations = {}
 progresses = {}
 savedtokens = {}
 convnames = {}
+bans = {}
 # data structure for savedtokens
 # {"id": {"token": "token", "expiry": "expiry_time"}}
 
 TOKEN_EXPIRY_TIME = 4 * 3600  # Token expiry time in seconds (4 hours)
+
+@app.before_request
+def limit_remote_addr():
+    if get_remote_address() in bans:
+        return render_template('banned.html'), 403
 
 
 @app.route('/')
