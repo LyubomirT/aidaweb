@@ -127,7 +127,7 @@ def index():
 
 
 @app.route('/new_conv', methods=['POST'])
-@limiter.limit("5/minute")
+@limiter.limit("5/2minute")
 def new_conv():
     data_json = request.json
     token = data_json['token']
