@@ -126,6 +126,7 @@ body {
   justify-content: space-between;
   /* existing styles */
   font-family: inherit;
+  width: 300px;
 }
 
 #user_info {
