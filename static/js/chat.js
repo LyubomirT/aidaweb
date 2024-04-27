@@ -385,6 +385,7 @@ function postMessage(message) {
       convElement.classList.add('conversation');
       convElement.innerHTML = LconvName;
       convElement.conv_id = convId;
+      convElement.disabled = true;
       conversationsList.prepend(convElement);
       constructConversation(convElement);
       newConvButton.disabled = false;
