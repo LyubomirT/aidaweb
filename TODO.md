@@ -41,10 +41,10 @@ BONUS:
 
 - [ ] Make another AI name the conversation somehow when sending the first message in a new one
     - [ ] Implement a `name` route
-       - [ ] Figure out what AI will be used for this
+       - [x] Figure out what AI will be used for this
            - [ ] Use the AI
-           - [ ] Make sure we don't pay for this
-        - [ ] If failed, use a "Conversation #" format
+           - [x] Make sure we don't pay for this
+        - [x] If failed, use a "Conversation #" format
     
 
 --------------------- STAGE 5 ---------------------
