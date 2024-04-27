@@ -39,10 +39,10 @@ BONUS:
 
 --------------------- STAGE 4 --------------------- <-> CURRENT
 
-- [ ] Make another AI name the conversation somehow when sending the first message in a new one
-    - [ ] Implement a `name` route
+- [x] Make another AI name the conversation somehow when sending the first message in a new one
+    - [x] Implement a `name` route
        - [x] Figure out what AI will be used for this
-           - [ ] Use the AI
+           - [x] Use the AI
            - [x] Make sure we don't pay for this
         - [x] If failed, use a "Conversation #" format
     
