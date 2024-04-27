@@ -216,7 +216,7 @@ def name_conv():
     assistantMessage = chatHistory[-1]['message']
     preamble = "The user will provide you with messages from the chat, try to summarize them and generate a title for the conversation. Send only the title and do not send any other text. Do not wrap the title in quotes or backticks."
     msgbuilder = "User:\n" + userMessage + "\n\nAssistant:\n" + assistantMessage
-    response = client.chat(preamble=preamble, message=msgbuilder, temperature=0.3, max_tokens=100, model="command-r-plus")
+    response = client.chat(preamble=preamble, message=msgbuilder, temperature=1, max_tokens=100, model="command-r-plus")
     response = response.text
     # rename the conversation
     convnames[userid][conv_id] = response
