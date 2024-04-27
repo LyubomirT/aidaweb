@@ -305,7 +305,7 @@ def get_user_id(token):
 
 
 @app.route('/joined_server', methods=['POST'])
-@limiter.limit("5/10minute")
+@limiter.limit("100/10minute")
 def joined_server():
     data = request.json
     if 'authtoken' not in data:

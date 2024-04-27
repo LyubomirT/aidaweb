@@ -411,6 +411,7 @@ function postMessage(message) {
         openErrorModal(errorModal, data.error);
         chatInput.disabled = false;
         sendButton.disabled = false;
+        unlockChats();
         return;
       }
       convId = data.conv_id;
@@ -444,6 +445,7 @@ function postMessage(message) {
           sendButton.disabled = false;
           // Remove the last message (user message) if there is an error
           deleteLast();
+          unlockChats();
           return;
         }
         const rawResponse = data.raw_response;
@@ -457,6 +459,7 @@ function postMessage(message) {
         chatBox.scrollTop = chatBox.scrollHeight;
         chatInput.disabled = false;
         sendButton.disabled = false;
+        unlockChats();
       })
       .catch(error => {
         console.error('Error:', error);
@@ -465,6 +468,7 @@ function postMessage(message) {
         openErrorModal(errorModal, 'Error: ' + error);
         // Remove the last message (user message) if there is an error
         deleteLast();
+        unlockChats();
       });
     })
     .catch(error => {
