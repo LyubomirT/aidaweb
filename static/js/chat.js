@@ -58,8 +58,11 @@ newConvButton.addEventListener('click', function() {
   convId = null;
 });
 
-chatInput.addEventListener('keypress', function(e) {
-  if (e.key === 'Enter') {
+chatInput.addEventListener('keydown', function(e) {
+  if (e.shiftKey && e.key === 'Enter') {
+    chatInput.value += '\n';
+  } else if (e.key === 'Enter') {
+    e.preventDefault();
     sendMessage();
   }
 });
@@ -216,6 +219,9 @@ function constructMessage(message, rawmsg, role) {
     rawmsg = rawmsg.message;
   } else {
     rawmsg = rawmsg;
+  }
+  if (role === "USER") {
+    message = message.replace(/(?:\r\n|\r|\n)/g, '<br>');
   }
   // Find ID by calculating its position in the chat history
   if (chatHistory.length > 0) {
