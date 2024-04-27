@@ -221,7 +221,9 @@ function constructMessage(message, rawmsg, role) {
     rawmsg = rawmsg;
   }
   if (role === "USER") {
-    message = message.replace(/\n/g, '<br>');
+    message = message.replace(/(?:\r\n|\r|\n)/g, '<br>');
+    message = message.replace('<br><br>', '<br>');
+    // I don't know why this bug happens, but it does, so...
   }
   // Find ID by calculating its position in the chat history
   if (chatHistory.length > 0) {
