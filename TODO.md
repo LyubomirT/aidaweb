@@ -60,7 +60,7 @@ BONUS:
 
 - [ ] Optionally
     - [ ] Create a status bar above
-        - [ ] Show the conversation name
+        - [x] Show the conversation name
         - [ ] Show the conversation ID
         - [ ] Add a "Delete" button
         - [ ] Add a "Edit" button
