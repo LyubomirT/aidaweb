@@ -58,6 +58,14 @@ BONUS:
     - [ ] Add a delete button to the conversation name
         - [ ] Add a confirmation dialog
 
+- [ ] Optionally
+    - [ ] Create a status bar above
+        - [ ] Show the conversation name
+        - [ ] Show the conversation ID
+        - [ ] Add a "Delete" button
+        - [ ] Add a "Edit" button
+        - [ ] Add a message count
+
 
 --------------------- STAGE 6 ---------------------
 
