@@ -429,6 +429,26 @@ function postMessage(message) {
         response.raw = rawResponse;
         chatBox.innerHTML += response;
         hljs.highlightAll();
+        fetch('/name_conv', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            conv_id: convId,
+            token: oauth2Token,
+          }),
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.error) {
+            // Do nothing
+          } else {
+            convElement.innerHTML = data.title;
+            LconvName = data.title;
+          }
+        })
+        .catch(error => console.error('Error:', error));
         chatBox.scrollTop = chatBox.scrollHeight;
         chatInput.disabled = false;
         sendButton.disabled = false;
