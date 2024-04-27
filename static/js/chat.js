@@ -363,12 +363,30 @@ function regenerate() {
   });
 }
 
+function lockChats() {
+  // Lock all conversations
+  const conversations = document.querySelectorAll('.conversation');
+  conversations.forEach((conv) => {
+    conv.disabled = true;
+  });
+}
+
+function unlockChats() {
+  // Unlock all conversations
+  const conversations = document.querySelectorAll('.conversation');
+  conversations.forEach((conv) => {
+    conv.disabled = false;
+  });
+}
+
 function postMessage(message) {
 
   chatInput.disabled = true;
   sendButton.disabled = true;
   // Create a preview of the message
   chatBox.innerHTML += constructMessage(message, message, 'USER');
+
+  lockChats();
 
   // If the chat history is empty, start a new conversation
   if (convId === null) {
@@ -390,8 +408,6 @@ function postMessage(message) {
       }
       convId = data.conv_id;
       var LconvName = data.name;
-      sendButton.disabled = false;
-      chatInput.disabled = false;
       // Create a new conversation element and add it to the TOP of the conversations list
       const convElement = document.createElement('div');
       convElement.classList.add('conversation');
@@ -449,6 +465,8 @@ function postMessage(message) {
       openErrorModal(errorModal, 'Error: ' + error);
       chatInput.disabled = false;
       sendButton.disabled = false;
+      unlockChats();
+      return;
     });
   } else {
     fetch('/chat', {
@@ -471,6 +489,7 @@ function postMessage(message) {
         sendButton.disabled = false;
         // Remove the last message (user message) if there is an error
         deleteLast();
+        unlockChats();
         return;
       }
       const rawResponse = data.raw_response;
@@ -484,6 +503,7 @@ function postMessage(message) {
       chatBox.scrollTop = chatBox.scrollHeight;
       chatInput.disabled = false;
       sendButton.disabled = false;
+      unlockChats();
     })
     .catch(error => {
       console.error('Error:', error);
@@ -492,6 +512,8 @@ function postMessage(message) {
       openErrorModal(errorModal, 'Error: ' + error);
       // Remove the last message (user message) if there is an error
       deleteLast();
+
+      unlockChats();
     });
   }
 }
