@@ -181,6 +181,7 @@ function postEdit(editedMessage) {
       // Restore the last two messages (edited message and assistant response)
       chatBox.innerHTML += constructMessage(lastUsr, 'USER');
       chatBox.innerHTML += constructMessage(lastAsst, 'ASSISTANT');
+      unlockChats();
       return;
     }
     const rawResponse = data.raw_response;
@@ -196,6 +197,7 @@ function postEdit(editedMessage) {
     chatBox.scrollTop = chatBox.scrollHeight;
     chatInput.disabled = false;
     sendButton.disabled = false;
+    unlockChats();
   })
   .catch(error => {
     console.error('Error:', error);
@@ -217,6 +219,7 @@ function postEdit(editedMessage) {
     })
     .catch(error => console.error('Error:', error));
     chatBox.innerHTML += constructMessage(lastAsst, 'ASSISTANT');
+    unlockChats();
   });
 }
 
@@ -322,6 +325,7 @@ function regenerate() {
   // it also receives a new message from the server and appends it to the chatbox
   chatInput.disabled = true;
   sendButton.disabled = true;
+  lockChats();
   fetch('/regen', {
     method: 'POST',
     headers: {
@@ -339,6 +343,7 @@ function regenerate() {
       openErrorModal(errorModal, 'Error: ' + data.error);
       chatInput.disabled = false;
       sendButton.disabled = false;
+      unlockChats();
       return;
     }
     deleteLast();
@@ -354,12 +359,14 @@ function regenerate() {
     chatBox.scrollTop = chatBox.scrollHeight;
     chatInput.disabled = false;
     sendButton.disabled = false;
+    unlockChats();
   })
   .catch(error => {
     console.error('Error:', error);
     chatInput.disabled = false;
     sendButton.disabled = false;
     openErrorModal(errorModal, 'Error: ' + error);
+    unlockChats();
   });
 }
 
