@@ -430,7 +430,7 @@ function postMessage(message) {
       convElement.innerHTML = LconvName;
       convElement.conv_id = convId;
       convElement.disabled = true;
-      statusText.innerHTML = data.name;
+      statusText.innerHTML = data.name + ` (${convId})`;
       conversationsList.prepend(convElement);
       constructConversation(convElement, LconvName);
 
@@ -486,7 +486,7 @@ function postMessage(message) {
             normalName = fixName(normalName);
             convElement.innerHTML = normalName;
             LconvName = data.title;
-            statusText.innerHTML = LconvName;
+            statusText.innerHTML = LconvName + ` (${convId})`;
           }
         })
         .catch(error => console.error('Error:', error));
@@ -573,7 +573,7 @@ function postMessage(message) {
 function constructConversation(conv, name=null) {
  // On click, get the conversation history from the server and display it in the chat box
   conv.addEventListener('click', function() {
-    statusText.innerHTML = name || "Conversation";
+    statusText.innerHTML = name + ` (${conv.conv_id})` || "Conversation (?)";
     chatBox.innerHTML = '';
     console.log('Conversation ID:', conv.conv_id);
     fetch('/get_conv', {
