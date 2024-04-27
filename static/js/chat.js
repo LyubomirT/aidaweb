@@ -5,6 +5,7 @@ const sendButton = document.getElementById('send-button');
 const username = document.getElementById('user_name');
 const userAvatar = document.getElementById('user_avatar');
 const errorModal = document.getElementById('errorModal');
+const statusText = document.getElementById('status-text');
 MathJax.startup.document.state(0);
 let chatHistory = [];  // Retrieve chat history from server
 let convId = null;  // Conversation ID
@@ -56,6 +57,7 @@ newConvButton.addEventListener('click', function() {
   chatBox.innerHTML = '';
   chatHistory = [];
   convId = null;
+  statusText.innerHTML = 'New conversation';
 });
 
 chatInput.addEventListener('keydown', function(e) {
@@ -428,8 +430,9 @@ function postMessage(message) {
       convElement.innerHTML = LconvName;
       convElement.conv_id = convId;
       convElement.disabled = true;
+      statusText.innerHTML = data.name;
       conversationsList.prepend(convElement);
-      constructConversation(convElement);
+      constructConversation(convElement, LconvName);
 
       fetch('/chat', {
         method: 'POST',
@@ -483,6 +486,7 @@ function postMessage(message) {
             normalName = fixName(normalName);
             convElement.innerHTML = normalName;
             LconvName = data.title;
+            statusText.innerHTML = LconvName;
           }
         })
         .catch(error => console.error('Error:', error));
@@ -566,9 +570,10 @@ function postMessage(message) {
   }
 }
 
-function constructConversation(conv) {
+function constructConversation(conv, name=null) {
  // On click, get the conversation history from the server and display it in the chat box
   conv.addEventListener('click', function() {
+    statusText.innerHTML = name || "Conversation";
     chatBox.innerHTML = '';
     console.log('Conversation ID:', conv.conv_id);
     fetch('/get_conv', {
@@ -633,7 +638,7 @@ function verify() {
       convElement.innerHTML = fixName(conv.name);
       convElement.conv_id = conv.conv_id;
       conversationsList.appendChild(convElement);
-      constructConversation(convElement);
+      constructConversation(convElement, conv.name);
     });
   })
   .catch(error => console.error('Error:', error));
