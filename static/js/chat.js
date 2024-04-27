@@ -56,43 +56,6 @@ newConvButton.addEventListener('click', function() {
   chatBox.innerHTML = '';
   chatHistory = [];
   convId = null;
-  /*
-  fetch('/new_conv', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({token: oauth2Token,}),  // Send the Discord token to the server
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (data.error) {
-      console.error('Error:', data.error);
-      openErrorModal(errorModal, data.error);
-      newConvButton.disabled = false;
-      return;
-    }
-    convId = data.conv_id;
-    var LconvName = data.name;
-    chatBox.innerHTML = '';
-    chatHistory = [];
-    sendButton.disabled = false;
-    chatInput.disabled = false;
-    // Create a new conversation element and add it to the TOP of the conversations list
-    const convElement = document.createElement('div');
-    convElement.classList.add('conversation');
-    convElement.innerHTML = LconvName;
-    convElement.conv_id = convId;
-    conversationsList.prepend(convElement);
-    constructConversation(convElement);
-    newConvButton.disabled = false;
-  })
-  .catch(error => {
-    console.error('Error:', error);
-    openErrorModal(errorModal, 'Error: ' + error);
-    newConvButton.disabled = false;
-  });
-  */
 });
 
 chatInput.addEventListener('keypress', function(e) {
