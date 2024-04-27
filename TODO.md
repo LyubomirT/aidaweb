@@ -37,7 +37,7 @@ BONUS:
     - [x] Allow switching between conversations
     - [x] Each new conversation simply clears the chat for now, but if a user sends a message, it should be saved to the conversation db
 
---------------------- STAGE 4 --------------------- <-> CURRENT
+--------------------- STAGE 4 ---------------------
 
 - [x] Make another AI name the conversation somehow when sending the first message in a new one
     - [x] Implement a `name` route
@@ -47,7 +47,7 @@ BONUS:
         - [x] If failed, use a "Conversation #" format
     
 
---------------------- STAGE 5 ---------------------
+--------------------- STAGE 5 --------------------- <-> CURRENT
 
 - [ ] Allow editing the conversation name
     - [ ] Implement an `editname` route
