@@ -374,6 +374,7 @@ function lockChats() {
   // Lock all conversations
   const conversations = document.querySelectorAll('.conversation');
   conversations.forEach((conv) => {
+    console.warn("Locked" + conv.innerHTML);
     conv.disabled = true;
   });
 }
@@ -417,7 +418,7 @@ function postMessage(message) {
       convId = data.conv_id;
       var LconvName = data.name;
       // Create a new conversation element and add it to the TOP of the conversations list
-      const convElement = document.createElement('div');
+      const convElement = document.createElement('button');
       convElement.classList.add('conversation');
       convElement.innerHTML = LconvName;
       convElement.conv_id = convId;
@@ -583,7 +584,7 @@ function verify() {
     }
     // Create conversation elements for each conversation
     data.conversations.forEach(conv => {
-      const convElement = document.createElement('div');
+      const convElement = document.createElement('button');
       convElement.classList.add('conversation');
       convElement.innerHTML = conv.name;
       convElement.conv_id = conv.conv_id;
