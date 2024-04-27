@@ -519,6 +519,10 @@ function constructConversation(conv) {
     })
     .then(response => response.json())
     .then(data => {
+      if (data.error) {
+        openErrorModal(errorModal, 'Error: ' + data.error);
+        return;
+      }
       const chatHistory = data.chat_history_html;
       chatHistory.forEach(message => {
         if (message.role === 'USER') {
