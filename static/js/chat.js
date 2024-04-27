@@ -54,6 +54,9 @@ if (oauth2Token) {
 newConvButton.addEventListener('click', function() {
   newConvButton.disabled = true;
   chatBox.innerHTML = '';
+  chatHistory = [];
+  convId = null;
+  /*
   fetch('/new_conv', {
     method: 'POST',
     headers: {
@@ -89,6 +92,7 @@ newConvButton.addEventListener('click', function() {
     openErrorModal(errorModal, 'Error: ' + error);
     newConvButton.disabled = false;
   });
+  */
 });
 
 chatInput.addEventListener('keypress', function(e) {
@@ -129,80 +133,6 @@ window.onclick = function(event) {
   modals.forEach(modal => {
     if (event.target == modal) {
       closeModal(modal);
-    }
-  });
-}
-
-/* Lock Convs */
-function lockConvs() {
-  for (let i = 0; i < conversationsList.children.length; i++) {
-    conversationsList.children[i].disabled = true;
-  }
-  fetch('/lock', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({token: oauth2Token,}),
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (data.error) {
-      console.error('Error:', data.error);
-      openErrorModal(errorModal, data.error);
-      for (let i = 0; i < conversationsList.children.length; i++) {
-        conversationsList.children[i].disabled = false;
-      }
-      return;
-    }
-    console.log('Conversations locked:', data.locked);
-    if (data.locked === true) {
-      newConvButton.disabled = true;
-    } else {
-      newConvButton.disabled = false;
-    }
-  })
-  .catch(error => {
-    console.error('Error:', error);
-    openErrorModal(errorModal, 'Error: ' + error);
-    for (let i = 0; i < conversationsList.children.length; i++) {
-      conversationsList.children[i].disabled = false;
-    }
-  });
-}
-
-/* Unlock Convs */
-function unlockConvs() {
-  for (let i = 0; i < conversationsList.children.length; i++) {
-    conversationsList.children[i].disabled = false;
-  }
-  fetch('/unlock', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({token: oauth2Token,}),
-  }).then(response => response.json())
-  .then(data => {
-    if (data.error) {
-      console.error('Error:', data.error);
-      openErrorModal(errorModal, data.error);
-      for (let i = 0; i < conversationsList.children.length; i++) {
-        conversationsList.children[i].disabled = true;
-      }
-      return;
-    }
-    console.log('Conversations unlocked:', data.locked);
-    if (data.locked === true) {
-      newConvButton.disabled = true;
-    } else {
-      newConvButton.disabled = false;
-    }
-  }).then(error => {
-    console.error('Error:', error);
-    openErrorModal(errorModal, 'Error: ' + error);
-    for (let i = 0; i < conversationsList.children.length; i++) {
-      conversationsList.children[i].disabled = true;
     }
   });
 }
@@ -440,48 +370,130 @@ function postMessage(message) {
   // Create a preview of the message
   chatBox.innerHTML += constructMessage(message, message, 'USER');
 
-  fetch('/chat', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      message: message,
-      conv_id: convId,
-      chat_history: chatHistory,  // Send chat history to server,
-      token: oauth2Token,
-    }),
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (data.error) {
-      openErrorModal(errorModal, 'Error: ' + data.error);
+  // If the chat history is empty, start a new conversation
+  if (convId === null) {
+    fetch('/new_conv', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({token: oauth2Token,}),  // Send the Discord token to the server
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.error) {
+        console.error('Error:', data.error);
+        openErrorModal(errorModal, data.error);
+        chatInput.disabled = false;
+        sendButton.disabled = false;
+        return;
+      }
+      convId = data.conv_id;
+      var LconvName = data.name;
+      sendButton.disabled = false;
+      chatInput.disabled = false;
+      // Create a new conversation element and add it to the TOP of the conversations list
+      const convElement = document.createElement('div');
+      convElement.classList.add('conversation');
+      convElement.innerHTML = LconvName;
+      convElement.conv_id = convId;
+      conversationsList.prepend(convElement);
+      constructConversation(convElement);
+      newConvButton.disabled = false;
+
+      fetch('/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: message,
+          conv_id: convId,
+          chat_history: chatHistory,  // Send chat history to server,
+          token: oauth2Token,
+        }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          openErrorModal(errorModal, 'Error: ' + data.error);
+          chatInput.disabled = false;
+          sendButton.disabled = false;
+          // Remove the last message (user message) if there is an error
+          deleteLast();
+          return;
+        }
+        const rawResponse = data.raw_response;
+        const htmlResponse = data.html_response;
+        chatHistory = data.chat_history;  // Update chat history from server
+        console.log('Chat history:', chatHistory);
+        response = constructMessage(htmlResponse, rawResponse, 'ASSISTANT');
+        response.raw = rawResponse;
+        chatBox.innerHTML += response;
+        hljs.highlightAll();
+        chatBox.scrollTop = chatBox.scrollHeight;
+        chatInput.disabled = false;
+        sendButton.disabled = false;
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        chatInput.disabled = false;
+        sendButton.disabled = false;
+        openErrorModal(errorModal, 'Error: ' + error);
+        // Remove the last message (user message) if there is an error
+        deleteLast();
+      });
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      openErrorModal(errorModal, 'Error: ' + error);
       chatInput.disabled = false;
       sendButton.disabled = false;
+    });
+  } else {
+    fetch('/chat', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        message: message,
+        conv_id: convId,
+        chat_history: chatHistory,  // Send chat history to server,
+        token: oauth2Token,
+      }),
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.error) {
+        openErrorModal(errorModal, 'Error: ' + data.error);
+        chatInput.disabled = false;
+        sendButton.disabled = false;
+        // Remove the last message (user message) if there is an error
+        deleteLast();
+        return;
+      }
+      const rawResponse = data.raw_response;
+      const htmlResponse = data.html_response;
+      chatHistory = data.chat_history;  // Update chat history from server
+      console.log('Chat history:', chatHistory);
+      response = constructMessage(htmlResponse, rawResponse, 'ASSISTANT');
+      response.raw = rawResponse;
+      chatBox.innerHTML += response;
+      hljs.highlightAll();
+      chatBox.scrollTop = chatBox.scrollHeight;
+      chatInput.disabled = false;
+      sendButton.disabled = false;
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      chatInput.disabled = false;
+      sendButton.disabled = false;
+      openErrorModal(errorModal, 'Error: ' + error);
       // Remove the last message (user message) if there is an error
       deleteLast();
-      return;
-    }
-    const rawResponse = data.raw_response;
-    const htmlResponse = data.html_response;
-    chatHistory = data.chat_history;  // Update chat history from server
-    console.log('Chat history:', chatHistory);
-    response = constructMessage(htmlResponse, rawResponse, 'ASSISTANT');
-    response.raw = rawResponse;
-    chatBox.innerHTML += response;
-    hljs.highlightAll();
-    chatBox.scrollTop = chatBox.scrollHeight;
-    chatInput.disabled = false;
-    sendButton.disabled = false;
-  })
-  .catch(error => {
-    console.error('Error:', error);
-    chatInput.disabled = false;
-    sendButton.disabled = false;
-    openErrorModal(errorModal, 'Error: ' + error);
-    // Remove the last message (user message) if there is an error
-    deleteLast();
-  });
+    });
+  }
 }
 
 function constructConversation(conv) {

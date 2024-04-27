@@ -30,6 +30,8 @@ lastreqroute = {}
 lastreqroute_id = {}
 ipban = {}
 
+lasttimewechecked = None
+
 # reqonroute is a dictionary that stores the number of requests on a route for the user IP
 # reqonroute_id is a dictionary that stores the number of requests on a route for the user ID
 # lastreqroute is a dictionary that stores the time of the last request on a route for the user IP
@@ -275,9 +277,15 @@ def edit():
 
 
 def check_join(token):
+    global lasttimewechecked
+    # there must be at least a 2 second gap between join requests
+    if lasttimewechecked is not None and time.time() - lasttimewechecked < 2:
+        time.sleep(2 - (time.time() - lasttimewechecked))
     g1 = requests.get(f"https://discord.com/api/users/@me/guilds", headers={"Authorization": f"Bearer {token}"})
     g1 = g1.json()
     serverid = '1079761115636043926'
+    print(g1)
+    lasttimewechecked = time.time()
     for i in g1:
         if i['id'] == serverid:
             return True
