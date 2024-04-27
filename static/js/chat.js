@@ -300,6 +300,28 @@ function deleteLast() {
   lastMessage.remove();
 }
 
+function fixName(name) {
+  // Replace all other symbols that come after the symbol 20 with ...
+  if (name.length > 26) {
+    name = name.substring(0, 25) + '...';
+  }
+  // BETTER WAY TO DO THIS IS TO REPLACE IT BY WORDS INSTEAD OF CHARACTERS (LIKE EVERY WORD AFTER OR IN THE 20TH CHARACTER)
+  // EXCEPTION: IF ONE WORD, THEN BY CHARACTERS
+  if (name.length > 30 && name.indexOf(' ') !== -1) {
+    // by words
+    var words = name.split(' ');
+    var newname = '';
+    for (var i = 0; i < words.length; i++) {
+      if (newname.length + words[i].length > 30) {
+        break;
+      }
+      newname += words[i] + ' ';
+    }
+    name = newname + '...';
+  }
+  return name;
+}
+
 function regenerate() {
   // this function heads to the regenerate route and deletes the last message (if it's an assistant message)
   // it also receives a new message from the server and appends it to the chatbox
@@ -457,7 +479,9 @@ function postMessage(message) {
           if (data.error) {
             // Do nothing
           } else {
-            convElement.innerHTML = data.title;
+            normalName = data.title;
+            normalName = fixName(normalName);
+            convElement.innerHTML = normalName;
             LconvName = data.title;
           }
         })
@@ -606,7 +630,7 @@ function verify() {
     list.forEach(conv => {
       const convElement = document.createElement('button');
       convElement.classList.add('conversation');
-      convElement.innerHTML = conv.name;
+      convElement.innerHTML = fixName(conv.name);
       convElement.conv_id = conv.conv_id;
       conversationsList.appendChild(convElement);
       constructConversation(convElement);
