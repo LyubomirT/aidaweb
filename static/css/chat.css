@@ -22,19 +22,28 @@ body {
   flex: 1; /* Make the chat container take up remaining space */
   padding: 20px;
   box-sizing: border-box;
+  max-height: 100vh;
+}
+
+#status-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: left;
+  margin-bottom: 20px;
 }
 
 #chat-box {
-  height: 80vh;
+  height: 60vh;
   overflow-y: scroll;
   border: 1px solid #ccc;
   padding: 10px;
   font-family: inherit;
+  flex-shrink: 1;
 }
 
 #input-container {
   margin-top: 20px;
-  height: 50px;
+  height: 60px;
 }
 
 #chat-input {
