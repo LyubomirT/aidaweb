@@ -303,7 +303,7 @@ def check_join(token):
     global lasttimewechecked
     # there must be at least a 2 second gap between join requests
     if lasttimewechecked is not None and time.time() - lasttimewechecked < 3:
-        time.sleep(2 - (time.time() - lasttimewechecked))
+        time.sleep(3 - (time.time() - lasttimewechecked))
     g1 = requests.get(f"https://discord.com/api/users/@me/guilds", headers={"Authorization": f"Bearer {token}"})
     g1 = g1.json()
     serverid = '1079761115636043926'

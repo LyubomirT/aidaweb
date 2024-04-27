@@ -5,6 +5,7 @@ const sendButton = document.getElementById('send-button');
 const username = document.getElementById('user_name');
 const userAvatar = document.getElementById('user_avatar');
 const errorModal = document.getElementById('errorModal');
+MathJax.startup.document.state(0);
 let chatHistory = [];  // Retrieve chat history from server
 let convId = null;  // Conversation ID
 // If there is a Discord access token in the URL, save it in local storage as OAUTH2_TOKEN
@@ -52,7 +53,6 @@ if (oauth2Token) {
 }
 
 newConvButton.addEventListener('click', function() {
-  newConvButton.disabled = true;
   chatBox.innerHTML = '';
   chatHistory = [];
   convId = null;
@@ -159,6 +159,7 @@ function postEdit(editedMessage) {
     response = constructMessage(htmlResponse, rawResponse, 'ASSISTANT');
     response.raw = rawResponse;
     chatBox.innerHTML += response;
+    MathJax.typeset();
     hljs.highlightAll();
     chatBox.scrollTop = chatBox.scrollHeight;
     chatInput.disabled = false;
@@ -224,6 +225,14 @@ function constructMessage(message, rawmsg, role) {
     message = message.replace(/(?:\r\n|\r|\n)/g, '<br>');
     message = message.replace('<br><br>', '<br>');
     // I don't know why this bug happens, but it does, so...
+  } else if (role === "ASSISTANT") {
+    // We need to replace $something$ with $$something$$ for MathJax to render it
+    // In both the raw message and the HTML message
+    // something can be any string of characters
+    var re = /\$([^\$]+)\$/g;
+    //message = message.replace(re, '$$$$$1$$$$');
+    //rawmsg = rawmsg.replace(re, '$$$$$1$$$$');
+    
   }
   // Find ID by calculating its position in the chat history
   if (chatHistory.length > 0) {
@@ -326,6 +335,7 @@ function regenerate() {
     response = constructMessage(htmlResponse, rawResponse, 'ASSISTANT');
     response.raw = rawResponse;
     chatBox.innerHTML += response;
+    MathJax.typeset();
     hljs.highlightAll();
     chatBox.scrollTop = chatBox.scrollHeight;
     chatInput.disabled = false;
@@ -362,6 +372,7 @@ function postMessage(message) {
 
   chatInput.disabled = true;
   sendButton.disabled = true;
+  newConvButton.disabled = true;
   // Create a preview of the message
   chatBox.innerHTML += constructMessage(message, message, 'USER');
 
@@ -383,6 +394,7 @@ function postMessage(message) {
         openErrorModal(errorModal, data.error);
         chatInput.disabled = false;
         sendButton.disabled = false;
+        newConvButton.disabled = false;
         unlockChats();
         return;
       }
@@ -396,7 +408,6 @@ function postMessage(message) {
       convElement.disabled = true;
       conversationsList.prepend(convElement);
       constructConversation(convElement);
-      newConvButton.disabled = false;
 
       fetch('/chat', {
         method: 'POST',
@@ -416,6 +427,7 @@ function postMessage(message) {
           openErrorModal(errorModal, 'Error: ' + data.error);
           chatInput.disabled = false;
           sendButton.disabled = false;
+          newConvButton.disabled = false;
           // Remove the last message (user message) if there is an error
           deleteLast();
           unlockChats();
@@ -428,6 +440,7 @@ function postMessage(message) {
         response = constructMessage(htmlResponse, rawResponse, 'ASSISTANT');
         response.raw = rawResponse;
         chatBox.innerHTML += response;
+        MathJax.typeset();
         hljs.highlightAll();
         fetch('/name_conv', {
           method: 'POST',
@@ -452,12 +465,14 @@ function postMessage(message) {
         chatBox.scrollTop = chatBox.scrollHeight;
         chatInput.disabled = false;
         sendButton.disabled = false;
+        newConvButton.disabled = false;
         unlockChats();
       })
       .catch(error => {
         console.error('Error:', error);
         chatInput.disabled = false;
         sendButton.disabled = false;
+        newConvButton.disabled = false;
         openErrorModal(errorModal, 'Error: ' + error);
         // Remove the last message (user message) if there is an error
         deleteLast();
@@ -469,6 +484,7 @@ function postMessage(message) {
       openErrorModal(errorModal, 'Error: ' + error);
       chatInput.disabled = false;
       sendButton.disabled = false;
+      newConvButton.disabled = false;
       unlockChats();
       return;
     });
@@ -491,6 +507,7 @@ function postMessage(message) {
         openErrorModal(errorModal, 'Error: ' + data.error);
         chatInput.disabled = false;
         sendButton.disabled = false;
+        newConvButton.disabled = false;
         // Remove the last message (user message) if there is an error
         deleteLast();
         unlockChats();
@@ -503,16 +520,19 @@ function postMessage(message) {
       response = constructMessage(htmlResponse, rawResponse, 'ASSISTANT');
       response.raw = rawResponse;
       chatBox.innerHTML += response;
+      MathJax.typeset();
       hljs.highlightAll();
       chatBox.scrollTop = chatBox.scrollHeight;
       chatInput.disabled = false;
       sendButton.disabled = false;
+      newConvButton.disabled = false;
       unlockChats();
     })
     .catch(error => {
       console.error('Error:', error);
       chatInput.disabled = false;
       sendButton.disabled = false;
+      newConvButton.disabled = false;
       openErrorModal(errorModal, 'Error: ' + error);
       // Remove the last message (user message) if there is an error
       deleteLast();
@@ -551,6 +571,7 @@ function constructConversation(conv) {
           chatBox.innerHTML += constructMessage(message.message, message, 'ASSISTANT');
         }
       });
+      MathJax.typeset();
       hljs.highlightAll();
       chatBox.scrollTop = chatBox.scrollHeight;
 
@@ -579,7 +600,10 @@ function verify() {
       console.log('User has joined the server');
     }
     // Create conversation elements for each conversation
-    data.conversations.forEach(conv => {
+    list = data.conversations;
+    // reverse the list
+    list = list.reverse();
+    list.forEach(conv => {
       const convElement = document.createElement('button');
       convElement.classList.add('conversation');
       convElement.innerHTML = conv.name;
