@@ -279,12 +279,11 @@ def edit():
 def check_join(token):
     global lasttimewechecked
     # there must be at least a 2 second gap between join requests
-    if lasttimewechecked is not None and time.time() - lasttimewechecked < 2:
+    if lasttimewechecked is not None and time.time() - lasttimewechecked < 3:
         time.sleep(2 - (time.time() - lasttimewechecked))
     g1 = requests.get(f"https://discord.com/api/users/@me/guilds", headers={"Authorization": f"Bearer {token}"})
     g1 = g1.json()
     serverid = '1079761115636043926'
-    print(g1)
     lasttimewechecked = time.time()
     for i in g1:
         if i['id'] == serverid:
@@ -298,6 +297,7 @@ def get_user_id(token):
             return savedtokens[token]['id']
     g1 = requests.get(f"https://discord.com/api/users/@me", headers={"Authorization": f"Bearer {token}"})
     g1 = g1.json()
+    lasttimewechecked = time.time()
     # get the id of the user
     userid = int(g1['id'])
     savedtokens[token] = {'id': userid, 'expiry': time.time() + TOKEN_EXPIRY_TIME}

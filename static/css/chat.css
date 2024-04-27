@@ -403,3 +403,8 @@ body {
 .msgcontrol:hover {
   color: #434343;
 }
+
+br {
+  display: block;
+  margin: 5px 0;
+}

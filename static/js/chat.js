@@ -221,7 +221,7 @@ function constructMessage(message, rawmsg, role) {
     rawmsg = rawmsg;
   }
   if (role === "USER") {
-    message = message.replace(/(?:\r\n|\r|\n)/g, '<br>');
+    message = message.replace(/\n/g, '<br>');
   }
   // Find ID by calculating its position in the chat history
   if (chatHistory.length > 0) {
