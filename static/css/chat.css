@@ -4,26 +4,28 @@ body {
   padding: 0;
 }
 
-#sidebar {
-  font-family: inherit;
-  width: 20%;
-  background-color: #f0f0f0;
-  padding: 20px;
-  box-sizing: border-box;
-  float: left;
+#total {
+  display: flex;
+  flex-wrap: wrap;
   height: 100vh;
 }
 
-#chat-container {
-  width: 80%;
-  float: right;
+#sidebar {
+  width: 20%;
+  min-width: 300px; /* Set a minimum width to prevent the sidebar from becoming too narrow */
+  background-color: #f0f0f0;
   padding: 20px;
   box-sizing: border-box;
-  font-family: inherit;
+}
+
+#chat-container {
+  flex: 1; /* Make the chat container take up remaining space */
+  padding: 20px;
+  box-sizing: border-box;
 }
 
 #chat-box {
-  height: 400px;
+  height: 80vh;
   overflow-y: scroll;
   border: 1px solid #ccc;
   padding: 10px;
