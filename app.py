@@ -222,6 +222,21 @@ def name_conv():
     convnames[userid][conv_id] = response
     return jsonify({'title': response})
 
+@app.route('/delete_conv', methods=['POST'])
+@limiter.limit("5/minute")
+def delete_conv():
+    data = request.json
+    conv_id = data['conv_id']
+    token = data['token']
+    if not check_join(token):
+        return redirect('/join')
+    userid = get_user_id(token)
+    if userid in progresses and progresses[userid]:
+        return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
+    del conversations[userid][conv_id]
+    del convnames[userid][conv_id]
+    return jsonify({'deleted': True})
+
 
 # this route regenerates (deletes and then generates) the last AI response
 @app.route('/regen', methods=['POST'])
