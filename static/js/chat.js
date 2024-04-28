@@ -195,14 +195,30 @@ document.getElementById('edit-modal-close').addEventListener('click', function()
   closeModal(document.getElementById('editModal'));
 });
 
+function edit(id) {
+  // Get the message from the chat history and open the edit modal
+  const item = getItem(id);
+  if (item === undefined) {
+    return;
+  }
+  openEditModal(editModal, item.message);
+}
+
 
 function constructMessage(message, rawmsg, role) {  
+  // Find ID by calculating its position in the chat history
+  if (chatHistory.length > 0) {
+    var id = chatHistory.length;
+  } else {
+    var id = 0;
+  }
   var regenstring;
   if (role === "USER") {
     imgsrc = userAvatar.src;
     var _username = username.innerHTML;
+    message.textToEdit = rawmsg;
     regenstring = `
-    <div class="msgcontrol edit" onclick="openEditModal(editModal, '${message}')">
+    <div class="msgcontrol edit" onclick="edit(${id})">
     <i class="fi fi-rr-edit"></i>
     </div>
     `;
@@ -234,12 +250,6 @@ function constructMessage(message, rawmsg, role) {
     //message = message.replace(re, '$$$$$1$$$$');
     //rawmsg = rawmsg.replace(re, '$$$$$1$$$$');
     
-  }
-  // Find ID by calculating its position in the chat history
-  if (chatHistory.length > 0) {
-    var id = chatHistory.length;
-  } else {
-    var id = 0;
   }
 
   chatHistory.push({id: id, message: rawmsg, role: role});
@@ -456,7 +466,7 @@ function postMessage(message) {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              conv_id: conv.conv_id,
+              conv_id: convElement.conv_id,
               token: oauth2Token,
             }),
           })
@@ -467,7 +477,7 @@ function postMessage(message) {
               unlockChats();
               return;
             }
-            if (convId === conv.conv_id) {
+            if (convId === convElement.conv_id) {
               chatBox.innerHTML = '';
               chatHistory = [];
               convId = null;
@@ -537,6 +547,8 @@ function postMessage(message) {
             normalName = data.title;
             normalName = fixName(normalName);
             convElement.querySelector('#name').innerHTML = normalName;
+            console.warn("Name changed to " + normalName);
+            convElement.setAttribute('conv_name', normalName);
             LconvName = data.title;
             statusText.innerHTML = LconvName + ` (${convId})`;
           }
@@ -623,9 +635,11 @@ function postMessage(message) {
 }
 
 function constructConversation(conv, name=null) {
- // On click, get the conversation history from the server and display it in the chat box
+  // On click, get the conversation history from the server and display it in the chat box
+  conv.setAttribute('conv_name', name);
+  conv.setAttribute('conv_id', conv.conv_id);
   conv.addEventListener('click', function() {
-    statusText.innerHTML = name + ` (${conv.conv_id})` || "Conversation (?)";
+    statusText.innerHTML = conv.getAttribute('conv_name') + ` (${conv.conv_id})` || 'Conversation (?)';
     chatBox.innerHTML = '';
     console.log('Conversation ID:', conv.conv_id);
     fetch('/get_conv', {
@@ -726,7 +740,7 @@ function verify() {
               unlockChats();
               return;
             }
-            if (convId === conv.conv_id) {
+            if (convId === convElement.conv_id) {
               chatBox.innerHTML = '';
               chatHistory = [];
               convId = null;
