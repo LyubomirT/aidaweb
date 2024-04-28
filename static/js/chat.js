@@ -208,6 +208,16 @@ function edit(id) {
 
 
 function constructMessage(message, rawmsg, role) {  
+  // Find all edit and regen buttons and remove them
+  // This is to prevent multiple edit and regen buttons from appearing
+  const edit = document.querySelectorAll('.edit');
+  edit.forEach((element) => {
+    element.remove();
+  });
+  const regen = document.querySelectorAll('.regen');
+  regen.forEach((element) => {
+    element.remove();
+  });
   // Find ID by calculating its position in the chat history
   if (chatHistory.length > 0) {
     var id = chatHistory.length;
