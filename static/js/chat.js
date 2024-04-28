@@ -116,6 +116,8 @@ function postEdit(editedMessage) {
   chatInput.disabled = true;
   sendButton.disabled = true;
 
+  lockChats();
+
   var lastUsr = null;
   var lastAsst = null;
   var tmp_ch = null;
