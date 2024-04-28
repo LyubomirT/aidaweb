@@ -677,7 +677,25 @@ function constructConversation(conv, name=null) {
         return;
       }
       const chatHistory = data.chat_history_html;
-      chatHistory.forEach(message => {
+      chatHistory.slice(0, -2).forEach(message => {
+        if (message.role === 'USER') {
+          chatBox.innerHTML += constructMessage(message.message, message, 'USER');
+        } else {
+          chatBox.innerHTML += constructMessage(message.message, message, 'ASSISTANT');
+        }
+      });
+      // Remove all regen and edit buttons
+      const regen = document.querySelectorAll('.regen');
+      const edit = document.querySelectorAll('.edit');
+      regen.forEach((element) => {
+        element.remove();
+      });
+      edit.forEach((element) => {
+        element.remove();
+      });
+      // Append the last two messages
+      const lastTwo = chatHistory.slice(-2);
+      lastTwo.forEach(message => {
         if (message.role === 'USER') {
           chatBox.innerHTML += constructMessage(message.message, message, 'USER');
         } else {
