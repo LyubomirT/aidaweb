@@ -6,7 +6,6 @@ const username = document.getElementById('user_name');
 const userAvatar = document.getElementById('user_avatar');
 const errorModal = document.getElementById('errorModal');
 const statusText = document.getElementById('status-text');
-MathJax.startup.document.state(0);
 let chatHistory = [];  // Retrieve chat history from server
 let convId = null;  // Conversation ID
 // If there is a Discord access token in the URL, save it in local storage as OAUTH2_TOKEN
