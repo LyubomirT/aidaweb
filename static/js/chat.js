@@ -725,8 +725,13 @@ function createDropdown(conversation) {
   deleteButton.classList.add('conv-control-child');
   deleteButton.innerHTML = 'Delete';
   deleteButton.value = 'delete';
+  var uselessButton = document.createElement('div');
+  uselessButton.classList.add('useless');
+  uselessButton.classList.add('conv-control-child');
+  uselessButton.innerHTML = 'Useless';
   var optionlist = [];
   optionlist.push(deleteButton);
+  optionlist.push(uselessButton);
 
   // add event listeners
   moreButton.addEventListener('click', function(event) {
