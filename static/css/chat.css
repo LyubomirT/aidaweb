@@ -393,11 +393,39 @@ body {
   text-align: left;
   font-size: 16px;
 }
-
 .conversation p,
 .conversation button {
   margin: 0;
 }
+
+.conversation .dropdown {
+  display: none;
+  position: fixed;
+  right: 50;
+  top: 50;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 6;
+  border-radius: 5px;
+}
+
+/* in the dropdown we have custom <option> elements */
+.conversation .dropdown .conv-control-child {
+  display: block;
+  padding: 10px;
+  text-decoration: none;
+  color: #434343;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.1s cubic-bezier(0.445, 0.05, 0.55, 0.95);
+  z-index: 10;
+}
+
+.conversation .dropdown .conv-control-child:hover {
+  background-color: #e6e6e6;
+}
+
 
 .conversation button {
   background-color: #f0f0f0;

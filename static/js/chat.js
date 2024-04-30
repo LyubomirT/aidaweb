@@ -468,56 +468,7 @@ function postMessage(message) {
       convElement.conv_id = convId;
       convElement.disabled = true;
       statusText.innerHTML = data.name + ` (${convId})`;
-      const moreButton = document.createElement('button');
-      moreButton.classList.add('more');
-      moreButton.classList.add('conv-control');
-      moreButton.innerHTML = '···';
-      moreButton.addEventListener('click', function(event) {
-        event.stopPropagation();
-        // Open a dropdown menu with options
-        const dropdown = document.createElement('div');
-        dropdown.classList.add('dropdown');
-        const deleteButton = document.createElement('button');
-        deleteButton.classList.add('delete');
-        deleteButton.classList.add('conv-control-child');
-        deleteButton.innerHTML = 'Delete';
-        deleteButton.addEventListener('click', function(event) {
-          event.stopPropagation();
-          // Delete the conversation
-          lockChats();
-          fetch('/delete_conv', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              conv_id: convElement.conv_id,
-              token: oauth2Token,
-            }),
-          })
-          .then(response => response.json())
-          .then(data => {
-            if (data.error) {
-              openErrorModal(errorModal, 'Error: ' + data.error);
-              unlockChats();
-              return;
-            }
-            if (convId === convElement.conv_id) {
-              chatBox.innerHTML = '';
-              chatHistory = [];
-              convId = null;
-              statusText.innerHTML = 'New conversation';
-            }
-            // Remove the conversation element
-            convElement.remove();
-            unlockChats();
-          })
-          .catch(error => console.error('Error:', error));
-        });
-        dropdown.appendChild(deleteButton);
-        convElement.appendChild(dropdown);
-      });
-      convElement.appendChild(moreButton);
+      createDropdown(convElement);
       conversationsList.prepend(convElement);
       constructConversation(convElement, LconvName);
 
@@ -749,61 +700,90 @@ function verify() {
       convElement.appendChild(p);
       convElement.querySelector('#name').innerHTML = fixName(conv.name);
       convElement.conv_id = conv.conv_id;
-      const moreButton = document.createElement('button');
-      moreButton.classList.add('more');
-      moreButton.classList.add('conv-control');
-      moreButton.innerHTML = '···';
-      moreButton.addEventListener('click', function(event) {
-        event.stopPropagation();
-        // Open a dropdown menu with options
-        const dropdown = document.createElement('div');
-        dropdown.classList.add('dropdown');
-        const deleteButton = document.createElement('button');
-        deleteButton.classList.add('delete');
-        deleteButton.classList.add('conv-control-child');
-        deleteButton.innerHTML = 'Delete';
-        deleteButton.addEventListener('click', function(event) {
-          event.stopPropagation();
-          // Delete the conversation
-          lockChats();
-          fetch('/delete_conv', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              conv_id: conv.conv_id,
-              token: oauth2Token,
-            }),
-          })
-          .then(response => response.json())
-          .then(data => {
-            if (data.error) {
-              openErrorModal(errorModal, 'Error: ' + data.error);
-              unlockChats();
-              return;
-            }
-            if (convId === convElement.conv_id) {
-              chatBox.innerHTML = '';
-              chatHistory = [];
-              convId = null;
-              statusText.innerHTML = 'New conversation';
-            }
-            // Remove the conversation element
-            convElement.remove();
-            unlockChats();
-          })
-          .catch(error => console.error('Error:', error));
-        });
-        dropdown.appendChild(deleteButton);
-        convElement.appendChild(dropdown);
-      });
-      convElement.appendChild(moreButton);
+      createDropdown(convElement);
       conversationsList.appendChild(convElement);
       constructConversation(convElement, conv.name);
     });
   })
   .catch(error => console.error('Error:', error));
+}
+
+function createDropdown(conversation) {
+  // we'll create a button BUT it'll use an invisible select element
+  // the select element will have all the options
+
+  // create the select element
+  var moreButton = document.createElement('button');
+  moreButton.classList.add('more');
+  moreButton.classList.add('conv-control');
+  moreButton.innerHTML = '···';
+  var dropdown = document.createElement('div');
+  dropdown.classList.add('dropdown');
+  dropdown.id = `dropdown-${conversation.conv_id}`
+  var deleteButton = document.createElement('div');
+  deleteButton.classList.add('delete');
+  deleteButton.classList.add('conv-control-child');
+  deleteButton.innerHTML = 'Delete';
+  deleteButton.value = 'delete';
+  var optionlist = [];
+  optionlist.push(deleteButton);
+
+  // add event listeners
+  moreButton.addEventListener('click', function(event) {
+    event.stopPropagation();
+    dropdown.style.display = 'block';
+
+  });
+
+  dropdown.addEventListener('change', function(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    if (event.target.getAttribute('value') === 'delete') {
+      // Delete the conversation
+      lockChats();
+      fetch('/delete_conv', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          conv_id: conversation.conv_id,
+          token: oauth2Token,
+        }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          openErrorModal(errorModal, 'Error: ' + data.error);
+          unlockChats();
+          return;
+        }
+        if (convId === conversation.conv_id) {
+          chatBox.innerHTML = '';
+          chatHistory = [];
+          convId = null;
+          statusText.innerHTML = 'New conversation';
+        }
+        // Remove the conversation element
+        conversation.remove();
+        unlockChats();
+      })
+      .catch(error => console.error('Error:', error));
+    }
+  });
+
+  for (var i = 0; i < optionlist.length; i++) {
+    optionlist[i].addEventListener('click', function(event) {
+      event.stopPropagation();
+      dropdown.setAttribute('value', event.target.value);
+      dropdown.dispatchEvent(new Event('change'));
+    });
+    dropdown.appendChild(optionlist[i]);
+  }
+
+
+  moreButton.appendChild(dropdown);
+  conversation.appendChild(moreButton);
 }
 
 verify();  // Verify that the user has joined the server
