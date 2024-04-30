@@ -217,13 +217,6 @@ function constructMessage(message, rawmsg, role) {
       console.log("Removed regen button");
     });
   }
-  else if (role==="USER") {
-    edit.forEach((element) => {
-      element.remove();
-      console.log(document.querySelectorAll('.edit').length + " edit buttons left");
-      console.log("Removed edit button");
-    });
-  }
   // Find ID by calculating its position in the chat history
   if (chatHistory.length > 0) {
     var id = chatHistory.length;
@@ -255,6 +248,13 @@ function constructMessage(message, rawmsg, role) {
     rawmsg = rawmsg.message;
   } else {
     rawmsg = rawmsg;
+  }
+  if (role==="USER") {
+    edit.forEach((element) => {
+      console.log(document.querySelectorAll('.edit').length + " edit buttons left");
+      element.remove();
+      console.log("Removed edit button");
+    });
   }
   if (role === "USER") {
     message = message.replace(/(?:\r\n|\r|\n)/g, '<br>');
@@ -424,11 +424,16 @@ function postMessage(message) {
   chatInput.disabled = true;
   sendButton.disabled = true;
   newConvButton.disabled = true;
+
+  const edit = document.querySelectorAll('.edit');
+  edit.forEach((element) => {
+    element.remove();
+  });
+
   // Create a preview of the message
   chatBox.innerHTML += constructMessage(message, message, 'USER');
 
   lockChats();
-
   // If the chat history is empty, start a new conversation
   if (convId === null) {
     fetch('/new_conv', {
