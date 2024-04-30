@@ -53,16 +53,16 @@ BONUS:
     - [ ] Implement an `editname` route
     - [ ] Add an edit button to the conversation name
 
-- [ ] Allow deleting the conversation
-    - [ ] Implement a `deleteconv` route
-    - [ ] Add a delete button to the conversation name
+- [x] Allow deleting the conversation
+    - [x] Implement a `deleteconv` route
+    - [x] Add a delete button to the conversation name
         - [ ] Add a confirmation dialog
 
 - [ ] Optionally
     - [ ] Create a status bar above
         - [x] Show the conversation name
         - [x] Show the conversation ID
-        - [ ] Add a "Delete" button
+        - [x] Add a "Delete" button
         - [ ] Add a "Edit" button
         - [ ] Add a message count
 
