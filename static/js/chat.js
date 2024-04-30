@@ -730,9 +730,22 @@ function createDropdown(conversation) {
 
   // add event listeners
   moreButton.addEventListener('click', function(event) {
+    /* hide all other dropdowns */
+    var dropdowns = document.querySelectorAll('.dropdown');
+    dropdowns.forEach((dropdown) => {
+      if (dropdown.id !== `dropdown-${conversation.conv_id}`) {
+        dropdown.style.display = 'none';
+      }
+    });
     event.stopPropagation();
     dropdown.style.display = 'block';
 
+  });
+
+  document.addEventListener('click', function(event) {
+    if (event.target !== moreButton) {
+      dropdown.style.display = 'none';
+    }
   });
 
   dropdown.addEventListener('change', function(event) {
