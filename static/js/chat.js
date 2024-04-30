@@ -200,6 +200,7 @@ document.getElementById('edit-modal-close').addEventListener('click', function()
 function edit(id) {
   // Get the message from the chat history and open the edit modal
   const item = getItem(id);
+  console.log(item);
   if (item === undefined) {
     return;
   }
@@ -249,13 +250,6 @@ function constructMessage(message, rawmsg, role) {
   } else {
     rawmsg = rawmsg;
   }
-  if (role==="USER") {
-    edit.forEach((element) => {
-      console.log(document.querySelectorAll('.edit').length + " edit buttons left");
-      element.remove();
-      console.log("Removed edit button");
-    });
-  }
   if (role === "USER") {
     message = message.replace(/(?:\r\n|\r|\n)/g, '<br>');
     message = message.replace('<br><br>', '<br>');
@@ -290,6 +284,12 @@ function constructMessage(message, rawmsg, role) {
 }
 
 function getItem(id) {
+  console.log('chat history:', chatHistory)
+  if (id === null) {
+    return;
+  } else if (id==0) {
+    return chatHistory[0];
+  }
   // Get from chat history
   for (var i = 0; i < chatHistory.length; i++) {
     if (chatHistory[i].id === id) {
@@ -382,6 +382,10 @@ function regenerate() {
     const rawResponse = data.raw_response;
     const htmlResponse = data.html_response;
     chatHistory = data.chat_history;  // Update chat history from server
+    // assign each message an id
+    for (var i = 0; i < chatHistory.length; i++) {
+      chatHistory[i].id = i;
+    }
     console.log('Chat history:', chatHistory);
     response = constructMessage(htmlResponse, rawResponse, 'ASSISTANT');
     response.raw = rawResponse;
@@ -499,6 +503,10 @@ function postMessage(message) {
         const rawResponse = data.raw_response;
         const htmlResponse = data.html_response;
         chatHistory = data.chat_history;  // Update chat history from server
+        // assign each message an id
+        for (var i = 0; i < chatHistory.length; i++) {
+          chatHistory[i].id = i;
+        }
         console.log('Chat history:', chatHistory);
         response = constructMessage(htmlResponse, rawResponse, 'ASSISTANT');
         response.raw = rawResponse;
@@ -584,6 +592,10 @@ function postMessage(message) {
       const rawResponse = data.raw_response;
       const htmlResponse = data.html_response;
       chatHistory = data.chat_history;  // Update chat history from server
+      // assign each message an id
+      for (var i = 0; i < chatHistory.length; i++) {
+        chatHistory[i].id = i;
+      }
       console.log('Chat history:', chatHistory);
       response = constructMessage(htmlResponse, rawResponse, 'ASSISTANT');
       response.raw = rawResponse;
@@ -635,6 +647,10 @@ function constructConversation(conv, name=null) {
         return;
       }
       const chatHistory = data.chat_history_html;
+      // assign each message an id
+      for (var i = 0; i < chatHistory.length; i++) {
+        chatHistory[i].id = i;
+      }
       chatHistory.slice(0, -2).forEach(message => {
         if (message.role === 'USER') {
           chatBox.innerHTML += constructMessage(message.message, message, 'USER');
