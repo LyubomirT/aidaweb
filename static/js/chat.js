@@ -403,6 +403,7 @@ function regenerate() {
 }
 
 function lockChats() {
+  newConvButton.disabled = true;
   // Lock all conversations
   const conversations = document.querySelectorAll('.conversation');
   conversations.forEach((conv) => {
@@ -412,6 +413,7 @@ function lockChats() {
 }
 
 function unlockChats() {
+  newConvButton.disabled = false;
   // Unlock all conversations
   const conversations = document.querySelectorAll('.conversation');
   conversations.forEach((conv) => {
