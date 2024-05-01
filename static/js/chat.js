@@ -773,6 +773,10 @@ function createDropdown(conversation) {
     event.preventDefault();
     event.stopPropagation();
     if (event.target.getAttribute('value') === 'delete') {
+      // ask for confirmation
+      if (!confirm('Are you sure you want to delete this conversation?')) {
+        return;
+      }
       // Delete the conversation
       lockChats();
       fetch('/delete_conv', {
