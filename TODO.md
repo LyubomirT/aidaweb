@@ -56,14 +56,14 @@ BONUS:
 - [x] Allow deleting the conversation
     - [x] Implement a `deleteconv` route
     - [x] Add a delete button to the conversation name
-        - [ ] Add a confirmation dialog
+        - [x] Add a confirmation dialog
 
 - [ ] Optionally
     - [ ] Create a status bar above
         - [x] Show the conversation name
         - [x] Show the conversation ID
         - [x] Add a "Delete" button
-        - [ ] Add a "Edit" button
+        - [x] Add a "Edit" button
         - [ ] Add a message count
 
 
