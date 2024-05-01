@@ -47,19 +47,19 @@ BONUS:
         - [x] If failed, use a "Conversation #" format
     
 
---------------------- STAGE 5 --------------------- <-> CURRENT
+--------------------- STAGE 5 ---------------------
 
-- [ ] Allow editing the conversation name
-    - [ ] Implement an `editname` route
-    - [ ] Add an edit button to the conversation name
+- [x] Allow editing the conversation name
+    - [x] Implement an `editname` route
+    - [x] Add an edit button to the conversation name
 
 - [x] Allow deleting the conversation
     - [x] Implement a `deleteconv` route
     - [x] Add a delete button to the conversation name
         - [x] Add a confirmation dialog
 
-- [ ] Optionally
-    - [ ] Create a status bar above
+- [x] Optionally
+    - [x] Create a status bar above
         - [x] Show the conversation name
         - [x] Show the conversation ID
         - [x] Add a "Delete" button
@@ -67,7 +67,7 @@ BONUS:
         - [ ] Add a message count
 
 
---------------------- STAGE 6 ---------------------
+--------------------- STAGE 6 --------------------- <-> CURRENT
 
 - [ ] Drink some tea
     - [ ] Make sure it's good tea
