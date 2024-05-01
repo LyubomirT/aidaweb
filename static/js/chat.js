@@ -413,6 +413,11 @@ function lockChats() {
   conversations.forEach((conv) => {
     console.warn("Locked" + conv.innerHTML);
     conv.disabled = true;
+    // for all the children of the conversation, disable them
+    var children = conv.children;
+    for (var i = 0; i < children.length; i++) {
+      children[i].disabled = true;
+    }
   });
 }
 
@@ -422,6 +427,11 @@ function unlockChats() {
   const conversations = document.querySelectorAll('.conversation');
   conversations.forEach((conv) => {
     conv.disabled = false;
+    // for all the children of the conversation, enable them
+    var children = conv.children;
+    for (var i = 0; i < children.length; i++) {
+      children[i].disabled = false;
+    }
   });
 }
 
@@ -475,6 +485,10 @@ function postMessage(message) {
       createDropdown(convElement);
       conversationsList.prepend(convElement);
       constructConversation(convElement, LconvName);
+      children = convElement.children;
+      for (var i = 0; i < children.length; i++) {
+        children[i].disabled = true;
+      }
 
       fetch('/chat', {
         method: 'POST',
