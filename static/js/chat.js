@@ -759,9 +759,15 @@ function createDropdown(conversation) {
   uselessButton.classList.add('useless');
   uselessButton.classList.add('conv-control-child');
   uselessButton.innerHTML = 'Useless';
+  var editButton = document.createElement('div');
+  editButton.classList.add('edit-conv');
+  editButton.classList.add('conv-control-child');
+  editButton.innerHTML = 'Rename';
+  editButton.value = 'edit-conv';
   var optionlist = [];
   optionlist.push(deleteButton);
   optionlist.push(uselessButton);
+  optionlist.push(editButton);
 
   // add event listeners
   moreButton.addEventListener('click', function(event) {
@@ -818,6 +824,36 @@ function createDropdown(conversation) {
         }
         // Remove the conversation element
         conversation.remove();
+        unlockChats();
+      })
+      .catch(error => console.error('Error:', error));
+    } else if (event.target.getAttribute('value') === 'edit-conv') {
+      // Edit the conversation name
+      var newName = prompt('Enter the new name for the conversation:');
+      if (newName === null) {
+        return;
+      }
+      lockChats();
+      fetch('/rename_conv', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          conv_id: conversation.conv_id,
+          new_name: newName,
+          token: oauth2Token,
+        }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          openErrorModal(errorModal, 'Error: ' + data.error);
+          unlockChats();
+          return;
+        }
+        conversation.querySelector('#name').innerHTML = fixName(newName);
+        conversation.setAttribute('conv_name', newName);
         unlockChats();
       })
       .catch(error => console.error('Error:', error));
