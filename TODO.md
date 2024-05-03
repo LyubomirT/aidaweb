@@ -77,7 +77,7 @@ BONUS:
     - [ ] Don't drink too little
 
 - [ ] Add configuration
-    - [ ] Create a new sidebar on the right
+    - [ ] Create a new menu
        - [ ] Allow customizing the temperature
        - [ ] Allow customizing the max tokens
        - [ ] Allow customizing the preamble
