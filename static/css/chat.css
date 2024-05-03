@@ -143,6 +143,15 @@ body {
 #user_info {
   display: flex;
   align-items: center;
+  background-color: transparent;
+  transition: all 0.1s cubic-bezier(0.445, 0.05, 0.55, 0.95);
+  border-radius: 5px;
+  padding: 10px;
+}
+
+#user_info:hover {
+  cursor: pointer;
+  background-color: #dedede;
 }
 
 #user_info img {
