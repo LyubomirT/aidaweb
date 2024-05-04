@@ -869,6 +869,11 @@ function createDropdown(conversation) {
 
   for (var i = 0; i < optionlist.length; i++) {
     optionlist[i].addEventListener('click', function(event) {
+      // dropdowns
+      const dropdowns = document.querySelectorAll('.dropdown');
+      dropdowns.forEach((dropdown) => {
+        dropdown.style.display = 'none';
+      });
       event.stopPropagation();
       dropdown.setAttribute('value', event.target.value);
       dropdown.dispatchEvent(new Event('change'));
@@ -944,6 +949,11 @@ function turnIntoDropdown(element) {
   });
   for (var i = 0; i < optionlist.length; i++) {
     optionlist[i].addEventListener('click', function(event) {
+      // dropdowns
+      const dropdowns = document.querySelectorAll('.dropdown');
+      dropdowns.forEach((dropdown) => {
+        dropdown.style.display = 'none';
+      });
       event.stopPropagation();
       dropdown.setAttribute('value', event.target.value);
       dropdown.dispatchEvent(new Event('change'));
