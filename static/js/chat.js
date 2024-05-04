@@ -426,6 +426,16 @@ function lockChats() {
       children[i].disabled = true;
     }
   });
+  // find all regen buttons and disable them
+  const regen = document.querySelectorAll('.regen');
+  regen.forEach((element) => {
+    element.disabled = true;
+  });
+  // find all edit buttons and disable them
+  const edit = document.querySelectorAll('.edit');
+  edit.forEach((element) => {
+    element.disabled = true;
+  });
 }
 
 function unlockChats() {
@@ -439,6 +449,16 @@ function unlockChats() {
     for (var i = 0; i < children.length; i++) {
       children[i].disabled = false;
     }
+  });
+  // find all regen buttons and enable them
+  const regen = document.querySelectorAll('.regen');
+  regen.forEach((element) => {
+    element.disabled = false;
+  });
+  // find all edit buttons and enable them
+  const edit = document.querySelectorAll('.edit');
+  edit.forEach((element) => {
+    element.disabled = false;
   });
 }
 
