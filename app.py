@@ -484,6 +484,14 @@ def auth_discord():
 def join():
     return render_template('jointos.html')
 
+@app.route('/logout', methods=['POST', 'GET'])
+def logout():
+    data = request.json
+    token = data['token']
+    if token in savedtokens:
+        del savedtokens[token]
+    return jsonify({'logged_out': True})
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000, host='0.0.0.0')
