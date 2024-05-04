@@ -8,6 +8,7 @@ import requests
 import time
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
+import json
 
 # Load the environment variables from the .env file
 dotenv.load_dotenv()
@@ -121,11 +122,61 @@ def limit_remote_addr():
     if ip in ipban:
         return render_template('banned.html'), 403
     
+user_configs = {}
 
+def save_user_config(id, config):
+    user_configs[id] = config
+
+def get_user_config(id):
+    if id in user_configs:
+        return user_configs[id]
+    return None
+
+def delete_user_config(id):
+    if id in user_configs:
+        del user_configs[id]
+
+def store_user_config(id, config):
+    with open(f"configs/{id}.json", "w") as f:
+        f.write(json.dumps(config))
+
+def retrieve_user_config(id):
+    try:
+        with open(f"configs/{id}.json", "r") as f:
+            return json.loads(f.read())
+    except:
+        return None
 
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/config', methods=['POST'])
+@limiter.limit("5/minute")
+def config():
+    data = request.json
+    token = data['token']
+    id = get_user_id(token)
+    if id in progresses and progresses[id]:
+        return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
+    # if possible, retrieve the user's config from the file system
+    config = retrieve_user_config(id)
+    if config is None:
+        config = {}
+    return jsonify(config)
+
+@app.route('/save_config', methods=['POST'])
+@limiter.limit("5/minute")
+def save_config():
+    data = request.json
+    token = data['token']
+    config = data['config']
+    id = get_user_id(token)
+    if id in progresses and progresses[id]:
+        return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
+    save_user_config(id, config)
+    store_user_config(id, config)
+    return jsonify({'saved': True})
 
 
 @app.route('/new_conv', methods=['POST'])
