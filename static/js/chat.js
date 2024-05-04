@@ -6,6 +6,8 @@ const username = document.getElementById('user_name');
 const userAvatar = document.getElementById('user_avatar');
 const errorModal = document.getElementById('errorModal');
 const statusText = document.getElementById('status-text');
+const settingsModal = document.getElementById('settingsModal');
+const settingsModalClose = document.getElementById('settings-modal-close');
 let chatHistory = [];  // Retrieve chat history from server
 let convId = null;  // Conversation ID
 // If there is a Discord access token in the URL, save it in local storage as OAUTH2_TOKEN
@@ -27,6 +29,10 @@ errorModalClose.addEventListener('click', function() {
   closeModal(errorModal);
 });
 
+settingsModalClose.addEventListener('click', function() {
+  closeModal(settingsModal);
+});
+
 // If there is a discord token in local storage, use it to authenticate
 const oauth2Token = localStorage.getItem('OAUTH2_TOKEN');
 if (oauth2Token) {
@@ -40,6 +46,7 @@ if (oauth2Token) {
     console.log('Discord user:', data);
     username.innerHTML = data.username;
     userAvatar.src = `https://cdn.discordapp.com/avatars/${data.id}/${data.avatar}.png`;
+    turnIntoDropdown(document.getElementById("user_info"));
   })
   .catch(error => {
     console.error('Error:', error);
@@ -874,4 +881,74 @@ function createDropdown(conversation) {
   conversation.appendChild(moreButton);
 }
 
+function openSettings() {
+  settingsModal.style.display = 'block';
+}
+
+function turnIntoDropdown(element) {
+  // doesnt assign any new classes, just adds an event listener that opens a dropdown
+  // when the button is clicked
+  const dropdown = document.createElement('div');
+  dropdown.classList.add('dropdown');
+  dropdown.style.display = 'none';
+  // add options
+  var settingsButton = document.createElement('div');
+  settingsButton.classList.add('settings');
+  settingsButton.classList.add('conv-control-child');
+  settingsButton.innerHTML = 'Settings';
+  settingsButton.value = 'settings';
+  var logoutButton = document.createElement('div');
+  logoutButton.classList.add('logout');
+  logoutButton.classList.add('conv-control-child');
+  logoutButton.innerHTML = 'Log out';
+  logoutButton.value = 'logout';
+  var optionlist = [];
+  optionlist.push(settingsButton);
+  optionlist.push(logoutButton);
+  element.appendChild(dropdown);
+  element.addEventListener('click', function(event) {
+    event.stopPropagation();
+    dropdown.style.display = 'block';
+  });
+  document.addEventListener('click', function(event) {
+    if (event.target !== element) {
+      dropdown.style.display = 'none';
+    }
+  });
+
+  dropdown.addEventListener('change', function(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    if (event.target.getAttribute('value') === 'logout') {
+      // Log out the user
+      fetch('/logout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({token: oauth2Token,}),
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          openErrorModal(errorModal, 'Error: ' + data.error);
+          return;
+        }
+        localStorage.removeItem('OAUTH2_TOKEN');
+        window.location.href = '/auth/discord';
+      })
+      .catch(error => console.error('Error:', error));
+    } else if (event.target.getAttribute('value') === 'settings') {
+      openSettings();
+    }
+  });
+  for (var i = 0; i < optionlist.length; i++) {
+    optionlist[i].addEventListener('click', function(event) {
+      event.stopPropagation();
+      dropdown.setAttribute('value', event.target.value);
+      dropdown.dispatchEvent(new Event('change'));
+    });
+    dropdown.appendChild(optionlist[i]);
+  }
+}
 verify();  // Verify that the user has joined the server
