@@ -44,6 +44,42 @@
     <p id="error-message"></p>
   </div>
 </div>
+<div id="settingsModal" class="modal">
+  <div class="modal-content">
+    <span class="close" id="settings-modal-close">&times;</span>
+    <h2>Configure AIDA</h2>
+    <div id="settings-ccontent">
+      <div class="settings-item">
+        <label for="temperature">Temperature</label>
+        <input type="range" id="temperature" name="temperature" min="0.1" max="1" step="0.1">
+        <span id="temperature-value">0.5</span>
+      </div>
+      <div class="settings-item">
+        <label for="max-tokens">Max Tokens</label>
+        <input type="range" id="max-tokens" name="max-tokens" min="1" max="100" step="1">
+        <span id="max-tokens-value">50</span>
+      </div>
+      <div class="settings-item">
+        <label for="preamble-override">Custom Instructions</label>
+        <textarea id="preamble-override" rows="4" cols="50"></textarea>
+      </div>
+      <div class="settings-item">
+        <label for="model">Model</label>
+        <select id="model">
+          <option value="command">Command</option>
+          <option value="command-r">Command-R</option>
+          <option value="command-r-plus">Command-R+</option>
+        </select>
+      </div>
+      <div class="settings-item">
+        <label for="websearch">Web Search</label>
+        <select id="websearch">
+          <option value="true">Enabled</option>
+          <option value="false">Disabled</option>
+        </select>
+      </div>
+    </div>
+</div>
 <div id="svgimport">
   <p id="regen" style="display: none;">{{ url_for('static', filename='svg/refresh.svg') }}</p>
 </div>
