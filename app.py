@@ -411,32 +411,35 @@ def get_user_id(token):
 @app.route('/joined_server', methods=['POST'])
 @limiter.limit("100/10minute")
 def joined_server():
-    data = request.json
-    if 'authtoken' not in data:
-        return jsonify({'joined': False})
-    authtoken = data['authtoken']
-    serverid = '1079761115636043926'
-    g1 = requests.get(f"https://discord.com/api/users/@me/guilds", headers={"Authorization": f"Bearer {authtoken}"})
-    g1 = g1.json()
-    g2 = requests.get(f"https://discord.com/api/users/@me", headers={"Authorization": f"Bearer {authtoken}"})
-    g2 = g2.json()
-    for i in g1:
-        if i['id'] == serverid:
-            savedtokens[authtoken] = {'id': None, 'expiry': None}
-            if authtoken not in savedtokens:
+    try:
+        data = request.json
+        if 'authtoken' not in data:
+            return jsonify({'joined': False})
+        authtoken = data['authtoken']
+        serverid = '1079761115636043926'
+        g1 = requests.get(f"https://discord.com/api/users/@me/guilds", headers={"Authorization": f"Bearer {authtoken}"})
+        g1 = g1.json()
+        g2 = requests.get(f"https://discord.com/api/users/@me", headers={"Authorization": f"Bearer {authtoken}"})
+        g2 = g2.json()
+        for i in g1:
+            if i['id'] == serverid:
                 savedtokens[authtoken] = {'id': None, 'expiry': None}
-            savedtokens[authtoken]['expiry'] = time.time() + TOKEN_EXPIRY_TIME
-            savedtokens[authtoken]['id'] = int(g2['id'])
-            if data.get('give_convs', True):
-                userid = savedtokens[authtoken]['id']
-                # get all conversations associated with the user
-                try:
-                    user_convs = [{'conv_id': conv_id, 'name': convnames[userid][conv_id]} for conv_id in conversations[userid]]
-                    print(user_convs)
-                except:
-                    user_convs = []
-                return jsonify({'joined': True, 'conversations': user_convs})
-            return jsonify({'joined': True})
+                if authtoken not in savedtokens:
+                    savedtokens[authtoken] = {'id': None, 'expiry': None}
+                savedtokens[authtoken]['expiry'] = time.time() + TOKEN_EXPIRY_TIME
+                savedtokens[authtoken]['id'] = int(g2['id'])
+                if data.get('give_convs', True):
+                    userid = savedtokens[authtoken]['id']
+                    # get all conversations associated with the user
+                    try:
+                        user_convs = [{'conv_id': conv_id, 'name': convnames[userid][conv_id]} for conv_id in conversations[userid]]
+                        print(user_convs)
+                    except:
+                        user_convs = []
+                    return jsonify({'joined': True, 'conversations': user_convs})
+                return jsonify({'joined': True})
+    except:
+        print("Could not verify user. Sending them to join page.")
 
 
 @app.route('/get_convs', methods=['POST'])
