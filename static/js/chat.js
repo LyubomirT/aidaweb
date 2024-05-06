@@ -907,7 +907,7 @@ function createDropdown(conversation) {
 }
 
 function openSettings() {
-  settingsModal.style.display = 'block';
+  settingsModal.style.display = 'flex';
 }
 
 function turnIntoDropdown(element) {

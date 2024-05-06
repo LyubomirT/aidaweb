@@ -69,12 +69,12 @@ BONUS:
 
 --------------------- STAGE 6 --------------------- <-> CURRENT
 
-- [ ] Drink some tea
-    - [ ] Make sure it's good tea
-    - [ ] Don't spill it
-    - [ ] Don't burn yourself
-    - [ ] Don't drink too much
-    - [ ] Don't drink too little
+- [x] Drink some tea
+    - [x] Make sure it's good tea
+    - [x] Don't spill it
+    - [x] Don't burn yourself
+    - [x] Don't drink too much
+    - [x] Don't drink too little
 
 - [ ] Add configuration
     - [x] Create a new menu

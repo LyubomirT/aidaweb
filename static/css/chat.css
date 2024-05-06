@@ -505,3 +505,26 @@ br {
   display: block;
   margin: 5px 0;
 }
+
+#settingsModal {
+  /* Center the modal content */
+  display: none;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
+#settingsModal .settings-item {
+  margin-bottom: 20px;
+}
+
+#settingsModal button {
+  background-color: #8346f3;
+  color: white;
+  padding: 10px 15px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
