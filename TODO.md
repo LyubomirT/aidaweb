@@ -77,11 +77,11 @@ BONUS:
     - [ ] Don't drink too little
 
 - [ ] Add configuration
-    - [ ] Create a new menu
-       - [ ] Allow customizing the temperature
-       - [ ] Allow customizing the max tokens
-       - [ ] Allow customizing the preamble
-       - [ ] Allow enabling websearch
+    - [x] Create a new menu
+       - [x] Allow customizing the temperature
+       - [x] Allow customizing the max tokens
+       - [x] Allow customizing the preamble
+       - [x] Allow enabling websearch
     - [ ] Implement a `configsave` route
        - [ ] Make sure the config is saved per-conversation
        - [ ] Associate convIDs along with the config in JSON
