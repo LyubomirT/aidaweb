@@ -341,6 +341,7 @@ body {
   background-color: #f8f8f8;
   resize: none;
   font-family: inherit;
+  margin-top: 5px;
 }
 
 #save-edit {
@@ -527,4 +528,27 @@ br {
   border: none;
   border-radius: 5px;
   cursor: pointer;
+}
+
+#settingsModal button:hover {
+  background-color: #7e4ce9;
+}
+
+#settingsModal select {
+  width: 100%;
+  padding: 12px 20px;
+  box-sizing: border-box;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  background-color: #f8f8f8;
+  font-family: inherit;
+  margin-top: 5px;
+}
+
+#settingsModal input[type="range"] {
+  width: 100%;
+  /* No padding or border for range input */
+  border: none;
+  padding: 0;
+  margin-top: 5px;
 }
