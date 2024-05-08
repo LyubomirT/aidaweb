@@ -130,18 +130,19 @@ def handle_too_many_requests(error):
   message = "You've exceeded the request limit, please try again later."
   return make_response(jsonify({"error": message}), 429)
 
-def process_config(config):
+def process_config(_config_):
+    _config_ = json.loads(_config_)
     newconfig = {}
-    if 'temperature' in config:
-        newconfig['temperature'] = float(config['temperature'])
-    if 'max_tokens' in config:
-        newconfig['max_tokens'] = int(config['max_tokens'])
-    if 'model' in config:
-        newconfig['model'] = config['model']
-    if 'preamble_override' in config:
-        newconfig['preamble_override'] = config['preamble_override']
-    if 'websearch' in config:
-        newconfig['websearch'] = config['websearch']
+    if 'temperature' in _config_:
+        newconfig['temperature'] = float(_config_['temperature'])
+    if 'max_tokens' in _config_:
+        newconfig['max_tokens'] = int(_config_['max_tokens'])
+    if 'model' in _config_:
+        newconfig['model'] = _config_['model']
+    if 'preamble_override' in _config_:
+        newconfig['preamble_override'] = _config_['preamble_override']
+    if 'websearch' in _config_:
+        newconfig['websearch'] = _config_['websearch']
     return newconfig
 
 
@@ -259,9 +260,14 @@ def regen():
         return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
     progresses[userid] = True
     chat_history.pop()  # Remove the last assistant response
-    response = client.chat(message=chat_history[-1]['message'],
+    if config_['websearch'] != 'true':
+        response = client.chat(message=chat_history[-1]['message'],
                            chat_history=chat_history[:-1],
                            temperature=config_['temperature'], max_tokens=config_['max_tokens'])
+    else:
+        response = client.chat(message=chat_history[-1]['message'],
+                           chat_history=chat_history[:-1],
+                           temperature=config_['temperature'], max_tokens=config_['max_tokens'], connectors=[{'id': 'websearch'}])
     response = response.text
     chat_history.append({"role": "ASSISTANT", "message": response})  # Add assistant response to history
 
@@ -307,9 +313,14 @@ def edit():
         return jsonify({'error': 'Message cannot be empty.'}), 400
     progresses[userid] = True
     chat_history[-2] = {"role": "USER", "message": new_message}
-    response = client.chat(message=new_message,
+    if config_['websearch'] != 'true':
+        response = client.chat(message=new_message,
                            chat_history=chat_history[:-1],
                            temperature=config_['temperature'], max_tokens=config_['max_tokens'])
+    else:
+        response = client.chat(message=new_message,
+                           chat_history=chat_history[:-1],
+                           temperature=config_['temperature'], max_tokens=config_['max_tokens'], connectors=[{'id': 'websearch'}])
     response = response.text
     chat_history.pop()
     chat_history.append({"role": "ASSISTANT", "message": response})  # Add assistant response to history
