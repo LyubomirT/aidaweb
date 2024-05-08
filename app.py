@@ -130,10 +130,19 @@ def handle_too_many_requests(error):
   message = "You've exceeded the request limit, please try again later."
   return make_response(jsonify({"error": message}), 429)
 
-config_ = {
-    "temperature": 0.5,
-    "max_tokens": 400
-}
+def process_config(config):
+    newconfig = {}
+    if 'temperature' in config:
+        newconfig['temperature'] = float(config['temperature'])
+    if 'max_tokens' in config:
+        newconfig['max_tokens'] = int(config['max_tokens'])
+    if 'model' in config:
+        newconfig['model'] = config['model']
+    if 'preamble_override' in config:
+        newconfig['preamble_override'] = config['preamble_override']
+    if 'websearch' in config:
+        newconfig['websearch'] = config['websearch']
+    return newconfig
 
 
 @app.route('/chat', methods=['POST'])
@@ -147,6 +156,7 @@ def chat():
     if not check_join(token):
         return redirect('/join')
     userid = get_user_id(token)
+    config_ = process_config(retrieve_user_config(userid))
     if userid in progresses and progresses[userid]:
         return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
     if message.strip() == "":
@@ -236,6 +246,7 @@ def regen():
     if not check_join(token):
         return redirect('/join')
     userid = get_user_id(token)
+    config_ = process_config(retrieve_user_config(userid))
     chat_history = conversations[userid][conv_id]
     if userid in progresses and progresses[userid]:
         return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
@@ -281,6 +292,7 @@ def edit():
     conv_id = data['conv_id']
     token = data['token']
     userid = get_user_id(token)
+    config_ = process_config(retrieve_user_config(userid))
     chat_history = conversations[userid][conv_id]
     if userid in progresses and progresses[userid]:
         return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
