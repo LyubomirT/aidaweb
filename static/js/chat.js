@@ -13,6 +13,7 @@ const temperatureValue = document.getElementById('temperature-value');
 const maxTokens = document.getElementById('max-tokens');
 const maxTokensValue = document.getElementById('max-tokens-value');
 const customInstructions = document.getElementById('preamble-override');
+const saveSettingsButton = document.getElementById('save-settings');
 const model = document.getElementById('model');
 const websearch = document.getElementById('websearch');
 let chatHistory = [];  // Retrieve chat history from server
@@ -46,6 +47,69 @@ settingsTemperature.addEventListener('input', function() {
 
 maxTokens.addEventListener('input', function() {
   maxTokensValue.innerHTML = maxTokens.value;
+});
+
+function loadConfig() {
+  if (oauth2Token) {
+    fetch('/config', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({token: oauth2Token,}),
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log('Config:', data);
+      if (data.temperature !== undefined && data.temperature !== null) {
+        settingsTemperature.value = data.temperature;
+        temperatureValue.innerHTML = data.temperature;
+      }
+      if (data.max_tokens !== undefined && data.max_tokens !== null) {
+        maxTokens.value = data.max_tokens;
+        maxTokensValue.innerHTML = data.max_tokens;
+      }
+      if (data.preamble_override !== undefined && data.preamble_override !== null) {
+        customInstructions.value = data.preamble_override;
+      }
+      if (data.model !== undefined && data.model !== null) {
+        model.value = data.model;
+      }
+      if (data.websearch !== undefined && data.websearch !== null) {
+        websearch.value = data.websearch;
+      }
+    })
+    .catch(error => console.error('Error:', error));
+  }
+}
+
+function saveConfig() {
+  fetch('/save_config', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      token: oauth2Token,
+      config: JSON.stringify({
+        temperature: settingsTemperature.value,
+        max_tokens: maxTokens.value,
+        preamble_override: customInstructions.value,
+        model: model.value,
+        websearch: websearch.value,
+      }),
+    }),
+  })
+  .then(response => response.json())
+  .then(data => {
+    console.log('Config saved:', data);
+    closeModal(settingsModal);
+  })
+  .catch(error => console.error('Error:', error));
+}
+
+saveSettingsButton.addEventListener('click', function() {
+  saveConfig();
 });
 
 // If there is a discord token in local storage, use it to authenticate
@@ -429,6 +493,8 @@ function regenerate() {
 }
 
 function lockChats() {
+  chatInput.disabled = true;
+  sendButton.disabled = true;
   newConvButton.disabled = true;
   // Lock all conversations
   const conversations = document.querySelectorAll('.conversation');
@@ -454,6 +520,8 @@ function lockChats() {
 }
 
 function unlockChats() {
+  chatInput.disabled = false;
+  sendButton.disabled = false;
   newConvButton.disabled = false;
   // Unlock all conversations
   const conversations = document.querySelectorAll('.conversation');
@@ -747,6 +815,7 @@ function constructConversation(conv, name=null) {
 }
 
 function verify() {
+  lockChats();
   fetch('/joined_server', {
     method: 'POST',
     headers: {
@@ -776,6 +845,8 @@ function verify() {
       conversationsList.appendChild(convElement);
       constructConversation(convElement, conv.name);
     });
+    loadConfig();
+    unlockChats();
   })
   .catch(error => console.error('Error:', error));
 }
