@@ -170,9 +170,16 @@ def chat():
     chat_history.append({"role": "USER", "message": message})  # Add user message to history
 
     # Send the updated chat history
-    response = client.chat(message=message,
+    if config_['websearch'] != 'true':
+        response = client.chat(message=message,
                            chat_history=chat_history,
-                           temperature=config_['temperature'], max_tokens=config_['max_tokens'])
+                           temperature=config_['temperature'], max_tokens=config_['max_tokens'], 
+                           model=config_['model'], preamble=config_['preamble_override'])
+    else:
+        response = client.chat(message=message,
+                           chat_history=chat_history,
+                           temperature=config_['temperature'], max_tokens=config_['max_tokens'], 
+                           model=config_['model'], preamble=config_['preamble_override'], connectors=[{'id': 'websearch'}])
     response = response.text
     chat_history.append({"role": "ASSISTANT", "message": response})  # Add assistant response to history
 
