@@ -12,6 +12,9 @@ const settingsTemperature = document.getElementById('temperature');
 const temperatureValue = document.getElementById('temperature-value');
 const maxTokens = document.getElementById('max-tokens');
 const maxTokensValue = document.getElementById('max-tokens-value');
+const customInstructions = document.getElementById('preamble-override');
+const model = document.getElementById('model');
+const websearch = document.getElementById('websearch');
 let chatHistory = [];  // Retrieve chat history from server
 let convId = null;  // Conversation ID
 // If there is a Discord access token in the URL, save it in local storage as OAUTH2_TOKEN
