@@ -8,6 +8,10 @@ const errorModal = document.getElementById('errorModal');
 const statusText = document.getElementById('status-text');
 const settingsModal = document.getElementById('settingsModal');
 const settingsModalClose = document.getElementById('settings-modal-close');
+const settingsTemperature = document.getElementById('temperature');
+const temperatureValue = document.getElementById('temperature-value');
+const maxTokens = document.getElementById('max-tokens');
+const maxTokensValue = document.getElementById('max-tokens-value');
 let chatHistory = [];  // Retrieve chat history from server
 let convId = null;  // Conversation ID
 // If there is a Discord access token in the URL, save it in local storage as OAUTH2_TOKEN
@@ -31,6 +35,14 @@ errorModalClose.addEventListener('click', function() {
 
 settingsModalClose.addEventListener('click', function() {
   closeModal(settingsModal);
+});
+
+settingsTemperature.addEventListener('input', function() {
+  temperatureValue.innerHTML = settingsTemperature.value;
+});
+
+maxTokens.addEventListener('input', function() {
+  maxTokensValue.innerHTML = maxTokens.value;
 });
 
 // If there is a discord token in local storage, use it to authenticate
