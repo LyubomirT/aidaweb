@@ -262,11 +262,11 @@ def regen():
     chat_history.pop()  # Remove the last assistant response
     if config_['websearch'] != 'true':
         response = client.chat(message=chat_history[-1]['message'],
-                           chat_history=chat_history[:-1],
+                           chat_history=chat_history[:-1], preamble=config_['preamble_override'], model=config_['model'],
                            temperature=config_['temperature'], max_tokens=config_['max_tokens'])
     else:
         response = client.chat(message=chat_history[-1]['message'],
-                           chat_history=chat_history[:-1],
+                           chat_history=chat_history[:-1], preamble=config_['preamble_override'], model=config_['model'],
                            temperature=config_['temperature'], max_tokens=config_['max_tokens'], connectors=[{'id': 'websearch'}])
     response = response.text
     chat_history.append({"role": "ASSISTANT", "message": response})  # Add assistant response to history
@@ -315,11 +315,11 @@ def edit():
     chat_history[-2] = {"role": "USER", "message": new_message}
     if config_['websearch'] != 'true':
         response = client.chat(message=new_message,
-                           chat_history=chat_history[:-1],
+                           chat_history=chat_history[:-1], preamble=config_['preamble_override'], model=config_['model'],
                            temperature=config_['temperature'], max_tokens=config_['max_tokens'])
     else:
         response = client.chat(message=new_message,
-                           chat_history=chat_history[:-1],
+                           chat_history=chat_history[:-1], preamble=config_['preamble_override'], model=config_['model'],
                            temperature=config_['temperature'], max_tokens=config_['max_tokens'], connectors=[{'id': 'websearch'}])
     response = response.text
     chat_history.pop()
