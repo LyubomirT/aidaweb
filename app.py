@@ -130,7 +130,7 @@ def handle_too_many_requests(error):
   message = "You've exceeded the request limit, please try again later."
   return make_response(jsonify({"error": message}), 429)
 
-config = {
+config_ = {
     "temperature": 0.5,
     "max_tokens": 400
 }
@@ -162,7 +162,7 @@ def chat():
     # Send the updated chat history
     response = client.chat(message=message,
                            chat_history=chat_history,
-                           temperature=config['temperature'], max_tokens=config['max_tokens'])
+                           temperature=config_['temperature'], max_tokens=config_['max_tokens'])
     response = response.text
     chat_history.append({"role": "ASSISTANT", "message": response})  # Add assistant response to history
 
@@ -243,7 +243,7 @@ def regen():
     chat_history.pop()  # Remove the last assistant response
     response = client.chat(message=chat_history[-1]['message'],
                            chat_history=chat_history[:-1],
-                           temperature=config['temperature'], max_tokens=config['max_tokens'])
+                           temperature=config_['temperature'], max_tokens=config_['max_tokens'])
     response = response.text
     chat_history.append({"role": "ASSISTANT", "message": response})  # Add assistant response to history
 
@@ -290,7 +290,7 @@ def edit():
     chat_history[-2] = {"role": "USER", "message": new_message}
     response = client.chat(message=new_message,
                            chat_history=chat_history[:-1],
-                           temperature=config['temperature'], max_tokens=config['max_tokens'])
+                           temperature=config_['temperature'], max_tokens=config_['max_tokens'])
     response = response.text
     chat_history.pop()
     chat_history.append({"role": "ASSISTANT", "message": response})  # Add assistant response to history
