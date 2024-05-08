@@ -61,6 +61,7 @@ function loadConfig() {
     .then(response => response.json())
     .then(data => {
       console.log('Config:', data);
+      data = JSON.parse(data);
       if (data.temperature !== undefined && data.temperature !== null) {
         settingsTemperature.value = data.temperature;
         temperatureValue.innerHTML = data.temperature;
