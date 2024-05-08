@@ -76,7 +76,7 @@ BONUS:
     - [x] Don't drink too much
     - [x] Don't drink too little
 
-- [ ] Add configuration
+- [x] Add configuration
     - [x] Create a new menu
        - [x] Allow customizing the temperature
        - [x] Allow customizing the max tokens
@@ -89,6 +89,9 @@ BONUS:
          - [ ] Make sure the config is loaded per-conversation
     - [ ] Delete the config when the conversation is deleted
     - [ ] Do not allow the user to change the config if the conversation is not empty
+
+^^ I took a different route, but...
+IT JUST WORKS (No, I'm not Todd Howard)
 
 --------------------- STAGE 7 ---------------------
 
