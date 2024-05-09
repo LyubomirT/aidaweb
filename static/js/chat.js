@@ -14,6 +14,7 @@ const maxTokens = document.getElementById('max-tokens');
 const maxTokensValue = document.getElementById('max-tokens-value');
 const customInstructions = document.getElementById('preamble-override');
 const saveSettingsButton = document.getElementById('save-settings');
+const resetSettingsButton = document.getElementById('reset-settings');
 const model = document.getElementById('model');
 const websearch = document.getElementById('websearch');
 let chatHistory = [];  // Retrieve chat history from server
@@ -111,6 +112,22 @@ function saveConfig() {
 
 saveSettingsButton.addEventListener('click', function() {
   saveConfig();
+});
+
+function resetConfig() {
+  settingsTemperature.value = 0.5;
+  temperatureValue.innerHTML = 0.5;
+  maxTokens.value = 500;
+  maxTokensValue.innerHTML = 500;
+  customInstructions.value = '';
+  model.value = 'command-r';
+  websearch.value = 'true';
+}
+
+resetSettingsButton.addEventListener('click', function() {
+  if (confirm('Are you sure you want to reset the settings?')) {
+    resetConfig();
+  }
 });
 
 // If there is a discord token in local storage, use it to authenticate
@@ -418,11 +435,12 @@ function deleteLast() {
 
 function fixName(name) {
   // Replace all other symbols that come after the symbol 20 with ...
-  if (name.length > 26) {
-    name = name.substring(0, 25) + '...';
+  if (name.length > 20) {
+    name = name.substring(0, 20) + '...';
   }
   // BETTER WAY TO DO THIS IS TO REPLACE IT BY WORDS INSTEAD OF CHARACTERS (LIKE EVERY WORD AFTER OR IN THE 20TH CHARACTER)
   // EXCEPTION: IF ONE WORD, THEN BY CHARACTERS
+  /*
   if (name.length > 30 && name.indexOf(' ') !== -1) {
     // by words
     var words = name.split(' ');
@@ -435,6 +453,7 @@ function fixName(name) {
     }
     name = newname + '...';
   }
+  */
   return name;
 }
 
@@ -1051,6 +1070,7 @@ function turnIntoDropdown(element) {
       })
       .catch(error => console.error('Error:', error));
     } else if (event.target.getAttribute('value') === 'settings') {
+      loadConfig();
       openSettings();
     }
   });
