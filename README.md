@@ -1,6 +1,6 @@
 # AIDA Web Is A Work In Progress
 
-At the moment we're at the `6th` stage of the `1st` category out of `14` stages and `3` categories.
+At the moment we're at the `7th` stage of the `1st` category out of `14` stages and `3` categories.
 
 ## If you want to help us, you can:
 
