@@ -180,7 +180,7 @@ def chat():
         response = client.chat(message=message,
                            chat_history=chat_history,
                            temperature=config_['temperature'], max_tokens=config_['max_tokens'], 
-                           model=config_['model'], preamble=config_['preamble_override'], connectors=[{'id': 'websearch'}])
+                           model=config_['model'], preamble=config_['preamble_override'], connectors=[{'id': 'web-search'}])
     response = response.text
     chat_history.append({"role": "ASSISTANT", "message": response})  # Add assistant response to history
 
@@ -267,7 +267,7 @@ def regen():
     else:
         response = client.chat(message=chat_history[-1]['message'],
                            chat_history=chat_history[:-1], preamble=config_['preamble_override'], model=config_['model'],
-                           temperature=config_['temperature'], max_tokens=config_['max_tokens'], connectors=[{'id': 'websearch'}])
+                           temperature=config_['temperature'], max_tokens=config_['max_tokens'], connectors=[{'id': 'web-search'}])
     response = response.text
     chat_history.append({"role": "ASSISTANT", "message": response})  # Add assistant response to history
 
@@ -320,7 +320,7 @@ def edit():
     else:
         response = client.chat(message=new_message,
                            chat_history=chat_history[:-1], preamble=config_['preamble_override'], model=config_['model'],
-                           temperature=config_['temperature'], max_tokens=config_['max_tokens'], connectors=[{'id': 'websearch'}])
+                           temperature=config_['temperature'], max_tokens=config_['max_tokens'], connectors=[{'id': 'web-search'}])
     response = response.text
     chat_history.pop()
     chat_history.append({"role": "ASSISTANT", "message": response})  # Add assistant response to history

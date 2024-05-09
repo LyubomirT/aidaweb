@@ -515,6 +515,7 @@ function regenerate() {
 function lockChats() {
   chatInput.disabled = true;
   sendButton.disabled = true;
+  sendButton.innerHTML = '<i class="fi fi-rr-menu-dots"></i>';
   newConvButton.disabled = true;
   // Lock all conversations
   const conversations = document.querySelectorAll('.conversation');
@@ -542,6 +543,7 @@ function lockChats() {
 function unlockChats() {
   chatInput.disabled = false;
   sendButton.disabled = false;
+  sendButton.innerHTML = '<i class="fi fi-rr-paper-plane-top"></i>';
   newConvButton.disabled = false;
   // Unlock all conversations
   const conversations = document.querySelectorAll('.conversation');
