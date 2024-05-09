@@ -95,17 +95,17 @@ IT JUST WORKS (No, I'm not Todd Howard)
 
 --------------------- STAGE 7 ---------------------
 
-- [ ] Add proper timeouts (need to wait 3s between any action)
-    - [ ] Implement a `timeout` route
-    - [ ] Implement a `timeout` function
-    - [ ] Implement a `timeout` check in the backend
+- [x] Add proper timeouts (need to wait 3s between any action)
+    - [x] Implement a `timeout` route
+    - [x] Implement a `timeout` function
+    - [x] Implement a `timeout` check in the backend
 
-- [ ] Add a "typing" indicator
-    - [ ] If no response is received yet, show a "typing" indicator
+- [x] Add a "typing" indicator
+    - [x] If no response is received yet, show a "typing" indicator
 
-- [ ] Allow stopping the AI
-    - [ ] Implement a `stop` route
-    - [ ] Implement a stop button
+- [x] Allow stopping the AI
+    - [x] Implement a `stop` route
+    - [x] Implement a stop button
 
 
 --------------------- STAGE 8 ---------------------
