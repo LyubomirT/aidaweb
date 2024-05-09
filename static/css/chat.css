@@ -553,3 +553,12 @@ br {
   padding: 0;
   margin-top: 5px;
 }
+
+.secondary {
+  color: #000000 !important;
+  background-color: #f0f0f0 !important;
+}
+
+.secondary:hover {
+  background-color: #e6e6e6 !important;
+}
