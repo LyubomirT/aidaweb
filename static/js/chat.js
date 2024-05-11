@@ -1035,9 +1035,15 @@ function turnIntoDropdown(element) {
   logoutButton.classList.add('conv-control-child');
   logoutButton.innerHTML = 'Log out';
   logoutButton.value = 'logout';
+  var tokenAmount = document.createElement('div');
+  tokenAmount.classList.add('token-amount');
+  tokenAmount.classList.add('conv-control-child');
+  tokenAmount.innerHTML = '0 AIDA Tokens';
+  tokenAmount.value = 'tokens';
   var optionlist = [];
   optionlist.push(settingsButton);
   optionlist.push(logoutButton);
+  optionlist.push(tokenAmount);
   element.appendChild(dropdown);
   element.addEventListener('click', function(event) {
     event.stopPropagation();
@@ -1048,6 +1054,22 @@ function turnIntoDropdown(element) {
       dropdown.style.display = 'none';
     }
   });
+
+  fetch('/get_tokens', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({token: oauth2Token,}),
+  }).then(response => response.json())
+  .then(data => {
+    console.log('Tokens:', data);
+    if (data.error) {
+      openErrorModal(errorModal, 'Error: ' + data.error);
+      return;
+    }
+    tokenAmount.innerHTML = data.tokens + ' AIDA Tokens';
+  })
 
   dropdown.addEventListener('change', function(event) {
     event.preventDefault();
