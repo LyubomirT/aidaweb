@@ -73,6 +73,22 @@ def retrieve_user_config(id):
 def index():
     return render_template('index.html')
 
+def get_tokens_by_id(id):
+    aidatokens = 0
+    response = requests.post("https://aida-token-api-d4fa1941f7a6.herokuapp.com/api/{id}".format(id=id), 
+                  headers={"authtoken": os.getenv("OTOKEN")})
+    if response.status_code == 200 and not response.json()['error']:
+        aidatokens = response.json()['aidatokens']
+    return aidatokens
+
+@app.route('/get_tokens', methods=['POST'])
+def get_tokens():
+    data = request.json
+    token = data['token']
+    id = get_user_id(token)
+    return jsonify({'tokens': get_tokens_by_id(id)})
+    
+
 @app.route('/config', methods=['POST'])
 @limiter.limit("5/minute")
 def config():
