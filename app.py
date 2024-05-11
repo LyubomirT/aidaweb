@@ -75,8 +75,8 @@ def index():
 
 def get_tokens_by_id(id):
     response = requests.post("https://aida-token-api-d4fa1941f7a6.herokuapp.com/api/{id}".format(id=id), 
-                  headers={"authtoken": os.getenv("OKEY")})
-    if response.status_code == 200 and not response.json()['error']:
+                  headers={"apikey": os.getenv("OKEY")})
+    if response.status_code == 200 and not response.json().get('error'):
         aidatokens = response.json()['aidatokens']
     elif response.json()['error']:
         aidatokens = 0
@@ -87,7 +87,7 @@ def get_tokens_by_id(id):
 def get_tokens():
     data = request.json
     token = data['token']
-    id = str(get_user_id(token))
+    id = get_user_id(token)
     return jsonify({'tokens': get_tokens_by_id(id)})
     
 
