@@ -1023,6 +1023,7 @@ function turnIntoDropdown(element) {
   // when the button is clicked
   const dropdown = document.createElement('div');
   dropdown.classList.add('dropdown');
+  dropdown.classList.add('movethehellup');
   dropdown.style.display = 'none';
   // add options
   var settingsButton = document.createElement('div');
