@@ -646,6 +646,7 @@ function postMessage(message) {
           unlockChats();
           return;
         }
+        setTokens(data.tokens);
         const rawResponse = data.raw_response;
         const htmlResponse = data.html_response;
         chatHistory = data.chat_history;  // Update chat history from server
@@ -735,6 +736,7 @@ function postMessage(message) {
         unlockChats();
         return;
       }
+      setTokens(data.tokens);
       const rawResponse = data.raw_response;
       const htmlResponse = data.html_response;
       chatHistory = data.chat_history;  // Update chat history from server
@@ -1016,6 +1018,11 @@ function createDropdown(conversation) {
 
 function openSettings() {
   settingsModal.style.display = 'flex';
+}
+
+function setTokens(tokens) {
+  const tokenAmount = document.querySelector('.token-amount');
+  tokenAmount.innerHTML = tokens + ' AIDA Tokens';
 }
 
 function turnIntoDropdown(element) {
