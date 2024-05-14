@@ -309,6 +309,12 @@ def regen():
         return redirect('/join')
     userid = get_user_id(token)
     config_ = process_config(retrieve_user_config(userid))
+    maxtokens_char = config_['max_tokens'] * 3
+    tokens = get_tokens_by_id(userid)
+    if tokens < 1:
+        return jsonify({'error': 'You do not have enough tokens to continue chatting. Please buy more at The Orange Squad to generate more responses.'}), 402
+    if tokens * 100 < maxtokens_char:
+        return jsonify({'error': 'Your maximum token limit is too high for your current token balance. Please lower it to continue chatting, or buy more tokens at The Orange Squad to generate more responses.'}), 402
     chat_history = conversations[userid][conv_id]
     if userid in progresses and progresses[userid]:
         return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
@@ -328,6 +334,14 @@ def regen():
     # Convert markdown response to HTML
     html_response = markdown2.markdown(response, extras=["tables", "fenced-code-blocks", "spoiler", "strike"])
     progresses[userid] = False
+
+    # count the amount of characters in the response and subtract that from the user's tokens
+    length = len(response)
+    amount = length // 100
+    if amount < 1:
+        amount = 1
+    if not tapiaction('take', amount, str(userid)):
+        return jsonify({'error': 'Could not take tokens from your account. Please try again later.'}), 500
 
     return jsonify({'raw_response': response, 'html_response': html_response, 'chat_history': chat_history})
 
