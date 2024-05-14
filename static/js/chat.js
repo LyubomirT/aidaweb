@@ -1104,6 +1104,22 @@ function turnIntoDropdown(element) {
     } else if (event.target.getAttribute('value') === 'settings') {
       loadConfig();
       openSettings();
+    } else if (event.target.getAttribute('value') === 'tokens') {
+      fetch('gotomytokens', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({token: oauth2Token,}),
+      }).then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          openErrorModal(errorModal, 'Error: ' + data.error);
+          return;
+        }
+        url = data.url
+        window.location.href = url;
+      });
     }
   });
   for (var i = 0; i < optionlist.length; i++) {
