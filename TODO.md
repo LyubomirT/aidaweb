@@ -67,7 +67,7 @@ BONUS:
         - [ ] Add a message count
 
 
---------------------- STAGE 6 --------------------- <-> CURRENT
+--------------------- STAGE 6 ---------------------
 
 - [x] Drink some tea
     - [x] Make sure it's good tea
@@ -128,7 +128,7 @@ IT JUST WORKS (No, I'm not Todd Howard)
     - [ ] If we fail to get data from the Discord DB handler, show a "Connection Failure" message
         - [ ] Make sure to show that it's something on our end, not the user's
 
---------------------- STAGE 9 ---------------------
+--------------------- STAGE 9 --------------------- <-> CURRENT
 
 - [ ] Add sample starters
     - [ ] If the conversation is empty, show a list of sample starters
