@@ -110,7 +110,7 @@ IT JUST WORKS (No, I'm not Todd Howard)
 
 --------------------- STAGE 8 ---------------------
 
-- [ ] Limit usage
+- [x] Limit usage
     - [ ] Implement a `limit` route for information
        - [ ] The POST request will check if the user can do the action
     - [ ] Set restrictions
@@ -119,12 +119,12 @@ IT JUST WORKS (No, I'm not Todd Howard)
         - [ ] Boosters get a 40% discount
         - [ ] Check based on the roles
     
-- [ ] Add a display for the amount of tokens you currently have
+- [x] Add a display for the amount of tokens you currently have
     - [ ] Implement a `tokens` route
     - [ ] Implement a `tokens` function
     - [ ] Implement a `tokens` check in the backend
 
-- [ ] Add a "Connection Failure" message
+- [x] Add a "Connection Failure" message
     - [ ] If we fail to get data from the Discord DB handler, show a "Connection Failure" message
         - [ ] Make sure to show that it's something on our end, not the user's
 
