@@ -85,62 +85,74 @@ def get_tokens_by_id(id):
 
 @app.route('/get_tokens', methods=['POST'])
 def get_tokens():
-    data = request.json
-    token = data['token']
-    id = get_user_id(token)
-    return jsonify({'tokens': get_tokens_by_id(id)})
+    try:
+        data = request.json
+        token = data['token']
+        id = get_user_id(token)
+        return jsonify({'tokens': get_tokens_by_id(id)})
+    except Exception as e:
+        return jsonify({'error': 'Could not retrieve token balance. Please try again later.'}), 500
     
 
 @app.route('/config', methods=['POST'])
 @limiter.limit("5/minute")
 def config():
-    data = request.json
-    token = data['token']
-    id = get_user_id(token)
-    if id in progresses and progresses[id]:
-        return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
-    # if possible, retrieve the user's config from the file system
-    config = retrieve_user_config(id)
-    if config is None:
-        config = {}
-    return jsonify(config)
+    try:
+        data = request.json
+        token = data['token']
+        id = get_user_id(token)
+        if id in progresses and progresses[id]:
+            return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
+        # if possible, retrieve the user's config from the file system
+        config = retrieve_user_config(id)
+        if config is None:
+            config = {}
+        return jsonify(config)
+    except Exception as e:
+        return jsonify({'error': "Yeah, it's just fucked up. I don't know what to do. Fatal error."}), 500
 
 @app.route('/save_config', methods=['POST'])
 @limiter.limit("5/minute")
 def save_config():
-    data = request.json
-    token = data['token']
-    config = data['config']
-    id = get_user_id(token)
-    if id in progresses and progresses[id]:
-        return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
-    save_user_config(id, config)
-    store_user_config(id, config)
-    return jsonify({'saved': True})
+    try:
+        data = request.json
+        token = data['token']
+        config = data['config']
+        id = get_user_id(token)
+        if id in progresses and progresses[id]:
+            return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
+        save_user_config(id, config)
+        store_user_config(id, config)
+        return jsonify({'saved': True})
+    except:
+        return jsonify({'error': 'Fatal error occured. Try again later.'}), 429
 
 
 @app.route('/new_conv', methods=['POST'])
 @limiter.limit("5/2minute")
 def new_conv():
-    data_json = request.json
-    token = data_json['token']
-    if not check_join(token):
-        return redirect('/join')
-    userid = get_user_id(token)
-    if userid in progresses and progresses[userid]:
-        return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
-    # Generate a new conversation ID
-    conv_id = random.randint(100000, 999999)
-    # Initialize the conversation in the dictionary
-    if userid not in conversations:
-        conversations[userid] = {}
-    if userid not in convnames:
-        convnames[userid] = {}
-    conversations[userid][conv_id] = []
-    # DEBUG: GENERATE RANDOM STRING FOR CONVERSATION NAME
-    convnames[userid][conv_id] = "Conversation " + str(random.randint(1000, 9999))
-    # DELETE THAT WHEN WE HAVE A WAY TO NAME CONVERSATIONS
-    return jsonify({'conv_id': conv_id, 'name': convnames[userid][conv_id]})
+    try:
+        data_json = request.json
+        token = data_json['token']
+        if not check_join(token):
+            return redirect('/join')
+        userid = get_user_id(token)
+        if userid in progresses and progresses[userid]:
+            return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
+        # Generate a new conversation ID
+        conv_id = random.randint(100000, 999999)
+        # Initialize the conversation in the dictionary
+        if userid not in conversations:
+            conversations[userid] = {}
+        if userid not in convnames:
+            convnames[userid] = {}
+        conversations[userid][conv_id] = []
+        # DEBUG: GENERATE RANDOM STRING FOR CONVERSATION NAME
+        convnames[userid][conv_id] = "Conversation " + str(random.randint(1000, 9999))
+        # DELETE THAT WHEN WE HAVE A WAY TO NAME CONVERSATIONS
+        return jsonify({'conv_id': conv_id, 'name': convnames[userid][conv_id]})
+    except Exception as e:
+        return jsonify({'error': 'Fatal error occurred. Please try again later.'}), 500
 
 @app.errorhandler(429)
 def handle_too_many_requests(error):
@@ -231,18 +243,24 @@ def chat():
 @app.route('/mytokens/<UID>', methods=['GET'])
 @limiter.limit("5/minute")
 def mytokens(UID):
-    id = int(UID)
-    tokens = get_tokens_by_id(id)
-    chars = tokens * 250
-    return render_template('mytokens.html', tokens=tokens, chars=chars)
+    try:
+        id = int(UID)
+        tokens = get_tokens_by_id(id)
+        chars = tokens * 250
+        return render_template('mytokens.html', tokens=tokens, chars=chars)
+    except Exception as e:
+        return "If you see this message, then the app is screwed. Tell Lyu his code sucks."
 
 @app.route('/gotomytokens', methods=['POST'])
 @limiter.limit("5/minute")
 def gotomytokens():
-    data = request.json
-    token = data['token']
-    id = get_user_id(token)
-    return jsonify({'url': f'/mytokens/{id}'})
+    try:
+        data = request.json
+        token = data['token']
+        id = get_user_id(token)
+        return jsonify({'url': f'/mytokens/{id}'})
+    except Exception as e:
+        return "AAAAAAAA. NOBODY IS SUPPOSED TO SEE THIS ANYWAY SO WHO CARES."
 
 def tapiaction(action=None, amount=0, id=1):
     if action == 'give':
@@ -267,172 +285,194 @@ def tapiaction(action=None, amount=0, id=1):
 @app.route('/name_conv', methods=['POST'])
 @limiter.limit("5/minute")
 def name_conv():
-    data = request.json
-    conv_id = data['conv_id']
-    token = data['token']
-    
-    if not check_join(token):
-        return redirect('/join')
-    userid = get_user_id(token)
-    if userid in progresses and progresses[userid]:
-        return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
-    chatHistory = conversations[userid][conv_id]
-    userMessage = chatHistory[-2]['message']
-    assistantMessage = chatHistory[-1]['message']
-    preamble = "The user will provide you with messages from the chat, try to summarize them and generate a title for the conversation. Send only the title and do not send any other text. Do not wrap the title in quotes or backticks."
-    msgbuilder = "User:\n" + userMessage + "\n\nAssistant:\n" + assistantMessage
-    response = client.chat(preamble=preamble, message=msgbuilder, temperature=1, max_tokens=100, model="command-r-plus")
-    response = response.text
-    # rename the conversation
-    convnames[userid][conv_id] = response
-    return jsonify({'title': response})
+    try:
+        data = request.json
+        conv_id = data['conv_id']
+        token = data['token']
+        
+        if not check_join(token):
+            return redirect('/join')
+        userid = get_user_id(token)
+        if userid in progresses and progresses[userid]:
+            return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
+        chatHistory = conversations[userid][conv_id]
+        userMessage = chatHistory[-2]['message']
+        assistantMessage = chatHistory[-1]['message']
+        preamble = "The user will provide you with messages from the chat, try to summarize them and generate a title for the conversation. Send only the title and do not send any other text. Do not wrap the title in quotes or backticks."
+        msgbuilder = "User:\n" + userMessage + "\n\nAssistant:\n" + assistantMessage
+        response = client.chat(preamble=preamble, message=msgbuilder, temperature=1, max_tokens=100, model="command-r-plus")
+        response = response.text
+        # rename the conversation
+        convnames[userid][conv_id] = response
+        return jsonify({'title': response})
+    except Exception as e:
+        return jsonify({'error': 'A wildcard error appeared. Please try again later.'}), 500
 
 @app.route('/delete_conv', methods=['POST'])
 @limiter.limit("5/minute")
 def delete_conv():
-    data = request.json
-    conv_id = data['conv_id']
-    token = data['token']
-    if not check_join(token):
-        return redirect('/join')
-    userid = get_user_id(token)
-    if userid in progresses and progresses[userid]:
-        return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
-    del conversations[userid][conv_id]
-    del convnames[userid][conv_id]
-    return jsonify({'deleted': True})
+    try:
+        data = request.json
+        conv_id = data['conv_id']
+        token = data['token']
+        if not check_join(token):
+            return redirect('/join')
+        userid = get_user_id(token)
+        if userid in progresses and progresses[userid]:
+            return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
+        del conversations[userid][conv_id]
+        del convnames[userid][conv_id]
+        return jsonify({'deleted': True})
+    except Exception as e:
+        return jsonify({'error': 'Fatal error occurred. Please try again later.'}), 500
 
 @app.route('/rename_conv', methods=['POST'])
 @limiter.limit("5/minute")
 def rename_conv():
-    data = request.json
-    conv_id = data['conv_id']
-    new_name = data['new_name']
-    token = data['token']
-    if not check_join(token):
-        return redirect('/join')
-    userid = get_user_id(token)
-    if userid in progresses and progresses[userid]:
-        return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
-    convnames[userid][conv_id] = new_name
-    return jsonify({'new_name': new_name})
+    try:
+        data = request.json
+        conv_id = data['conv_id']
+        new_name = data['new_name']
+        token = data['token']
+        if not check_join(token):
+            return redirect('/join')
+        userid = get_user_id(token)
+        if userid in progresses and progresses[userid]:
+            return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
+        convnames[userid][conv_id] = new_name
+        return jsonify({'new_name': new_name})
+    except Exception as e:
+        return jsonify({'error': 'Fatal error occurred. Please try again later.'}), 500
 
 
 # this route regenerates (deletes and then generates) the last AI response
 @app.route('/regen', methods=['POST'])
 @limiter.limit("100/hour")
 def regen():
-    data = request.json
-    conv_id = data['conv_id']
-    token = data['token']
-    if not check_join(token):
-        return redirect('/join')
-    userid = get_user_id(token)
-    config_ = process_config(retrieve_user_config(userid))
-    maxtokens_char = config_['max_tokens'] * 3
-    tokens = get_tokens_by_id(userid)
-    if tokens < 1:
-        return jsonify({'error': 'You do not have enough tokens to continue chatting. Please buy more at The Orange Squad to generate more responses.'}), 402
-    if tokens * 250 < maxtokens_char:
-        return jsonify({'error': 'Your maximum token limit is too high for your current token balance. Please lower it to continue chatting, or buy more tokens at The Orange Squad to generate more responses.'}), 402
-    chat_history = conversations[userid][conv_id]
-    if userid in progresses and progresses[userid]:
-        return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
-    progresses[userid] = True
-    chat_history.pop()  # Remove the last assistant response
-    if config_['websearch'] != 'true':
-        response = client.chat(message=chat_history[-1]['message'],
-                           chat_history=chat_history[:-1], preamble=config_['preamble_override'], model=config_['model'],
-                           temperature=config_['temperature'], max_tokens=config_['max_tokens'])
-    else:
-        response = client.chat(message=chat_history[-1]['message'],
-                           chat_history=chat_history[:-1], preamble=config_['preamble_override'], model=config_['model'],
-                           temperature=config_['temperature'], max_tokens=config_['max_tokens'], connectors=[{'id': 'web-search'}])
-    response = response.text
-    chat_history.append({"role": "ASSISTANT", "message": response})  # Add assistant response to history
+    try:
+        data = request.json
+        conv_id = data['conv_id']
+        token = data['token']
+        if not check_join(token):
+            return redirect('/join')
+        userid = get_user_id(token)
+        config_ = process_config(retrieve_user_config(userid))
+        maxtokens_char = config_['max_tokens'] * 3
+        tokens = get_tokens_by_id(userid)
+        if tokens < 1:
+            return jsonify({'error': 'You do not have enough tokens to continue chatting. Please buy more at The Orange Squad to generate more responses.'}), 402
+        if tokens * 250 < maxtokens_char:
+            return jsonify({'error': 'Your maximum token limit is too high for your current token balance. Please lower it to continue chatting, or buy more tokens at The Orange Squad to generate more responses.'}), 402
+        chat_history = conversations[userid][conv_id]
+        if userid in progresses and progresses[userid]:
+            return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
+        progresses[userid] = True
+        chat_history.pop()  # Remove the last assistant response
+        if config_['websearch'] != 'true':
+            response = client.chat(message=chat_history[-1]['message'],
+                            chat_history=chat_history[:-1], preamble=config_['preamble_override'], model=config_['model'],
+                            temperature=config_['temperature'], max_tokens=config_['max_tokens'])
+        else:
+            response = client.chat(message=chat_history[-1]['message'],
+                            chat_history=chat_history[:-1], preamble=config_['preamble_override'], model=config_['model'],
+                            temperature=config_['temperature'], max_tokens=config_['max_tokens'], connectors=[{'id': 'web-search'}])
+        response = response.text
+        chat_history.append({"role": "ASSISTANT", "message": response})  # Add assistant response to history
 
-    # Convert markdown response to HTML
-    html_response = markdown2.markdown(response, extras=["tables", "fenced-code-blocks", "spoiler", "strike"])
-    progresses[userid] = False
+        # Convert markdown response to HTML
+        html_response = markdown2.markdown(response, extras=["tables", "fenced-code-blocks", "spoiler", "strike"])
+        progresses[userid] = False
 
-    # count the amount of characters in the response and subtract that from the user's tokens
-    length = len(response)
-    amount = length // 250
-    if amount < 1:
-        amount = 1
-    if not tapiaction('take', amount, str(userid)):
-        return jsonify({'error': 'Could not take tokens from your account. Please try again later.'}), 500
+        # count the amount of characters in the response and subtract that from the user's tokens
+        length = len(response)
+        amount = length // 250
+        if amount < 1:
+            amount = 1
+        if not tapiaction('take', amount, str(userid)):
+            return jsonify({'error': 'Could not take tokens from your account. Please try again later.'}), 500
 
-    return jsonify({'raw_response': response, 'html_response': html_response, 'chat_history': chat_history})
+        return jsonify({'raw_response': response, 'html_response': html_response, 'chat_history': chat_history})
+    except Exception as e:
+        progresses[userid] = False
+        return jsonify({'error': 'Regen failed. Please try again later.'}), 500
 
 @app.route('/textmanager/to_html', methods=['POST'])
 def to_html():
-    data = request.json
-    text = data['text']
-    html = markdown2.markdown(text, extras=["tables", "fenced-code-blocks", "spoiler", "strike"])
-    return jsonify({'html': html})
+    try:
+        data = request.json
+        text = data['text']
+        html = markdown2.markdown(text, extras=["tables", "fenced-code-blocks", "spoiler", "strike"])
+        return jsonify({'html': html})
+    except Exception as e:
+        return jsonify({'error': 'Utility crashed. Please try again later.'}), 500
 
 @app.route('/chatmanager/get_history', methods=['POST'])
 def get_history():
-    data = request.json
-    conv_id = data['conv_id']
-    token = data['token']
-    if not check_join(token):
-        return redirect('/join')
-    userid = get_user_id(token)
-    chat_history = conversations[userid][conv_id]
-    return jsonify({'chat_history': chat_history})
+    try:
+        data = request.json
+        conv_id = data['conv_id']
+        token = data['token']
+        if not check_join(token):
+            return redirect('/join')
+        userid = get_user_id(token)
+        chat_history = conversations[userid][conv_id]
+        return jsonify({'chat_history': chat_history})
+    except Exception as e:
+        return jsonify({'error': 'Chat manager could not retrieve history. Please try again later.'}), 500
 
 
 # this route edits the last user message and regenerates the last AI response that goes after it
 @app.route('/edit', methods=['POST'])
 @limiter.limit("100/hour")
 def edit():
-    data = request.json
-    new_message = data['new_message']
-    conv_id = data['conv_id']
-    token = data['token']
-    userid = get_user_id(token)
-    config_ = process_config(retrieve_user_config(userid))
-    chat_history = conversations[userid][conv_id]
-    if userid in progresses and progresses[userid]:
-        return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
-    if new_message.strip() == "":
-        return jsonify({'error': 'Message cannot be empty.'}), 400
-    maxtokens_char = config_['max_tokens'] * 3
-    tokens = get_tokens_by_id(userid)
-    if tokens < 1:
-        return jsonify({'error': 'You do not have enough tokens to continue chatting. Please buy more at The Orange Squad to generate more responses.'}), 402
-    if tokens * 250 < maxtokens_char:
-        return jsonify({'error': 'Your maximum token limit is too high for your current token balance. Please lower it to continue chatting, or buy more tokens at The Orange Squad to generate more responses.'}), 402
-    progresses[userid] = True
-    chat_history[-2] = {"role": "USER", "message": new_message}
-    if config_['websearch'] != 'true':
-        response = client.chat(message=new_message,
-                           chat_history=chat_history[:-1], preamble=config_['preamble_override'], model=config_['model'],
-                           temperature=config_['temperature'], max_tokens=config_['max_tokens'])
-    else:
-        response = client.chat(message=new_message,
-                           chat_history=chat_history[:-1], preamble=config_['preamble_override'], model=config_['model'],
-                           temperature=config_['temperature'], max_tokens=config_['max_tokens'], connectors=[{'id': 'web-search'}])
-    response = response.text
-    chat_history.pop()
-    chat_history.append({"role": "ASSISTANT", "message": response})  # Add assistant response to history
+    try:
+        data = request.json
+        new_message = data['new_message']
+        conv_id = data['conv_id']
+        token = data['token']
+        userid = get_user_id(token)
+        config_ = process_config(retrieve_user_config(userid))
+        chat_history = conversations[userid][conv_id]
+        if userid in progresses and progresses[userid]:
+            return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
+        if new_message.strip() == "":
+            return jsonify({'error': 'Message cannot be empty.'}), 400
+        maxtokens_char = config_['max_tokens'] * 3
+        tokens = get_tokens_by_id(userid)
+        if tokens < 1:
+            return jsonify({'error': 'You do not have enough tokens to continue chatting. Please buy more at The Orange Squad to generate more responses.'}), 402
+        if tokens * 250 < maxtokens_char:
+            return jsonify({'error': 'Your maximum token limit is too high for your current token balance. Please lower it to continue chatting, or buy more tokens at The Orange Squad to generate more responses.'}), 402
+        progresses[userid] = True
+        chat_history[-2] = {"role": "USER", "message": new_message}
+        if config_['websearch'] != 'true':
+            response = client.chat(message=new_message,
+                            chat_history=chat_history[:-1], preamble=config_['preamble_override'], model=config_['model'],
+                            temperature=config_['temperature'], max_tokens=config_['max_tokens'])
+        else:
+            response = client.chat(message=new_message,
+                            chat_history=chat_history[:-1], preamble=config_['preamble_override'], model=config_['model'],
+                            temperature=config_['temperature'], max_tokens=config_['max_tokens'], connectors=[{'id': 'web-search'}])
+        response = response.text
+        chat_history.pop()
+        chat_history.append({"role": "ASSISTANT", "message": response})  # Add assistant response to history
 
-    # Convert markdown response to HTML
-    html_response = markdown2.markdown(response, extras=["tables", "fenced-code-blocks", "spoiler", "strike"])
-    progresses[userid] = False
+        # Convert markdown response to HTML
+        html_response = markdown2.markdown(response, extras=["tables", "fenced-code-blocks", "spoiler", "strike"])
+        progresses[userid] = False
 
-    # count the amount of characters in the response and subtract that from the user's tokens
-    length = len(response)
-    amount = length // 250
-    if amount < 1:
-        amount = 1
-    if not tapiaction('take', amount, str(userid)):
-        return jsonify({'error': 'Could not take tokens from your account. Please try again later.'}), 500
+        # count the amount of characters in the response and subtract that from the user's tokens
+        length = len(response)
+        amount = length // 250
+        if amount < 1:
+            amount = 1
+        if not tapiaction('take', amount, str(userid)):
+            return jsonify({'error': 'Could not take tokens from your account. Please try again later.'}), 500
 
-    return jsonify({'raw_response': response, 'html_response': html_response, 'chat_history': chat_history})
-
+        return jsonify({'raw_response': response, 'html_response': html_response, 'chat_history': chat_history})
+    except Exception as e:
+        progresses[userid] = False
+        return jsonify({'error': 'Edit function committed Alt+F4. Please try again later.'}), 500
 
 def check_join(token):
     global lasttimewechecked
@@ -501,55 +541,70 @@ def joined_server():
 @app.route('/get_convs', methods=['POST'])
 @limiter.limit("5/5minute")
 def get_convs():
-    data = request.json
-    token = data['token']
-    if not check_join(token):
-        return redirect('/join')
-    userid = get_user_id(token)
-    # get all conversations associated with the user
     try:
-        user_convs = [{'conv_id': conv_id, 'name': convnames[userid][conv_id]} for conv_id in conversations[userid]]
+        data = request.json
+        token = data['token']
+        if not check_join(token):
+            return redirect('/join')
+        userid = get_user_id(token)
+        # get all conversations associated with the user
+        try:
+            user_convs = [{'conv_id': conv_id, 'name': convnames[userid][conv_id]} for conv_id in conversations[userid]]
+        except:
+            user_convs = []
+        return jsonify({'conversations': user_convs})
     except:
-        user_convs = []
-    return jsonify({'conversations': user_convs})
+        return jsonify({'error': 'Could not retrieve conversations. Please try again later.'}), 500
 
 
 @app.route('/get_conv', methods=['POST'])
 @limiter.limit("10/minute")
 def get_conv():
-    data = request.json
-    conv_id = data['conv_id']
-    token = data['token']
-    id = get_user_id(token)
-    chat_history = conversations[id][conv_id]
-    name = convnames[id][conv_id]
-    chat_history_html = []
-    if id in progresses and progresses[id]:
-        return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
-    for message in chat_history:
-        if message['role'] == 'ASSISTANT':
-            chat_history_html.append({'role': 'ASSISTANT', 'message': markdown2.markdown(message['message'], extras=["tables", "fenced-code-blocks", "spoiler", "strike"])})
-        else:
-            chat_history_html.append({'role': 'USER', 'message': message['message']})
-    return jsonify({'chat_history': chat_history, 'chat_history_html': chat_history_html, 'name': name})
+    try:
+        data = request.json
+        conv_id = data['conv_id']
+        token = data['token']
+        id = get_user_id(token)
+        chat_history = conversations[id][conv_id]
+        name = convnames[id][conv_id]
+        chat_history_html = []
+        if id in progresses and progresses[id]:
+            return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
+        for message in chat_history:
+            if message['role'] == 'ASSISTANT':
+                chat_history_html.append({'role': 'ASSISTANT', 'message': markdown2.markdown(message['message'], extras=["tables", "fenced-code-blocks", "spoiler", "strike"])})
+            else:
+                chat_history_html.append({'role': 'USER', 'message': message['message']})
+        return jsonify({'chat_history': chat_history, 'chat_history_html': chat_history_html, 'name': name})
+    except:
+        return jsonify({'error': 'Could not retrieve conversation. Please try again later.'}), 500
 
 
 @app.route('/auth/discord')
 def auth_discord():
-    return render_template('login.html')
+    try:
+        return render_template('login.html')
+    except:
+        return "Could not load login page. Please try again later. This means that the app is fucked."
 
 
 @app.route('/join')
 def join():
-    return render_template('jointos.html')
+    try:
+        return render_template('jointos.html')
+    except Exception as e:
+        return "This didn't age well."
 
 @app.route('/logout', methods=['POST', 'GET'])
 def logout():
-    data = request.json
-    token = data['token']
-    if token in savedtokens:
-        del savedtokens[token]
-    return jsonify({'logged_out': True})
+    try:
+        data = request.json
+        token = data['token']
+        if token in savedtokens:
+            del savedtokens[token]
+        return jsonify({'logged_out': True})
+    except:
+        return jsonify({'error': "Logout failed."}), 500
 
 
 if __name__ == '__main__':
