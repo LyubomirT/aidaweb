@@ -167,62 +167,66 @@ def process_config(_config_):
 @app.route('/chat', methods=['POST'])
 @limiter.limit("100/hour")
 def chat():
-    data = request.json
-    message = data['message']
-    conv_id = data['conv_id']
-    conv_id = int(conv_id)
-    token = data['token']
-    if not check_join(token):
-        return redirect('/join')
-    userid = get_user_id(token)
-    config_ = process_config(retrieve_user_config(userid))
-    # get tokens by id
-    tokens = get_tokens_by_id(userid)
-    if tokens < 1:
-        return jsonify({'error': 'You do not have enough tokens to continue chatting. Please buy more at The Orange Squad to generate more responses.'}), 402
-    maxtokens_char = config_['max_tokens'] * 3
-    if tokens * 250 < maxtokens_char:
-        return jsonify({'error': 'Your maximum token limit is too high for your current token balance. Please lower it to continue chatting, or buy more tokens at The Orange Squad to generate more responses.'}), 402
-
-    if userid in progresses and progresses[userid]:
-        return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
-    if message.strip() == "":
-        return jsonify({'error': 'Message cannot be empty.'}), 400
-    progresses[userid] = True
     try:
-        chat_history = conversations[userid][conv_id]
-    except:
+        data = request.json
+        message = data['message']
+        conv_id = data['conv_id']
+        conv_id = int(conv_id)
+        token = data['token']
+        if not check_join(token):
+            return redirect('/join')
+        userid = get_user_id(token)
+        config_ = process_config(retrieve_user_config(userid))
+        # get tokens by id
+        tokens = get_tokens_by_id(userid)
+        if tokens < 1:
+            return jsonify({'error': 'You do not have enough tokens to continue chatting. Please buy more at The Orange Squad to generate more responses.'}), 402
+        maxtokens_char = config_['max_tokens'] * 3
+        if tokens * 250 < maxtokens_char:
+            return jsonify({'error': 'Your maximum token limit is too high for your current token balance. Please lower it to continue chatting, or buy more tokens at The Orange Squad to generate more responses.'}), 402
+
+        if userid in progresses and progresses[userid]:
+            return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
+        if message.strip() == "":
+            return jsonify({'error': 'Message cannot be empty.'}), 400
+        progresses[userid] = True
+        try:
+            chat_history = conversations[userid][conv_id]
+        except:
+            progresses[userid] = False
+            return jsonify({'error': 'Conversation not found.'}), 404
+        chat_history.append({"role": "USER", "message": message})  # Add user message to history
+
+        # Send the updated chat history
+        if config_['websearch'] != 'true':
+            response = client.chat(message=message,
+                               chat_history=chat_history,
+                               temperature=config_['temperature'], max_tokens=config_['max_tokens'], 
+                               model=config_['model'], preamble=config_['preamble_override'])
+        else:
+            response = client.chat(message=message,
+                               chat_history=chat_history,
+                               temperature=config_['temperature'], max_tokens=config_['max_tokens'], 
+                               model=config_['model'], preamble=config_['preamble_override'], connectors=[{'id': 'web-search'}])
+        response = response.text
+        chat_history.append({"role": "ASSISTANT", "message": response})  # Add assistant response to history
+
+        # Convert markdown response to HTML
+        html_response = markdown2.markdown(response, extras=["tables", "fenced-code-blocks", "spoiler", "strike"])
         progresses[userid] = False
-        return jsonify({'error': 'Conversation not found.'}), 404
-    chat_history.append({"role": "USER", "message": message})  # Add user message to history
-
-    # Send the updated chat history
-    if config_['websearch'] != 'true':
-        response = client.chat(message=message,
-                           chat_history=chat_history,
-                           temperature=config_['temperature'], max_tokens=config_['max_tokens'], 
-                           model=config_['model'], preamble=config_['preamble_override'])
-    else:
-        response = client.chat(message=message,
-                           chat_history=chat_history,
-                           temperature=config_['temperature'], max_tokens=config_['max_tokens'], 
-                           model=config_['model'], preamble=config_['preamble_override'], connectors=[{'id': 'web-search'}])
-    response = response.text
-    chat_history.append({"role": "ASSISTANT", "message": response})  # Add assistant response to history
-
-    # Convert markdown response to HTML
-    html_response = markdown2.markdown(response, extras=["tables", "fenced-code-blocks", "spoiler", "strike"])
-    progresses[userid] = False
-    # count the amount of characters in the response and subtract that from the user's tokens
-    length = len(response)
-    amount = length // 250
-    if amount < 1:
-        amount = 1
-    if not tapiaction('take', amount, str(userid)):
-        return jsonify({'error': 'Could not take tokens from your account. Please try again later.'}), 500
+        # count the amount of characters in the response and subtract that from the user's tokens
+        length = len(response)
+        amount = length // 250
+        if amount < 1:
+            amount = 1
+        if not tapiaction('take', amount, str(userid)):
+            return jsonify({'error': 'Could not take tokens from your account. Please try again later.'}), 500
 
 
-    return jsonify({'raw_response': response, 'html_response': html_response, 'chat_history': chat_history, 'tokens': get_tokens_by_id(userid)})
+        return jsonify({'raw_response': response, 'html_response': html_response, 'chat_history': chat_history, 'tokens': get_tokens_by_id(userid)})
+    except Exception as e:
+        progresses[userid] = False
+        return jsonify({'error': 'Fatal error occurred. Please try again later.'}), 500
 
 @app.route('/mytokens/<UID>', methods=['GET'])
 @limiter.limit("5/minute")
