@@ -140,6 +140,8 @@ body {
   /* existing styles */
   font-family: inherit;
   width: 300px;
+  transform-origin: left;
+  transition: all 0.1s cubic-bezier(0.445, 0.05, 0.55, 0.95);
 }
 
 #close-sidebar {
