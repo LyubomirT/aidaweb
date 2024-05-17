@@ -34,7 +34,7 @@ body {
 }
 
 #chat-box {
-  height: 60vh;
+  height: 70vh;
   overflow-y: scroll;
   border: 1px solid #ccc;
   padding: 10px;
