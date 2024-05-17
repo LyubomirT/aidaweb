@@ -143,7 +143,7 @@ body {
 }
 
 #close-sidebar {
-  background-color: #f0f0f0;
+  background-color: #e7e7e7;
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -154,7 +154,7 @@ body {
 }
 
 #close-sidebar:hover {
-  background-color: #e6e6e6;
+  background-color: #d5d5d5;
 }
 
 #user_info {
