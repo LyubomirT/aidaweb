@@ -15,6 +15,9 @@ const maxTokensValue = document.getElementById('max-tokens-value');
 const customInstructions = document.getElementById('preamble-override');
 const saveSettingsButton = document.getElementById('save-settings');
 const resetSettingsButton = document.getElementById('reset-settings');
+const sidebar = document.getElementById('sidebar');
+const closeSidebar = document.getElementById('close-sidebar');
+var firstClick = false;
 const model = document.getElementById('model');
 const websearch = document.getElementById('websearch');
 let chatHistory = [];  // Retrieve chat history from server
@@ -33,6 +36,22 @@ const regenlink_ = document.querySelector('#svgimport > #regen');
 const regenlink = regenlink_.textContent;
 
 const conversationsList = document.getElementById('conversations-list');
+
+// Add event listeners
+closeSidebar.addEventListener('click', function() {
+  if (firstClick === false) {
+    sidebar.style.display = 'none';
+    firstClick = true;
+  } else {
+    if (sidebar.style.display === 'flex') {
+      sidebar.style.display = 'none';
+      closeSidebar.innerHTML = '<i class="fi fi-rr-angle-double-right"></i>';
+    } else {
+      sidebar.style.display = 'flex';
+      closeSidebar.innerHTML = '<i class="fi fi-rr-angle-double-left"></i>';
+    }
+  }
+});
 
 errorModalClose.addEventListener('click', function() {
   closeModal(errorModal);

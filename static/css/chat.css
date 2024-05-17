@@ -149,6 +149,7 @@ body {
   cursor: pointer;
   font-family: inherit;
   width: 25px;
+  height: 100vh;
 }
 
 #close-sidebar:hover {
