@@ -36,10 +36,12 @@ body {
 #chat-box {
   height: 70vh;
   overflow-y: scroll;
-  border: 1px solid #ccc;
+  border: 0;
   padding: 10px;
   font-family: inherit;
   flex-shrink: 1;
+  padding-left: 0;
+  padding-right: 5%;
 }
 
 #input-container {
