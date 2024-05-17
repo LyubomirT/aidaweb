@@ -816,7 +816,7 @@ function constructConversation(conv, name=null) {
         openErrorModal(errorModal, 'Error: ' + data.error);
         return;
       }
-      const chatHistory = data.chat_history_html;
+      chatHistory = data.chat_history_html;
       // assign each message an id
       for (var i = 0; i < chatHistory.length; i++) {
         chatHistory[i].id = i;
@@ -846,6 +846,7 @@ function constructConversation(conv, name=null) {
           chatBox.innerHTML += constructMessage(message.message, message, 'ASSISTANT');
         }
       });
+      chatHistory = data.chat_history;  // Update chat history from server
       MathJax.typeset();
       hljs.highlightAll();
       chatBox.scrollTop = chatBox.scrollHeight;
