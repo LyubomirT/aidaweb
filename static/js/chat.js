@@ -41,6 +41,7 @@ const conversationsList = document.getElementById('conversations-list');
 closeSidebar.addEventListener('click', function() {
   if (firstClick === false) {
     sidebar.style.display = 'none';
+    closeSidebar.innerHTML = '<i class="fi fi-rr-angle-double-right"></i>';
     firstClick = true;
   } else {
     if (sidebar.style.display === 'flex') {

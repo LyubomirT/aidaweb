@@ -150,6 +150,24 @@ body {
   font-family: inherit;
   width: 25px;
   height: 100vh;
+  z-index: 2;
+}
+
+@media (max-width: 768px) {
+  #sidebar {
+    position: fixed;
+    z-index: 1;
+    width: 100%;
+    height: 90%;
+    margin-top: 50px;
+  }
+
+  #close-sidebar {
+    /* move it to the top and make it a square */
+    width: 100%;
+    height: 50px;
+    position: fixed;
+  }
 }
 
 #close-sidebar:hover {
