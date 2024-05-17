@@ -160,7 +160,7 @@ def handle_too_many_requests(error):
   message = "You've exceeded the request limit, please try again later."
   return make_response(jsonify({"error": message}), 429)
 
-def process_config(_config_):
+def process_config(_config_, name=None):
     _config_ = json.loads(_config_)
     newconfig = {}
     if 'temperature' in _config_:
@@ -173,6 +173,25 @@ def process_config(_config_):
         newconfig['preamble_override'] = _config_['preamble_override']
     if 'websearch' in _config_:
         newconfig['websearch'] = _config_['websearch']
+    if newconfig['preamble_override'] == '':
+        newconfig['preamble_override'] = """
+Your name is AIDA, an AI designed to assist users with their queries. Your goal is to provide accurate and helpful
+responses to the user's questions while maintaining a casual, friendly and human-like demeanor. Try not to use
+too much poetic language and avoid overly complex or technical jargon, keep it casual. You can also ask the user for clarification, provide
+additional information or ask follow-up questions to better understand the user's needs. Remember to be respectful
+and professional at all times. You can also use Markdown and LateX Math (MathJax) in your responses. When conversing,
+always keep the user's best interests in mind and strive to provide the best possible assistance. Avoid using
+inappropriate language, making offensive remarks or engaging in any form of discrimination. Refuse to provide
+assistance if the user's request is illegal, unethical or harmful. If you encounter any issues or need help, contact
+the system administrator or a human moderator for assistance. You're developed by LyubomirT, a young coding enthusiast,
+using modified versions of Cohere's models. Good luck and have fun chatting with the user!
+""".replace("\n", " ").strip()
+    newconfig['preamble_override'] = newconfig['preamble_override'] + """
+Additional information:
+User's name: {name}
+You may mention the user's name in your responses to personalize the conversation and make it more engaging.
+""".format(name=name)
+    print(newconfig)
     return newconfig
 
 
@@ -188,7 +207,7 @@ def chat():
         if not check_join(token):
             return redirect('/join')
         userid = get_user_id(token)
-        config_ = process_config(retrieve_user_config(userid))
+        config_ = process_config(retrieve_user_config(userid), get_usernames(token))
         # get tokens by id
         tokens = get_tokens_by_id(userid)
         if tokens < 1:
@@ -356,7 +375,7 @@ def regen():
         if not check_join(token):
             return redirect('/join')
         userid = get_user_id(token)
-        config_ = process_config(retrieve_user_config(userid))
+        config_ = process_config(retrieve_user_config(userid), get_usernames(token))
         maxtokens_char = config_['max_tokens'] * 3
         tokens = get_tokens_by_id(userid)
         if tokens < 1:
@@ -431,7 +450,8 @@ def edit():
         conv_id = data['conv_id']
         token = data['token']
         userid = get_user_id(token)
-        config_ = process_config(retrieve_user_config(userid))
+        name = get_usernames(token)
+        config_ = process_config(retrieve_user_config(userid), name)
         chat_history = conversations[userid][conv_id]
         if userid in progresses and progresses[userid]:
             return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
@@ -490,6 +510,7 @@ def check_join(token):
 
 
 def get_user_id(token):
+    global lasttimewechecked
     if token in savedtokens and 'expiry' in savedtokens[token]:
         if savedtokens[token]['expiry'] > time.time():
             return savedtokens[token]['id']
@@ -500,6 +521,19 @@ def get_user_id(token):
     userid = int(g1['id'])
     savedtokens[token] = {'id': userid, 'expiry': time.time() + TOKEN_EXPIRY_TIME}
     return userid
+
+def get_usernames(token):
+    global lasttimewechecked
+    if lasttimewechecked is not None and time.time() - lasttimewechecked < 3:
+        time.sleep(3 - (time.time() - lasttimewechecked))
+    g1 = requests.get(f"https://discord.com/api/users/@me", headers={"Authorization": f"Bearer {token}"})
+    g1 = g1.json()
+    print(g1)
+    lasttimewechecked = time.time()
+    # get the id of the user
+    username = g1['username']
+
+    return username
 
 
 @app.route('/joined_server', methods=['POST'])
