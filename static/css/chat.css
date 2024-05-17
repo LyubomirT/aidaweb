@@ -142,6 +142,19 @@ body {
   width: 300px;
 }
 
+#close-sidebar {
+  background-color: #f0f0f0;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-family: inherit;
+  width: 25px;
+}
+
+#close-sidebar:hover {
+  background-color: #e6e6e6;
+}
+
 #user_info {
   display: flex;
   align-items: center;
