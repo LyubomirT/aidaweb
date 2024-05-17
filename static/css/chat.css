@@ -16,6 +16,7 @@ body {
   background-color: #f0f0f0;
   padding: 20px;
   box-sizing: border-box;
+  max-height: 100vh;
 }
 
 #chat-container {
@@ -63,7 +64,7 @@ body {
 }
 
 #chat-input::-webkit-scrollbar-thumb {
-  background-color: #f0f0f0;
+  background-color: #e0e0e0;
   border-radius: 5px;
 }
 
@@ -73,7 +74,7 @@ body {
 }
 
 #chat-input::-webkit-scrollbar-thumb:hover {
-  background-color: #e6e6e6;
+  background-color: #9c9c9c;
   border-radius: 10px;
 }
 
@@ -381,7 +382,7 @@ body {
 }
 
 #conversations-list::-webkit-scrollbar-thumb {
-  background-color: #f0f0f0;
+  background-color: #dfdfdf;
   border-radius: 5px;
 }
 
