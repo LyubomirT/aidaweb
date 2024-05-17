@@ -534,8 +534,6 @@ def joined_server():
                 return jsonify({'joined': True})
     except:
         print("Could not verify user. Sending them to join page.")
-        import traceback
-        traceback.print_exc()
 
 
 @app.route('/get_convs', methods=['POST'])
