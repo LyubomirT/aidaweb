@@ -435,9 +435,11 @@ function deleteLast() {
 
 function fixName(name) {
   // Replace all other symbols that come after the symbol 20 with ...
+  /*
   if (name.length > 20) {
     name = name.substring(0, 20) + '...';
   }
+  */
   // BETTER WAY TO DO THIS IS TO REPLACE IT BY WORDS INSTEAD OF CHARACTERS (LIKE EVERY WORD AFTER OR IN THE 20TH CHARACTER)
   // EXCEPTION: IF ONE WORD, THEN BY CHARACTERS
   /*
