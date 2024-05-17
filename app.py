@@ -191,7 +191,6 @@ Additional information:
 User's name: {name}
 You may mention the user's name in your responses to personalize the conversation and make it more engaging.
 """.format(name=name)
-    print(newconfig)
     return newconfig
 
 
@@ -243,7 +242,7 @@ def chat():
         chat_history.append({"role": "ASSISTANT", "message": response})  # Add assistant response to history
 
         # Convert markdown response to HTML
-        html_response = markdown2.markdown(response, extras=["tables", "fenced-code-blocks", "spoiler", "strike"])
+        html_response = markdown2.markdown(response, extras=["tables", "fenced-code-blocks", "spoiler", "strike", "subscript", "superscript"])
         progresses[userid] = False
         # count the amount of characters in the response and subtract that from the user's tokens
         length = len(response)
@@ -399,7 +398,7 @@ def regen():
         chat_history.append({"role": "ASSISTANT", "message": response})  # Add assistant response to history
 
         # Convert markdown response to HTML
-        html_response = markdown2.markdown(response, extras=["tables", "fenced-code-blocks", "spoiler", "strike"])
+        html_response = markdown2.markdown(response, extras=["tables", "fenced-code-blocks", "spoiler", "strike", "subscript", "superscript"])
         progresses[userid] = False
 
         # count the amount of characters in the response and subtract that from the user's tokens
@@ -420,7 +419,7 @@ def to_html():
     try:
         data = request.json
         text = data['text']
-        html = markdown2.markdown(text, extras=["tables", "fenced-code-blocks", "spoiler", "strike"])
+        html = markdown2.markdown(text, extras=["tables", "fenced-code-blocks", "spoiler", "strike", "subscript", "superscript"])
         return jsonify({'html': html})
     except Exception as e:
         return jsonify({'error': 'Utility crashed. Please try again later.'}), 500
