@@ -20,6 +20,7 @@ const closeSidebar = document.getElementById('close-sidebar');
 var firstClick = false;
 const model = document.getElementById('model');
 const websearch = document.getElementById('websearch');
+const samples = document.getElementsByClassName('samples')[0];
 let chatHistory = [];  // Retrieve chat history from server
 let convId = null;  // Conversation ID
 // If there is a Discord access token in the URL, save it in local storage as OAUTH2_TOKEN
@@ -894,6 +895,13 @@ function verify() {
     });
     loadConfig();
     unlockChats();
+    const children = samples.children;
+    for (var i = 0; i < children.length; i++) {
+      children[i].addEventListener('click', function() {
+        chatInput.value = this.innerText;
+        sendMessage();
+      });
+    }
   })
   .catch(error => console.error('Error:', error));
 }
