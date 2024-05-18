@@ -898,6 +898,7 @@ function verify() {
     const children = samples.children;
     for (var i = 0; i < children.length; i++) {
       children[i].addEventListener('click', function() {
+        chatBox.innerHTML = '';
         chatInput.value = this.innerText;
         sendMessage();
       });
