@@ -615,3 +615,28 @@ br {
     height: 60vh;
   }
 }
+
+.samples div {
+  display: inline-block;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  padding: 5px 10px;
+  border-radius: 5px;
+  background-color: #f0f0f0;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.samples div:hover {
+  background-color: #e6e6e6;
+}
+
+#conv-samples {
+  bottom: 0;
+  background-color: #fafafa;
+  padding: 10px;
+  border-top: 1px solid #f0f0f0;
+  width: 100%;
+  z-index: 1;
+  border-radius: 5px;
+}
