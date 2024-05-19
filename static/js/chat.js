@@ -198,6 +198,11 @@ sendButton.addEventListener('click', function() {
 });
 
 function sendMessage() {
+  if (chatInput.value === '') {
+    openErrorModal(errorModal, 'Please enter a message before sending');
+    return;
+  }
+  chatBox.innerHTML = '';
   const message = chatInput.value;
   chatInput.value = '';
   postMessage(message);
