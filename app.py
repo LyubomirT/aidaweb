@@ -193,6 +193,20 @@ You may mention the user's name in your responses to personalize the conversatio
 """.format(name=name)
     return newconfig
 
+def query(filename):
+    with open(filename, "rb") as f:
+        data = f.read()
+    response = requests.post("https://api-inference.huggingface.co/models/Salesforce/blip-image-captioning-large", 
+                  headers={"Authorization": "Bearer {API_KEY}".format(API_KEY=os.getenv("HFACE"))}, data=data)
+    # if there is error in the response, print it
+    if response.status_code != 200:
+        while response.status_code != 200:
+            response = requests.post("https://api-inference.huggingface.co/models/Salesforce/blip-image-captioning-large", 
+                  headers={"Authorization": "Bearer {API_KEY}".format(API_KEY=os.getenv("HFACE"))}, data=data)
+    return response.json()
+
+query("test.png")
+
 
 @app.route('/chat', methods=['POST'])
 @limiter.limit("100/hour")
@@ -228,6 +242,8 @@ def chat():
             progresses[userid] = False
             return jsonify({'error': 'Conversation not found.'}), 404
         chat_history.append({"role": "USER", "message": message, 'attachment': attachment if data.get('attachmentbase64', None) is not None else None})  # Add user message to history
+
+        attachmentstr = ""
 
         # Send the updated chat history
         if config_['websearch'] != 'true':
@@ -607,7 +623,7 @@ def get_conv():
             if message['role'] == 'ASSISTANT':
                 chat_history_html.append({'role': 'ASSISTANT', 'message': markdown2.markdown(message['message'], extras=["tables", "fenced-code-blocks", "spoiler", "strike"])})
             else:
-                chat_history_html.append({'role': 'USER', 'message': message['message']}, 'attachment': message['attachment'] if message.get('attachment', None) is not None else None)
+                chat_history_html.append({'role': 'USER', 'message': message['message'], 'attachment': message['attachment'] if message.get('attachment', None) is not None else None})
         return jsonify({'chat_history': chat_history, 'chat_history_html': chat_history_html, 'name': name})
     except:
         return jsonify({'error': 'Could not retrieve conversation. Please try again later.'}), 500
