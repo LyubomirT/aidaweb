@@ -50,14 +50,14 @@ body {
 }
 
 #chat-input {
-  width: calc(100% - 70px);
+  width: calc(100% - 130px);
   box-sizing: border-box;
   border: 1px solid #ccc;
   border-radius: 5px;
   font-family: inherit;
   padding: 20px;
   resize: none;
-  min-height: 80px;
+  min-height: 60px;
 }
 
 /* Custom scrollbar for chat input */
@@ -84,7 +84,7 @@ body {
   background-color: #dcdcdc;
 }
 
-#send-button {
+#send-button, #upload-button {
   width: 60px;
   padding: 10px;
   box-sizing: border-box;
@@ -100,8 +100,17 @@ body {
   font-size: 16px;
 }
 
+#upload-button {
+  background-color: #f0f0f0;
+  color: #434343;
+}
+
 #send-button:hover {
   background-color: #7e4ce9;
+}
+
+#upload-button:hover {
+  background-color: #e6e6e6;
 }
 
 #new-conv-button {
