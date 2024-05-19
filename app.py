@@ -201,6 +201,8 @@ def chat():
         data = request.json
         message = data['message']
         conv_id = data['conv_id']
+        if data.get('attachmentbase64', None) is not None:
+            attachment = data['attachmentbase64']
         conv_id = int(conv_id)
         token = data['token']
         if not check_join(token):
@@ -225,7 +227,7 @@ def chat():
         except:
             progresses[userid] = False
             return jsonify({'error': 'Conversation not found.'}), 404
-        chat_history.append({"role": "USER", "message": message})  # Add user message to history
+        chat_history.append({"role": "USER", "message": message, 'attachment': attachment if data.get('attachmentbase64', None) is not None else None})  # Add user message to history
 
         # Send the updated chat history
         if config_['websearch'] != 'true':
@@ -463,7 +465,7 @@ def edit():
         if tokens * 250 < maxtokens_char:
             return jsonify({'error': 'Your maximum token limit is too high for your current token balance. Please lower it to continue chatting, or buy more tokens at The Orange Squad to generate more responses.'}), 402
         progresses[userid] = True
-        chat_history[-2] = {"role": "USER", "message": new_message}
+        chat_history[-2] = {"role": "USER", "message": new_message, 'attachment': chat_history[-2].get('attachment', None)}  # Update user message in history
         if config_['websearch'] != 'true':
             response = client.chat(message=new_message,
                             chat_history=chat_history[:-1], preamble=config_['preamble_override'], model=config_['model'],
@@ -605,7 +607,7 @@ def get_conv():
             if message['role'] == 'ASSISTANT':
                 chat_history_html.append({'role': 'ASSISTANT', 'message': markdown2.markdown(message['message'], extras=["tables", "fenced-code-blocks", "spoiler", "strike"])})
             else:
-                chat_history_html.append({'role': 'USER', 'message': message['message']})
+                chat_history_html.append({'role': 'USER', 'message': message['message']}, 'attachment': message['attachment'] if message.get('attachment', None) is not None else None)
         return jsonify({'chat_history': chat_history, 'chat_history_html': chat_history_html, 'name': name})
     except:
         return jsonify({'error': 'Could not retrieve conversation. Please try again later.'}), 500
