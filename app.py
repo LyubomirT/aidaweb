@@ -196,16 +196,13 @@ You may mention the user's name in your responses to personalize the conversatio
 def query(filename):
     with open(filename, "rb") as f:
         data = f.read()
-    response = requests.post("https://api-inference.huggingface.co/models/Salesforce/blip-image-captioning-large", 
+    try:
+        response = requests.post("https://api-inference.huggingface.co/models/Salesforce/blip-image-captioning-large", 
                   headers={"Authorization": "Bearer {API_KEY}".format(API_KEY=os.getenv("HFACE"))}, data=data)
-    # if there is error in the response, print it
-    if response.status_code != 200:
-        while response.status_code != 200:
-            response = requests.post("https://api-inference.huggingface.co/models/Salesforce/blip-image-captioning-large", 
-                  headers={"Authorization": "Bearer {API_KEY}".format(API_KEY=os.getenv("HFACE"))}, data=data)
+    except Exception as e:
+        print(e)
+        return None
     return response.json()
-
-query("test.png")
 
 
 @app.route('/chat', methods=['POST'])
