@@ -263,7 +263,7 @@ def chat():
                 traceback.print_exc()
                 attachmentstr = ""
         
-        chat_history.append({"role": "USER", "message": message, 'attachment': attachmentstr if attachmentstr != "" else None})  # Add user message to history
+        chat_history.append({"role": "USER", "message": message, 'attachment': attachmentstr if attachmentstr != "" else None, 'attachmentbase64': data.get('attachmentbase64', None)})  # Add user message to history
 
         # Add a hidden part to the message to descrine the attachment
         proxy = chat_history
