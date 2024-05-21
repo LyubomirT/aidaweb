@@ -273,7 +273,7 @@ def chat():
         proxy = copy.deepcopy(c_history)
         for i in range(len(proxy)):
             if proxy[i]['role'] == 'USER' and proxy[i].get('attachment', None) is not None:
-                proxy[i]['message'] = proxy[i]['message'] + "\n\nAttachment: " + proxy[i]['attachment']
+                proxy[i]['message'] = proxy[i]['message'] + "\n\n\n[Attachment Description: " + proxy[i]['attachment'] + "]"
 
         # Send the updated chat history
         if config_['websearch'] != 'true':
