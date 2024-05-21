@@ -683,6 +683,12 @@ function postMessage(message) {
         children[i].disabled = true;
       }
 
+      if (localStorage.getItem('upload')) {
+        var base64string = localStorage.getItem('upload');
+      } else {
+        var base64string = null;
+      }
+
       fetch('/chat', {
         method: 'POST',
         headers: {
@@ -693,6 +699,7 @@ function postMessage(message) {
           conv_id: convId,
           chat_history: chatHistory,  // Send chat history to server,
           token: oauth2Token,
+          attachmentbase64: base64string,
         }),
       })
       .then(response => response.json())
@@ -773,6 +780,11 @@ function postMessage(message) {
       return;
     });
   } else {
+    if (localStorage.getItem('upload')) {
+      var base64string = localStorage.getItem('upload');
+    } else {
+      var base64string = null;
+    }
     fetch('/chat', {
       method: 'POST',
       headers: {
@@ -783,6 +795,7 @@ function postMessage(message) {
         conv_id: convId,
         chat_history: chatHistory,  // Send chat history to server,
         token: oauth2Token,
+        attachmentbase64: base64string,
       }),
     })
     .then(response => response.json())

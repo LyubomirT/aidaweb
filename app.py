@@ -240,36 +240,46 @@ def chat():
         except:
             progresses[userid] = False
             return jsonify({'error': 'Conversation not found.'}), 404
-        chat_history.append({"role": "USER", "message": message, 'attachment': attachment if data.get('attachmentbase64', None) is not None else None})  # Add user message to history
 
         attachmentstr = ""
 
         # load the attachment into an image file if it exists, using PIL. Convert that from base64 to an image file
         if data.get('attachmentbase64', None) is not None:
             try:
+                # It's a data URL at first, so we need to remove the first part of the string
+                attachment = attachment.split(",")[1]
+                print(attachment)
                 attachment = base64.b64decode(attachment)
                 with open(f"attachments/{userid}_{conv_id}.png", "wb") as f:
                     f.write(attachment)
                 response = query(f"attachments/{userid}_{conv_id}.png")
+                print(response)
                 if response is not None:
-                    attachmentstr = response['generated_text']
+                    attachmentstr = response[0]['generated_text']
                 else:
                     attachmentstr = ""
-                
-                message = message + "\n\n" + "[Attached image description: " + attachmentstr + "]"
             except Exception as e:
-                print(e)
+                import traceback
+                traceback.print_exc()
                 attachmentstr = ""
+        
+        chat_history.append({"role": "USER", "message": message, 'attachment': attachmentstr if attachmentstr != "" else None})  # Add user message to history
+
+        # Add a hidden part to the message to descrine the attachment
+        proxy = chat_history
+        for i in range(len(chat_history)):
+            if proxy[i]['role'] == 'USER' and proxy[i].get('attachment', None) is not None:
+                proxy[i]['message'] = proxy[i]['message'] + "\n\nAttachment: " + proxy[i]['attachment']
 
         # Send the updated chat history
         if config_['websearch'] != 'true':
             response = client.chat(message=message,
-                               chat_history=chat_history,
+                               chat_history=proxy,
                                temperature=config_['temperature'], max_tokens=config_['max_tokens'], 
                                model=config_['model'], preamble=config_['preamble_override'])
         else:
             response = client.chat(message=message,
-                               chat_history=chat_history,
+                               chat_history=proxy,
                                temperature=config_['temperature'], max_tokens=config_['max_tokens'], 
                                model=config_['model'], preamble=config_['preamble_override'], connectors=[{'id': 'web-search'}])
         response = response.text
