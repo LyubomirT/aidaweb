@@ -371,7 +371,7 @@ function edit(id) {
 }
 
 
-function constructMessage(message, rawmsg, role) {  
+function constructMessage(message, rawmsg, role, attachmentbase64=null) { 
   // Remove all regen and edit buttons
   const regen = document.querySelectorAll('.regen');
   const edit = document.querySelectorAll('.edit');
@@ -397,6 +397,12 @@ function constructMessage(message, rawmsg, role) {
     <i class="fi fi-rr-edit"></i>
     </div>
     `;
+    if (localStorage.getItem('upload') || attachmentbase64 !== null) {
+      var base64string = localStorage.getItem('upload');
+      contentstring = `<img src="${base64string}" alt="User uploaded image" class="uploaded-image">`;
+    } else {
+      contentstring = ``;
+    }
   } else {
     const assistanthidden = document.getElementById('assistant-hidden');
     imgsrc = assistanthidden.src;
@@ -406,6 +412,7 @@ function constructMessage(message, rawmsg, role) {
     regenstring = `<div class="msgcontrol regen" onclick="regenerate()">
     <i class="fi fi-rr-refresh"></i>
     </div>`;
+    contentstring = ``;
   }
   console.log(rawmsg);
   if (rawmsg.message !== undefined) {
@@ -436,6 +443,7 @@ function constructMessage(message, rawmsg, role) {
       <div class="${role} username">${_username}</div>
     </div>
     <div class="${role} message">${message}</div>
+    ${contentstring}
     <div class="msgcontrols">
       ${regenstring}
       <div class="msgcontrol copy" onclick="copy_(${id})">
@@ -875,7 +883,11 @@ function constructConversation(conv, name=null) {
       }
       chatHistory.slice(0, -2).forEach(message => {
         if (message.role === 'USER') {
-          chatBox.innerHTML += constructMessage(message.message, message, 'USER');
+          if (message.attachmentbase64 !== null) {
+            chatBox.innerHTML += constructMessage(message.message, message, 'USER', attachmentbase64=message.attachmentbase64);
+          } else {
+            chatBox.innerHTML += constructMessage(message.message, message, 'USER');
+          }
         } else {
           chatBox.innerHTML += constructMessage(message.message, message, 'ASSISTANT');
         }
@@ -893,7 +905,11 @@ function constructConversation(conv, name=null) {
       const lastTwo = chatHistory.slice(-2);
       lastTwo.forEach(message => {
         if (message.role === 'USER') {
-          chatBox.innerHTML += constructMessage(message.message, message, 'USER');
+          if (message.attachmentbase64 !== null) {
+            chatBox.innerHTML += constructMessage(message.message, message, 'USER', attachmentbase64=message.attachmentbase64);
+          } else {
+            chatBox.innerHTML += constructMessage(message.message, message, 'USER');
+          }
         } else {
           chatBox.innerHTML += constructMessage(message.message, message, 'ASSISTANT');
         }

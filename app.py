@@ -248,7 +248,6 @@ def chat():
             try:
                 # It's a data URL at first, so we need to remove the first part of the string
                 attachment = attachment.split(",")[1]
-                print(attachment)
                 attachment = base64.b64decode(attachment)
                 with open(f"attachments/{userid}_{conv_id}.png", "wb") as f:
                     f.write(attachment)
@@ -649,7 +648,7 @@ def get_conv():
             if message['role'] == 'ASSISTANT':
                 chat_history_html.append({'role': 'ASSISTANT', 'message': markdown2.markdown(message['message'], extras=["tables", "fenced-code-blocks", "spoiler", "strike"])})
             else:
-                chat_history_html.append({'role': 'USER', 'message': message['message'], 'attachment': message['attachment'] if message.get('attachment', None) is not None else None})
+                chat_history_html.append({'role': 'USER', 'message': message['message'], 'attachment': message['attachment'] if message.get('attachment', None) is not None else None, 'attachmentbase64': message.get('attachmentbase64', None)})
         return jsonify({'chat_history': chat_history, 'chat_history_html': chat_history_html, 'name': name})
     except:
         return jsonify({'error': 'Could not retrieve conversation. Please try again later.'}), 500
