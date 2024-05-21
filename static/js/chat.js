@@ -398,7 +398,11 @@ function constructMessage(message, rawmsg, role, attachmentbase64=null) {
     </div>
     `;
     if (localStorage.getItem('upload') || attachmentbase64 !== null) {
-      var base64string = localStorage.getItem('upload');
+      if (attachmentbase64 !== null) {
+        base64string = attachmentbase64;
+      } else if (localStorage.getItem('upload')) {
+        base64string = localStorage.getItem('upload');
+      }
       contentstring = `<img src="${base64string}" alt="User uploaded image" class="uploaded-image">`;
     } else {
       contentstring = ``;

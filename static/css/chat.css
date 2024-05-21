@@ -652,3 +652,10 @@ br {
   z-index: 1;
   border-radius: 5px;
 }
+
+.uploaded-image {
+  max-width: 300px;
+  max-height: 300px;
+  margin: 10px 0;
+  border-radius: 5px;
+}
