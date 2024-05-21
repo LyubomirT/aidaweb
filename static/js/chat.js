@@ -17,6 +17,7 @@ const saveSettingsButton = document.getElementById('save-settings');
 const resetSettingsButton = document.getElementById('reset-settings');
 const sidebar = document.getElementById('sidebar');
 const closeSidebar = document.getElementById('close-sidebar');
+const fileSelector = document.getElementById('upload-button');
 var firstClick = false;
 const model = document.getElementById('model');
 const websearch = document.getElementById('websearch');
@@ -37,6 +38,38 @@ const regenlink_ = document.querySelector('#svgimport > #regen');
 const regenlink = regenlink_.textContent;
 
 const conversationsList = document.getElementById('conversations-list');
+
+localStorage.removeItem('upload');
+
+fileSelector.addEventListener('click', function() {
+  const fileInput = document.createElement('input');
+  fileInput.type = 'file';
+  fileInput.accept = '.png, .jpg, .jpeg, .gif';
+  fileInput.click();
+  fileInput.addEventListener('change', function() {
+    const file = fileInput.files[0];
+    if (!file) {
+      return;
+    }
+    // Check if the file is an image
+    if (!file.type.includes('png') && !file.type.includes('jpg') && !file.type.includes('jpeg') && !file.type.includes('gif')) {
+      openErrorModal(errorModal, 'Please upload an image file');
+      return;
+    }
+    // Not more than 25MB
+    if (file.size > 25 * 1024 * 1024) {
+      openErrorModal(errorModal, 'File size must be less than 25MB');
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = function() {
+      const dataURL = reader.result;
+      // store the dataURL in local storage
+      localStorage.setItem('upload', dataURL);
+    };
+    reader.readAsDataURL(file);
+  });
+});
 
 // Add event listeners
 closeSidebar.addEventListener('click', function() {
