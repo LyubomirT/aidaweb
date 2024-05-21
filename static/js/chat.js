@@ -39,7 +39,17 @@ const regenlink = regenlink_.textContent;
 
 const conversationsList = document.getElementById('conversations-list');
 
-localStorage.removeItem('upload');
+function setMarked() {
+  // set the marked variable to true
+  fileSelector.innerHTML = '<i class="fi fi-rr-check"></i>';
+}
+
+function setUnmarked() {
+  // set the marked variable to false
+  fileSelector.innerHTML = '<i class="fi fi-rr-clip"></i>';
+  localStorage.removeItem('upload');
+}
+setUnmarked();
 
 fileSelector.addEventListener('click', function() {
   const fileInput = document.createElement('input');
@@ -68,6 +78,7 @@ fileSelector.addEventListener('click', function() {
       localStorage.setItem('upload', dataURL);
     };
     reader.readAsDataURL(file);
+    setMarked();
   });
 });
 
@@ -215,6 +226,7 @@ newConvButton.addEventListener('click', function() {
   chatHistory = [];
   convId = null;
   statusText.innerHTML = 'New conversation';
+  setUnmarked();
 });
 
 chatInput.addEventListener('keydown', function(e) {
@@ -435,6 +447,7 @@ function constructMessage(message, rawmsg, role, attachmentbase64=null) {
     var re = /\$([^\$]+)\$/g;
     //message = message.replace(re, '$$$$$1$$$$');
     //rawmsg = rawmsg.replace(re, '$$$$$1$$$$');
+    setUnmarked();
     
   }
 
@@ -590,6 +603,7 @@ function lockChats() {
   sendButton.disabled = true;
   sendButton.innerHTML = '<i class="fi fi-rr-menu-dots"></i>';
   newConvButton.disabled = true;
+  fileSelector.disabled = true;
   // Lock all conversations
   const conversations = document.querySelectorAll('.conversation');
   conversations.forEach((conv) => {
@@ -618,6 +632,7 @@ function unlockChats() {
   sendButton.disabled = false;
   sendButton.innerHTML = '<i class="fi fi-rr-paper-plane-top"></i>';
   newConvButton.disabled = false;
+  fileSelector.disabled = false;
   // Unlock all conversations
   const conversations = document.querySelectorAll('.conversation');
   conversations.forEach((conv) => {
@@ -861,6 +876,7 @@ function constructConversation(conv, name=null) {
   conv.setAttribute('conv_name', name);
   conv.setAttribute('conv_id', conv.conv_id);
   conv.addEventListener('click', function() {
+    setUnmarked();
     statusText.innerHTML = conv.getAttribute('conv_name') + ` (${conv.conv_id})` || 'Conversation (?)';
     chatBox.innerHTML = '';
     console.log('Conversation ID:', conv.conv_id);

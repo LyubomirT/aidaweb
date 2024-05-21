@@ -201,6 +201,10 @@ def query(filename):
     try:
         response = requests.post("https://api-inference.huggingface.co/models/Salesforce/blip-image-captioning-large", 
                   headers={"Authorization": "Bearer {API_KEY}".format(API_KEY=os.getenv("HFACE"))}, data=data)
+        if response.json()[0].get('error', None):
+            while response.json()[0].get('error', None):
+                response = requests.post("https://api-inference.huggingface.co/models/Salesforce/blip-image-captioning-large", 
+                  headers={"Authorization": "Bearer {API_KEY}".format(API_KEY=os.getenv("HFACE"))}, data=data)
     except Exception as e:
         print(e)
         return None
@@ -265,8 +269,8 @@ def chat():
         chat_history.append({"role": "USER", "message": message, 'attachment': attachmentstr if attachmentstr != "" else None, 'attachmentbase64': data.get('attachmentbase64', None)})  # Add user message to history
 
         # Add a hidden part to the message to descrine the attachment
-        proxy = chat_history
-        for i in range(len(chat_history)):
+        proxy = chat_history.copy()
+        for i in range(len(proxy)):
             if proxy[i]['role'] == 'USER' and proxy[i].get('attachment', None) is not None:
                 proxy[i]['message'] = proxy[i]['message'] + "\n\nAttachment: " + proxy[i]['attachment']
 
