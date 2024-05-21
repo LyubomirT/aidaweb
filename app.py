@@ -269,7 +269,7 @@ def chat():
         c_history.append({"role": "USER", "message": message, 'attachment': attachmentstr if attachmentstr != "" else None, 'attachmentbase64': data.get('attachmentbase64', None)})  # Add user message to history
 
         # Add a hidden part to the message to descrine the attachment
-        proxy = c_history.copy()
+        proxy = c_history[:]
         for i in range(len(proxy)):
             if proxy[i]['role'] == 'USER' and proxy[i].get('attachment', None) is not None:
                 proxy[i]['message'] = proxy[i]['message'] + "\n\nAttachment: " + proxy[i]['attachment']
@@ -303,6 +303,8 @@ def chat():
         return jsonify({'raw_response': response, 'html_response': html_response, 'chat_history': c_history, 'tokens': get_tokens_by_id(userid)})
     except Exception as e:
         progresses[userid] = False
+        import traceback
+        traceback.print_exc()
         return jsonify({'error': 'Fatal error occurred. Please try again later.'}), 500
 
 @app.route('/mytokens/<UID>', methods=['GET'])
