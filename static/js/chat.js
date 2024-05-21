@@ -492,6 +492,7 @@ function copy_(id = null) {
     return;
   }
   const item = getItem(id);
+  console.warn(item);
   if (item === undefined) {
     return;
   }
@@ -879,6 +880,7 @@ function constructConversation(conv, name=null) {
     setUnmarked();
     statusText.innerHTML = conv.getAttribute('conv_name') + ` (${conv.conv_id})` || 'Conversation (?)';
     chatBox.innerHTML = '';
+    chatHistory = [];
     console.log('Conversation ID:', conv.conv_id);
     fetch('/get_conv', {
       method: 'POST',
@@ -935,9 +937,12 @@ function constructConversation(conv, name=null) {
         }
       });
       chatHistory = data.chat_history;  // Update chat history from server
+
       MathJax.typeset();
       hljs.highlightAll();
       chatBox.scrollTop = chatBox.scrollHeight;
+
+      reassignIds();
 
       // Enable the chat input and send button
       chatInput.disabled = false;
@@ -948,6 +953,23 @@ function constructConversation(conv, name=null) {
     }).catch(error => console.error('Error:', error));
   });
 }
+
+function reassignIds() {
+  // find all messagecontainers
+  const messages = document.querySelectorAll('.messagecontainer');
+  for (var i = 0; i < messages.length; i++) {
+    // find all edit buttons and copy buttons in the messagecontainer
+    const edit = messages[i].querySelector('.edit');
+    const copy = messages[i].querySelector('.copy');
+    if (edit !== null) {
+      edit.setAttribute('onclick', `edit(${i})`);
+    }
+    if (copy !== null) {
+      copy.setAttribute('onclick', `copy_(${i})`);
+    }
+  }
+}
+
 
 function verify() {
   lockChats();
