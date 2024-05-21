@@ -11,6 +11,7 @@ from flask_limiter.util import get_remote_address
 import json
 import PIL
 import base64
+import copy
 
 # Load the environment variables from the .env file
 dotenv.load_dotenv()
@@ -269,7 +270,7 @@ def chat():
         c_history.append({"role": "USER", "message": message, 'attachment': attachmentstr if attachmentstr != "" else None, 'attachmentbase64': data.get('attachmentbase64', None)})  # Add user message to history
 
         # Add a hidden part to the message to descrine the attachment
-        proxy = c_history[:]
+        proxy = copy.deepcopy(c_history)
         for i in range(len(proxy)):
             if proxy[i]['role'] == 'USER' and proxy[i].get('attachment', None) is not None:
                 proxy[i]['message'] = proxy[i]['message'] + "\n\nAttachment: " + proxy[i]['attachment']
