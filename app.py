@@ -9,6 +9,8 @@ import time
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 import json
+import PIL
+import base64
 
 # Load the environment variables from the .env file
 dotenv.load_dotenv()
@@ -241,6 +243,23 @@ def chat():
         chat_history.append({"role": "USER", "message": message, 'attachment': attachment if data.get('attachmentbase64', None) is not None else None})  # Add user message to history
 
         attachmentstr = ""
+
+        # load the attachment into an image file if it exists, using PIL. Convert that from base64 to an image file
+        if data.get('attachmentbase64', None) is not None:
+            try:
+                attachment = base64.b64decode(attachment)
+                with open(f"attachments/{userid}_{conv_id}.png", "wb") as f:
+                    f.write(attachment)
+                response = query(f"attachments/{userid}_{conv_id}.png")
+                if response is not None:
+                    attachmentstr = response['generated_text']
+                else:
+                    attachmentstr = ""
+                
+                message = message + "\n\n" + "[Attached image description: " + attachmentstr + "]"
+            except Exception as e:
+                print(e)
+                attachmentstr = ""
 
         # Send the updated chat history
         if config_['websearch'] != 'true':
