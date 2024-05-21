@@ -257,6 +257,7 @@ def chat():
                 with open(f"attachments/{userid}_{conv_id}.png", "wb") as f:
                     f.write(attachment)
                 response = query(f"attachments/{userid}_{conv_id}.png")
+                os.remove(f"attachments/{userid}_{conv_id}.png")
                 print(response)
                 if response is not None:
                     attachmentstr = response[0]['generated_text']
