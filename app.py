@@ -194,6 +194,7 @@ Additional information:
 User's name: {name}
 You may mention the user's name in your responses to personalize the conversation and make it more engaging.
 """.format(name=name)
+    newconfig['imagegen'] = _config_['imagegen']
     return newconfig
 
 def query(filename):
