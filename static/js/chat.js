@@ -14,6 +14,7 @@ const maxTokens = document.getElementById('max-tokens');
 const maxTokensValue = document.getElementById('max-tokens-value');
 const customInstructions = document.getElementById('preamble-override');
 const imageGen = document.getElementById('image-generation');
+const useMyName = document.getElementById('use-my-name');
 const saveSettingsButton = document.getElementById('save-settings');
 const resetSettingsButton = document.getElementById('reset-settings');
 const sidebar = document.getElementById('sidebar');
@@ -149,6 +150,9 @@ function loadConfig() {
       if (data.imagegen !== undefined && data.imagegen !== null) {
         imageGen.value = data.imagegen;
       }
+      if (data.usemyname !== undefined && data.usemyname !== null) {
+        useMyName.value = data.usemyname;
+      }
     })
     .catch(error => console.error('Error:', error));
   }
@@ -169,6 +173,7 @@ function saveConfig() {
         model: model.value,
         websearch: websearch.value,
         imagegen: imageGen.value,
+        usemyname: useMyName.value,
       }),
     }),
   })
@@ -193,6 +198,7 @@ function resetConfig() {
   model.value = 'command-r';
   websearch.value = 'true';
   imageGen.value = 'true';
+  useMyName.value = 'false';
 }
 
 resetSettingsButton.addEventListener('click', function() {

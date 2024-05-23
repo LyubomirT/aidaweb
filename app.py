@@ -189,11 +189,13 @@ assistance if the user's request is illegal, unethical or harmful. If you encoun
 the system administrator or a human moderator for assistance. You're developed by LyubomirT, a young coding enthusiast,
 using modified versions of Cohere's models. Good luck and have fun chatting with the user!
 """.replace("\n", " ").strip()
-    newconfig['preamble_override'] = newconfig['preamble_override'] + """
-Additional information:
-User's name: {name}
-You may mention the user's name in your responses to personalize the conversation and make it more engaging.
-""".format(name=name)
+    newconfig['usemyname'] = _config_['usemyname']
+    if newconfig['usemyname'] == 'true' and name is not None:
+        newconfig['preamble_override'] = newconfig['preamble_override'] + """
+    Additional information:
+    User's name: {name}
+    You may mention the user's name in your responses to personalize the conversation and make it more engaging.
+    """.format(name=name)
     newconfig['imagegen'] = _config_['imagegen']
     return newconfig
 
