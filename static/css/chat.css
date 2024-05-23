@@ -675,7 +675,7 @@ br {
 
   /* input field */
   #chat-input {
-    width: calc(85% - 60px);
+    width: calc(82% - 60px);
   }
 }
 
