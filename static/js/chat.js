@@ -179,6 +179,12 @@ function saveConfig() {
   })
   .then(response => response.json())
   .then(data => {
+    if (data.error) {
+      openErrorModal(errorModal, 'Error: ' + data.error);
+      resetConfig();
+      saveConfig();
+      return;
+    }
     console.log('Config saved:', data);
     closeModal(settingsModal);
   })

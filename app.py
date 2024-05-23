@@ -120,12 +120,14 @@ def save_config():
     try:
         data = request.json
         token = data['token']
-        config = data['config']
+        config_ = data['config']
         id = get_user_id(token)
         if id in progresses and progresses[id]:
             return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
-        save_user_config(id, config)
-        store_user_config(id, config)
+        save_user_config(id, config_)
+        store_user_config(id, config_)
+        if not check_limits(process_config(retrieve_user_config(id), get_usernames(token))):
+            return jsonify({'error': 'Invalid configuration settings. You either are on an outdated version of the page, or you are trying to mess with the system. Very funny if it\'s the latter.'}), 400
         return jsonify({'saved': True})
     except:
         return jsonify({'error': 'Fatal error occured. Try again later.'}), 429
@@ -214,6 +216,20 @@ def query(filename):
         return None
     return response.json()
 
+def check_limits(config):
+    if config['temperature'] > 1 or config['temperature'] < 0.1:
+        return False
+    if config['max_tokens'] > 3000 or config['max_tokens'] < 1:
+        return False
+    if config['model'] not in ['command', 'command-r', 'command-r-plus']:
+        return False
+    if config['usemyname'] not in ['true', 'false']:
+        return False
+    if config['imagegen'] not in ['true', 'false']:
+        return False
+    if config['websearch'] not in ['true', 'false']:
+        return False
+    return True
 
 @app.route('/chat', methods=['POST'])
 @limiter.limit("100/hour")
@@ -230,6 +246,8 @@ def chat():
             return redirect('/join')
         userid = get_user_id(token)
         config_ = process_config(retrieve_user_config(userid), get_usernames(token))
+        if not check_limits(config_):
+            return jsonify({'error': 'Invalid configuration settings. You either are on an outdated version of the page, or you are trying to mess with the system. Very funny if it\'s the latter.'}), 400
         # get tokens by id
         tokens = get_tokens_by_id(userid)
         if tokens < 1:
@@ -429,6 +447,8 @@ def regen():
             return redirect('/join')
         userid = get_user_id(token)
         config_ = process_config(retrieve_user_config(userid), get_usernames(token))
+        if not check_limits(config_):
+            return jsonify({'error': 'Invalid configuration settings. You either are on an outdated version of the page, or you are trying to mess with the system. Very funny if it\'s the latter.'}), 400
         maxtokens_char = config_['max_tokens'] * 3
         tokens = get_tokens_by_id(userid)
         if tokens < 1:
@@ -511,6 +531,8 @@ def edit():
         userid = get_user_id(token)
         name = get_usernames(token)
         config_ = process_config(retrieve_user_config(userid), name)
+        if not check_limits(config_):
+            return jsonify({'error': 'Invalid configuration settings. You either are on an outdated version of the page, or you are trying to mess with the system. Very funny if it\'s the latter.'}), 400
         chat_history = conversations[userid][conv_id]
         if userid in progresses and progresses[userid]:
             return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
