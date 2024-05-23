@@ -128,20 +128,18 @@ IT JUST WORKS (No, I'm not Todd Howard)
     - [ ] If we fail to get data from the Discord DB handler, show a "Connection Failure" message
         - [ ] Make sure to show that it's something on our end, not the user's
 
---------------------- STAGE 9 --------------------- <-> CURRENT
+--------------------- STAGE 9 --------------------- 
 
-- [ ] Add sample starters
-    - [ ] If the conversation is empty, show a list of sample starters
-    - [ ] Implement a `sample` route
-    - [ ] Create a list of sample starters
+- [x] Add sample starters
+    - [x] If the conversation is empty, show a list of sample starters
+    - [x] Create a list of sample starters
         - [ ] Use a title/description format
            - [ ] Only the description will be sent to the AI
-        - [ ] Messages are sent on the user's behalf
-        - [ ] They disappear if the user sends a message (or clicks on a sample)
-    
-- [ ] Add a "No messages" screen
-    - [ ] If the conversation is empty, show a small intro screen
-       - [ ] It'll show the bot PFP and a message like "Start a conversation by typing something!"
+        - [x] Messages are sent on the user's behalf
+        - [x] They disappear if the user sends a message (or clicks on a sample)
+
+
+<-> CURRENT: WORKING ON IMAGE GENERATION <->
 
 
 +++++++++++++++++++++ BETA OPEN +++++++++++++++++++++
