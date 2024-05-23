@@ -241,7 +241,7 @@ def chat():
             return jsonify({'error': 'Message cannot be empty.'}), 400
         progresses[userid] = True
         try:
-            c_history = conversations[userid][conv_id]
+            chat_history = conversations[userid][conv_id]
         except:
             progresses[userid] = False
             return jsonify({'error': 'Conversation not found.'}), 404
@@ -268,10 +268,10 @@ def chat():
                 traceback.print_exc()
                 attachmentstr = ""
         
-        c_history.append({"role": "USER", "message": message, 'attachment': attachmentstr if attachmentstr != "" else None, 'attachmentbase64': data.get('attachmentbase64', None)})  # Add user message to history
+        chat_history.append({"role": "USER", "message": message, 'attachment': attachmentstr if attachmentstr != "" else None, 'attachmentbase64': data.get('attachmentbase64', None)})  # Add user message to history
 
         # Add a hidden part to the message to descrine the attachment
-        proxy = copy.deepcopy(c_history)
+        proxy = copy.deepcopy(chat_history)
         for i in range(len(proxy)):
             if proxy[i]['role'] == 'USER' and proxy[i].get('attachment', None) is not None:
                 proxy[i]['message'] = proxy[i]['message'] + "\n\n\n[Attachment Description: " + proxy[i]['attachment'] + "]"
@@ -288,7 +288,7 @@ def chat():
                                temperature=config_['temperature'], max_tokens=config_['max_tokens'], 
                                model=config_['model'], preamble=config_['preamble_override'], connectors=[{'id': 'web-search'}])
         response = response.text
-        c_history.append({"role": "ASSISTANT", "message": response})  # Add assistant response to history
+        chat_history.append({"role": "ASSISTANT", "message": response})  # Add assistant response to history
 
         # Convert markdown response to HTML
         html_response = markdown2.markdown(response, extras=["tables", "fenced-code-blocks", "spoiler", "strike", "subscript", "superscript"])
@@ -302,7 +302,7 @@ def chat():
             return jsonify({'error': 'Could not take tokens from your account. Please try again later.'}), 500
 
 
-        return jsonify({'raw_response': response, 'html_response': html_response, 'chat_history': c_history, 'tokens': get_tokens_by_id(userid)})
+        return jsonify({'raw_response': response, 'html_response': html_response, 'chat_history': chat_history, 'tokens': get_tokens_by_id(userid)})
     except Exception as e:
         progresses[userid] = False
         import traceback
@@ -432,27 +432,27 @@ def regen():
             return jsonify({'error': 'You do not have enough tokens to continue chatting. Please buy more at The Orange Squad to generate more responses.'}), 402
         if tokens * 250 < maxtokens_char:
             return jsonify({'error': 'Your maximum token limit is too high for your current token balance. Please lower it to continue chatting, or buy more tokens at The Orange Squad to generate more responses.'}), 402
-        c_history = conversations[userid][conv_id]
+        chat_history = conversations[userid][conv_id]
         if userid in progresses and progresses[userid]:
             return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
         progresses[userid] = True
-        c_history.pop()  # Remove the last assistant response
+        chat_history.pop()  # Remove the last assistant response
 
         # Add a hidden part to the message to descrine the attachment
-        proxy = copy.deepcopy(c_history)
+        proxy = copy.deepcopy(chat_history)
         for i in range(len(proxy)):
             if proxy[i]['role'] == 'USER' and proxy[i].get('attachment', None) is not None:
                 proxy[i]['message'] = proxy[i]['message'] + "\n\n\n[Attachment Description: " + proxy[i]['attachment'] + "]"
         if config_['websearch'] != 'true':
-            response = client.chat(message=c_history[-1]['message'],
+            response = client.chat(message=chat_history[-1]['message'],
                             chat_history=proxy[:-1], preamble=config_['preamble_override'], model=config_['model'],
                             temperature=config_['temperature'], max_tokens=config_['max_tokens'])
         else:
-            response = client.chat(message=c_history[-1]['message'],
+            response = client.chat(message=chat_history[-1]['message'],
                             chat_history=proxy[:-1], preamble=config_['preamble_override'], model=config_['model'],
                             temperature=config_['temperature'], max_tokens=config_['max_tokens'], connectors=[{'id': 'web-search'}])
         response = response.text
-        c_history.append({"role": "ASSISTANT", "message": response})  # Add assistant response to history
+        chat_history.append({"role": "ASSISTANT", "message": response})  # Add assistant response to history
 
         # Convert markdown response to HTML
         html_response = markdown2.markdown(response, extras=["tables", "fenced-code-blocks", "spoiler", "strike", "subscript", "superscript"])
@@ -466,7 +466,7 @@ def regen():
         if not tapiaction('take', amount, str(userid)):
             return jsonify({'error': 'Could not take tokens from your account. Please try again later.'}), 500
 
-        return jsonify({'raw_response': response, 'html_response': html_response, 'chat_history': c_history})
+        return jsonify({'raw_response': response, 'html_response': html_response, 'chat_history': chat_history})
     except Exception as e:
         progresses[userid] = False
         return jsonify({'error': 'Regen failed. Please try again later.'}), 500
@@ -490,8 +490,8 @@ def get_history():
         if not check_join(token):
             return redirect('/join')
         userid = get_user_id(token)
-        c_history = conversations[userid][conv_id]
-        return jsonify({'c_history': c_history})
+        chat_history = conversations[userid][conv_id]
+        return jsonify({'chat_history': chat_history})
     except Exception as e:
         return jsonify({'error': 'Chat manager could not retrieve history. Please try again later.'}), 500
 
@@ -508,7 +508,7 @@ def edit():
         userid = get_user_id(token)
         name = get_usernames(token)
         config_ = process_config(retrieve_user_config(userid), name)
-        c_history = conversations[userid][conv_id]
+        chat_history = conversations[userid][conv_id]
         if userid in progresses and progresses[userid]:
             return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
         if new_message.strip() == "":
@@ -520,9 +520,9 @@ def edit():
         if tokens * 250 < maxtokens_char:
             return jsonify({'error': 'Your maximum token limit is too high for your current token balance. Please lower it to continue chatting, or buy more tokens at The Orange Squad to generate more responses.'}), 402
         progresses[userid] = True
-        c_history[-2] = {"role": "USER", "message": new_message, 'attachment': c_history[-2].get('attachment', None), 'attachmentbase64': c_history[-2].get('attachmentbase64', None)}  # Edit user message in history
+        chat_history[-2] = {"role": "USER", "message": new_message, 'attachment': chat_history[-2].get('attachment', None), 'attachmentbase64': chat_history[-2].get('attachmentbase64', None)}  # Edit user message in history
         # Add a hidden part to the message to descrine the attachment
-        proxy = copy.deepcopy(c_history)
+        proxy = copy.deepcopy(chat_history)
         for i in range(len(proxy)):
             if proxy[i]['role'] == 'USER' and proxy[i].get('attachment', None) is not None:
                 proxy[i]['message'] = proxy[i]['message'] + "\n\n\n[Attachment Description: " + proxy[i]['attachment'] + "]"
@@ -535,8 +535,8 @@ def edit():
                             chat_history=proxy[:-1], preamble=config_['preamble_override'], model=config_['model'],
                             temperature=config_['temperature'], max_tokens=config_['max_tokens'], connectors=[{'id': 'web-search'}])
         response = response.text
-        c_history.pop()
-        c_history.append({"role": "ASSISTANT", "message": response})  # Add assistant response to history
+        chat_history.pop()
+        chat_history.append({"role": "ASSISTANT", "message": response})  # Add assistant response to history
 
         # Convert markdown response to HTML
         html_response = markdown2.markdown(response, extras=["tables", "fenced-code-blocks", "spoiler", "strike"])
@@ -550,7 +550,7 @@ def edit():
         if not tapiaction('take', amount, str(userid)):
             return jsonify({'error': 'Could not take tokens from your account. Please try again later.'}), 500
 
-        return jsonify({'raw_response': response, 'html_response': html_response, 'chat_history': c_history})
+        return jsonify({'raw_response': response, 'html_response': html_response, 'chat_history': chat_history})
     except Exception as e:
         progresses[userid] = False
         return jsonify({'error': 'Edit function committed Alt+F4. Please try again later.'}), 500
@@ -658,17 +658,18 @@ def get_conv():
         conv_id = data['conv_id']
         token = data['token']
         id = get_user_id(token)
-        c_history = conversations[id][conv_id]
+        chat_history = conversations[id][conv_id]
+        print(chat_history)
         name = convnames[id][conv_id]
-        c_history_html = []
+        chat_history_html = []
         if id in progresses and progresses[id]:
             return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
-        for message in c_history:
+        for message in chat_history:
             if message['role'] == 'ASSISTANT':
-                c_history_html.append({'role': 'ASSISTANT', 'message': markdown2.markdown(message['message'], extras=["tables", "fenced-code-blocks", "spoiler", "strike"])})
+                chat_history_html.append({'role': 'ASSISTANT', 'message': markdown2.markdown(message['message'], extras=["tables", "fenced-code-blocks", "spoiler", "strike"])})
             else:
-                c_history_html.append({'role': 'USER', 'message': message['message'], 'attachment': message['attachment'] if message.get('attachment', None) is not None else None, 'attachmentbase64': message.get('attachmentbase64', None)})
-        return jsonify({'chat_history': c_history, 'chat_history_html': c_history_html, 'name': name})
+                chat_history_html.append({'role': 'USER', 'message': message['message'], 'attachment': message['attachment'] if message.get('attachment', None) is not None else None, 'attachmentbase64': message.get('attachmentbase64', None)})
+        return jsonify({'chat_history': chat_history, 'chat_history_html': chat_history_html, 'name': name})
     except:
         return jsonify({'error': 'Could not retrieve conversation. Please try again later.'}), 500
 
