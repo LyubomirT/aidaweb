@@ -878,11 +878,11 @@ function postMessage(message) {
   }
 }
 
-function constructConversation(conv, name=null) {
+function constructConversation(conv, name = null) {
   // On click, get the conversation history from the server and display it in the chat box
   conv.setAttribute('conv_name', name);
   conv.setAttribute('conv_id', conv.conv_id);
-  conv.addEventListener('click', function() {
+  conv.addEventListener('click', function () {
     setUnmarked();
     statusText.innerHTML = conv.getAttribute('conv_name') + ` (${conv.conv_id})` || 'Conversation (?)';
     chatBox.innerHTML = '';
@@ -898,67 +898,73 @@ function constructConversation(conv, name=null) {
         token: oauth2Token,
       }),
     })
-    .then(response => response.json())
-    .then(data => {
-      if (data.error) {
-        openErrorModal(errorModal, 'Error: ' + data.error);
-        return;
-      }
-      chatHistory = data.chat_history_html;
-      // assign each message an id
-      for (var i = 0; i < chatHistory.length; i++) {
-        chatHistory[i].id = i;
-      }
-      chatHistory.slice(0, -2).forEach(message => {
-        if (message.role === 'USER') {
-          if (message.attachmentbase64 !== null) {
-            chatBox.innerHTML += constructMessage(message.message, message, 'USER', attachmentbase64=message.attachmentbase64);
-          } else {
-            chatBox.innerHTML += constructMessage(message.message, message, 'USER');
-          }
-        } else {
-          chatBox.innerHTML += constructMessage(message.message, message, 'ASSISTANT');
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          openErrorModal(errorModal, 'Error: ' + data.error);
+          return;
         }
-      });
-      // Remove all regen and edit buttons
-      const regen = document.querySelectorAll('.regen');
-      const edit = document.querySelectorAll('.edit');
-      regen.forEach((element) => {
-        element.remove();
-      });
-      edit.forEach((element) => {
-        element.remove();
-      });
-      // Append the last two messages
-      const lastTwo = chatHistory.slice(-2);
-      lastTwo.forEach(message => {
-        if (message.role === 'USER') {
-          if (message.attachmentbase64 !== null) {
-            chatBox.innerHTML += constructMessage(message.message, message, 'USER', attachmentbase64=message.attachmentbase64);
-          } else {
-            chatBox.innerHTML += constructMessage(message.message, message, 'USER');
-          }
-        } else {
-          chatBox.innerHTML += constructMessage(message.message, message, 'ASSISTANT');
+        const chatHistoryHtml = data.chat_history_html;
+        // Assign each message an id
+        for (var i = 0; i < chatHistoryHtml.length; i++) {
+          chatHistoryHtml[i].id = i;
         }
-      });
-      chatHistory = data.chat_history;  // Update chat history from server
 
-      MathJax.typeset();
-      hljs.highlightAll();
-      chatBox.scrollTop = chatBox.scrollHeight;
+        console.warn('Chat history:', chatHistoryHtml);
 
-      reassignIds();
+        // Append all messages except the last two
+        chatHistoryHtml.slice(0, -2).forEach(message => {
+          if (message.role === 'USER') {
+            if (message.attachmentbase64 !== null) {
+              chatBox.innerHTML += constructMessage(message.message, message, 'USER', message.attachmentbase64);
+            } else {
+              chatBox.innerHTML += constructMessage(message.message, message, 'USER');
+            }
+          } else {
+            chatBox.innerHTML += constructMessage(message.message, message, 'ASSISTANT');
+          }
+        });
 
-      // Enable the chat input and send button
-      chatInput.disabled = false;
-      sendButton.disabled = false;
+        // Remove all regen and edit buttons
+        const regen = document.querySelectorAll('.regen');
+        const edit = document.querySelectorAll('.edit');
+        regen.forEach(element => element.remove());
+        edit.forEach(element => element.remove());
 
-      // Set the conversation ID
-      convId = conv.conv_id;
-    }).catch(error => console.error('Error:', error));
+        // Append the last two messages individually to ensure they are displayed correctly
+        const lastTwo = chatHistoryHtml.slice(-2);
+        lastTwo.forEach(message => {
+          if (message.role === 'USER') {
+            if (message.attachmentbase64 !== null) {
+              chatBox.innerHTML += constructMessage(message.message, message, 'USER', message.attachmentbase64);
+            } else {
+              chatBox.innerHTML += constructMessage(message.message, message, 'USER');
+            }
+          } else {
+            chatBox.innerHTML += constructMessage(message.message, message, 'ASSISTANT');
+          }
+        });
+
+        chatHistory = data.chat_history;  // Update chat history from server
+
+        MathJax.typeset();
+        hljs.highlightAll();
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        reassignIds();
+
+        // Enable the chat input and send button
+        chatInput.disabled = false;
+        sendButton.disabled = false;
+
+        // Set the conversation ID
+        convId = conv.conv_id;
+      })
+      .catch(error => console.error('Error:', error));
   });
 }
+
+
 
 function reassignIds() {
   // find all messagecontainers

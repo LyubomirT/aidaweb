@@ -659,19 +659,20 @@ def get_conv():
         token = data['token']
         id = get_user_id(token)
         chat_history = conversations[id][conv_id]
-        print(chat_history)
         name = convnames[id][conv_id]
         chat_history_html = []
         if id in progresses and progresses[id]:
             return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
-        for message in chat_history:
+        for message in copy.deepcopy(chat_history):
             if message['role'] == 'ASSISTANT':
                 chat_history_html.append({'role': 'ASSISTANT', 'message': markdown2.markdown(message['message'], extras=["tables", "fenced-code-blocks", "spoiler", "strike"])})
             else:
                 chat_history_html.append({'role': 'USER', 'message': message['message'], 'attachment': message['attachment'] if message.get('attachment', None) is not None else None, 'attachmentbase64': message.get('attachmentbase64', None)})
-        return jsonify({'chat_history': chat_history, 'chat_history_html': chat_history_html, 'name': name})
-    except:
+        return jsonify({'chat_history': chat_history, 'chat_history_html': chat_history_html, 'name': name, 'expectedlength': len(chat_history)})
+    except Exception as e:
+        print(f"Error: {str(e)}")
         return jsonify({'error': 'Could not retrieve conversation. Please try again later.'}), 500
+
 
 
 @app.route('/auth/discord')
