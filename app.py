@@ -437,13 +437,19 @@ def regen():
             return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
         progresses[userid] = True
         c_history.pop()  # Remove the last assistant response
+
+        # Add a hidden part to the message to descrine the attachment
+        proxy = copy.deepcopy(c_history)
+        for i in range(len(proxy)):
+            if proxy[i]['role'] == 'USER' and proxy[i].get('attachment', None) is not None:
+                proxy[i]['message'] = proxy[i]['message'] + "\n\n\n[Attachment Description: " + proxy[i]['attachment'] + "]"
         if config_['websearch'] != 'true':
             response = client.chat(message=c_history[-1]['message'],
-                            chat_history=c_history[:-1], preamble=config_['preamble_override'], model=config_['model'],
+                            chat_history=proxy[:-1], preamble=config_['preamble_override'], model=config_['model'],
                             temperature=config_['temperature'], max_tokens=config_['max_tokens'])
         else:
             response = client.chat(message=c_history[-1]['message'],
-                            chat_history=c_history[:-1], preamble=config_['preamble_override'], model=config_['model'],
+                            chat_history=proxy[:-1], preamble=config_['preamble_override'], model=config_['model'],
                             temperature=config_['temperature'], max_tokens=config_['max_tokens'], connectors=[{'id': 'web-search'}])
         response = response.text
         c_history.append({"role": "ASSISTANT", "message": response})  # Add assistant response to history
@@ -514,14 +520,19 @@ def edit():
         if tokens * 250 < maxtokens_char:
             return jsonify({'error': 'Your maximum token limit is too high for your current token balance. Please lower it to continue chatting, or buy more tokens at The Orange Squad to generate more responses.'}), 402
         progresses[userid] = True
-        c_history[-2] = {"role": "USER", "message": new_message, 'attachment': c_history[-2].get('attachment', None)}  # Update user message in history
+        c_history[-2] = {"role": "USER", "message": new_message, 'attachment': c_history[-2].get('attachment', None), 'attachmentbase64': c_history[-2].get('attachmentbase64', None)}  # Edit user message in history
+        # Add a hidden part to the message to descrine the attachment
+        proxy = copy.deepcopy(c_history)
+        for i in range(len(proxy)):
+            if proxy[i]['role'] == 'USER' and proxy[i].get('attachment', None) is not None:
+                proxy[i]['message'] = proxy[i]['message'] + "\n\n\n[Attachment Description: " + proxy[i]['attachment'] + "]"
         if config_['websearch'] != 'true':
             response = client.chat(message=new_message,
-                            chat_history=c_history[:-1], preamble=config_['preamble_override'], model=config_['model'],
+                            chat_history=proxy[:-1], preamble=config_['preamble_override'], model=config_['model'],
                             temperature=config_['temperature'], max_tokens=config_['max_tokens'])
         else:
             response = client.chat(message=new_message,
-                            chat_history=c_history[:-1], preamble=config_['preamble_override'], model=config_['model'],
+                            chat_history=proxy[:-1], preamble=config_['preamble_override'], model=config_['model'],
                             temperature=config_['temperature'], max_tokens=config_['max_tokens'], connectors=[{'id': 'web-search'}])
         response = response.text
         c_history.pop()
