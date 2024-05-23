@@ -247,7 +247,13 @@ function sendMessage() {
     openErrorModal(errorModal, 'Please enter a message before sending');
     return;
   }
-  chatBox.innerHTML = '';
+  if (chatInput.value.length > 2000) {
+    openErrorModal(errorModal, 'Message is too long (max 2000 characters)');
+    return;
+  }
+  if (document.getElementById('conv-samples')) {
+    document.getElementById('conv-samples').remove();
+  }
   const message = chatInput.value;
   chatInput.value = '';
   postMessage(message);
