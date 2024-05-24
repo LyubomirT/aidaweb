@@ -357,7 +357,7 @@ function postEdit(editedMessage) {
     chatHistory = data.chat_history;  // Update chat history from server
     console.log('Chat history:', chatHistory);
     // Append the edited message and the assistant response
-    chatBox.innerHTML += constructMessage(editedMessage, editedMessage, 'USER');
+    chatBox.innerHTML += constructMessage(editedMessage, editedMessage, 'USER', attachmentbase64=data.attachmentbase64);
     response = constructMessage(htmlResponse, rawResponse, 'ASSISTANT');
     response.raw = rawResponse;
     chatBox.innerHTML += response;

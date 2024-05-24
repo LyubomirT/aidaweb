@@ -575,7 +575,7 @@ def edit():
         if not tapiaction('take', amount, str(userid)):
             return jsonify({'error': 'Could not take tokens from your account. Please try again later.'}), 500
 
-        return jsonify({'raw_response': response, 'html_response': html_response, 'chat_history': chat_history})
+        return jsonify({'raw_response': response, 'html_response': html_response, 'chat_history': chat_history, 'attachmentbase64': chat_history[-2].get('attachmentbase64', None)})
     except Exception as e:
         progresses[userid] = False
         return jsonify({'error': 'Edit function committed Alt+F4. Please try again later.'}), 500
