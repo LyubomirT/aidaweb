@@ -1294,6 +1294,8 @@ function turnIntoDropdown(element) {
       elements.forEach((element) => {
         element.classList.toggle('darkmode');
       });
+      darkmodeOn = !darkmodeOn;
+      localStorage.setItem('darkmode', darkmodeOn);
     }
   });
   for (var i = 0; i < optionlist.length; i++) {
@@ -1309,5 +1311,25 @@ function turnIntoDropdown(element) {
     });
     dropdown.appendChild(optionlist[i]);
   }
+}
+
+function loadDarkMode() {
+  // Load the dark mode setting from local storage
+  darkmodeOn = localStorage.getItem('darkmode') === 'true';
+  if (darkmodeOn) {
+    // Apply dark mode to all elements
+    applyRemainingMode();
+  }
+}
+
+loadDarkMode();
+
+function applyRemainingMode() {
+  const elements = document.querySelectorAll('*');
+  elements.forEach((element) => {
+    if (darkmodeOn && !element.classList.contains('darkmode')) {
+      element.classList.add('darkmode');
+    }
+  });
 }
 verify();  // Verify that the user has joined the server
