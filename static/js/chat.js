@@ -344,6 +344,7 @@ function postEdit(editedMessage) {
       // Restore the last two messages (edited message and assistant response)
       chatBox.innerHTML += constructMessage(lastUsr, 'USER');
       chatBox.innerHTML += constructMessage(lastAsst, 'ASSISTANT');
+      applyRemainingMode();
       unlockChats();
       return;
     }
@@ -356,6 +357,7 @@ function postEdit(editedMessage) {
     response = constructMessage(htmlResponse, rawResponse, 'ASSISTANT');
     response.raw = rawResponse;
     chatBox.innerHTML += response;
+    applyRemainingMode();
     MathJax.typeset();
     hljs.highlightAll();
     chatBox.scrollTop = chatBox.scrollHeight;
@@ -370,6 +372,7 @@ function postEdit(editedMessage) {
     openErrorModal(errorModal, 'Error: ' + error);
     // Restore the last two messages (edited message and assistant response)
     chatBox.innerHTML += constructMessage(lastUsr, 'USER');
+    applyRemainingMode();
     fetch('/textmanager/to_html', {
       method: 'POST',
       headers: {
@@ -383,6 +386,7 @@ function postEdit(editedMessage) {
     })
     .catch(error => console.error('Error:', error));
     chatBox.innerHTML += constructMessage(lastAsst, 'ASSISTANT');
+    applyRemainingMode();
     unlockChats();
   });
 }
@@ -602,6 +606,7 @@ function regenerate() {
     response = constructMessage(htmlResponse, rawResponse, 'ASSISTANT');
     response.raw = rawResponse;
     chatBox.innerHTML += response;
+    applyRemainingMode();
     MathJax.typeset();
     hljs.highlightAll();
     chatBox.scrollTop = chatBox.scrollHeight;
@@ -688,6 +693,8 @@ function postMessage(message) {
 
   // Create a preview of the message
   chatBox.innerHTML += constructMessage(message, message, 'USER');
+  chatBox.scrollTop = chatBox.scrollHeight;
+  applyRemainingMode();
 
   lockChats();
   // If the chat history is empty, start a new conversation
@@ -725,6 +732,7 @@ function postMessage(message) {
       createDropdown(convElement);
       conversationsList.prepend(convElement);
       constructConversation(convElement, LconvName);
+      applyRemainingMode();
       children = convElement.children;
       for (var i = 0; i < children.length; i++) {
         children[i].disabled = true;
@@ -773,6 +781,7 @@ function postMessage(message) {
         response = constructMessage(htmlResponse, rawResponse, 'ASSISTANT');
         response.raw = rawResponse;
         chatBox.innerHTML += response;
+        applyRemainingMode();
         MathJax.typeset();
         hljs.highlightAll();
         fetch('/name_conv', {
@@ -869,6 +878,7 @@ function postMessage(message) {
       response = constructMessage(htmlResponse, rawResponse, 'ASSISTANT');
       response.raw = rawResponse;
       chatBox.innerHTML += response;
+      applyRemainingMode();
       MathJax.typeset();
       hljs.highlightAll();
       chatBox.scrollTop = chatBox.scrollHeight;
@@ -936,6 +946,7 @@ function constructConversation(conv, name = null) {
           } else {
             chatBox.innerHTML += constructMessage(message.message, message, 'ASSISTANT');
           }
+          applyRemainingMode();
         });
 
         // Remove all regen and edit buttons
@@ -956,6 +967,7 @@ function constructConversation(conv, name = null) {
           } else {
             chatBox.innerHTML += constructMessage(message.message, message, 'ASSISTANT');
           }
+          applyRemainingMode();
         });
 
         chatHistory = data.chat_history;  // Update chat history from server
@@ -1026,6 +1038,7 @@ function verify() {
       createDropdown(convElement);
       conversationsList.appendChild(convElement);
       constructConversation(convElement, conv.name);
+      applyRemainingMode();
     });
     loadConfig();
     unlockChats();
