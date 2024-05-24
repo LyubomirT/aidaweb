@@ -13,7 +13,6 @@ const temperatureValue = document.getElementById('temperature-value');
 const maxTokens = document.getElementById('max-tokens');
 const maxTokensValue = document.getElementById('max-tokens-value');
 const customInstructions = document.getElementById('preamble-override');
-const imageGen = document.getElementById('image-generation');
 const useMyName = document.getElementById('use-my-name');
 const saveSettingsButton = document.getElementById('save-settings');
 const resetSettingsButton = document.getElementById('reset-settings');
@@ -147,9 +146,6 @@ function loadConfig() {
       if (data.websearch !== undefined && data.websearch !== null) {
         websearch.value = data.websearch;
       }
-      if (data.imagegen !== undefined && data.imagegen !== null) {
-        imageGen.value = data.imagegen;
-      }
       if (data.usemyname !== undefined && data.usemyname !== null) {
         useMyName.value = data.usemyname;
       }
@@ -172,7 +168,6 @@ function saveConfig() {
         preamble_override: customInstructions.value,
         model: model.value,
         websearch: websearch.value,
-        imagegen: imageGen.value,
         usemyname: useMyName.value,
       }),
     }),
@@ -203,7 +198,6 @@ function resetConfig() {
   customInstructions.value = '';
   model.value = 'command-r';
   websearch.value = 'true';
-  imageGen.value = 'true';
   useMyName.value = 'false';
 }
 
