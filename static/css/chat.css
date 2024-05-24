@@ -259,7 +259,7 @@ body.darkmode {
 }
 
 #close-sidebar.darkmode {
-  background-color: #292929;
+  background-color: #171717;
   color: #ffffff;
 }
 
@@ -268,7 +268,7 @@ body.darkmode {
 }
 
 #close-sidebar.darkmode:hover {
-  background-color: #434343;
+  background-color: #272727;
 }
 
 #user_info {
