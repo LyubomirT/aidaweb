@@ -1208,10 +1208,16 @@ function turnIntoDropdown(element) {
   tokenAmount.classList.add('conv-control-child');
   tokenAmount.innerHTML = '0 AIDA Tokens';
   tokenAmount.value = 'tokens';
+  var switchMode = document.createElement('div');
+  switchMode.classList.add('switch-mode');
+  switchMode.classList.add('conv-control-child');
+  switchMode.innerHTML = 'Toggle Light Mode';
+  switchMode.value = 'switch-mode';
   var optionlist = [];
   optionlist.push(settingsButton);
   optionlist.push(logoutButton);
   optionlist.push(tokenAmount);
+  optionlist.push(switchMode);
   element.appendChild(dropdown);
   element.addEventListener('click', function(event) {
     event.stopPropagation();
