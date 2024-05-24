@@ -437,6 +437,44 @@ body.darkmode {
   font-weight: bold;
 }
 
+#chat-box::-webkit-scrollbar {
+  width: 10px;
+}
+
+#chat-box::-webkit-scrollbar-thumb {
+  background-color: #dfdfdf;
+  border-radius: 5px;
+}
+
+#chat-box.darkmode::-webkit-scrollbar-thumb {
+  background-color: #434343;
+}
+
+#chat-box::-webkit-scrollbar-track {
+  background-color: #f0f0f0;
+  border-radius: 10px;
+}
+
+#chat-box.darkmode::-webkit-scrollbar-track {
+  background-color: #292929;
+}
+
+#chat-box::-webkit-scrollbar-thumb:hover {
+  background-color: #e6e6e6;
+}
+
+#chat-box.darkmode::-webkit-scrollbar-thumb:hover {
+  background-color: #575757;
+}
+
+#chat-box::-webkit-scrollbar-thumb:active {
+  background-color: #dcdcdc;
+}
+
+#chat-box.darkmode::-webkit-scrollbar-thumb:active {
+  background-color: #434343;
+}
+
 .msgbtn {
   color: rgb(255, 0, 0);
   border: none;
@@ -545,7 +583,7 @@ body.darkmode {
 }
 
 #conversations-list.darkmode::-webkit-scrollbar-thumb {
-  background-color: #434343;
+  background-color: #181818;
 }
 
 #conversations-list::-webkit-scrollbar-track {
@@ -554,7 +592,7 @@ body.darkmode {
 }
 
 #conversations-list.darkmode::-webkit-scrollbar-track {
-  background-color: #292929;
+  background-color: #181818;
 }
 
 #conversations-list::-webkit-scrollbar-thumb:hover {
@@ -572,8 +610,9 @@ body.darkmode {
 }
 
 #conversations-list.darkmode::-webkit-scrollbar-thumb:active {
-  background-color: #434343;
+  background-color: #181818;
 }
+
 
 .conversation {
   display: flex;
@@ -595,12 +634,18 @@ body.darkmode {
 }
 
 .conversation.darkmode {
-  background-color: #292929;
-  color: #ffffff;
+  background-color: #292929 !important;
+  color: #ffffff !important;
+  border-bottom: 1px solid #434343;
 }
 .conversation p,
 .conversation button {
   margin: 0;
+}
+
+.conversation.darkmode p,
+.conversation.darkmode button {
+  color: #ffffff;
 }
 
 .dropdown {
@@ -618,7 +663,6 @@ body.darkmode {
   background-color: #292929;
   color: #ffffff;
 }
-
 /* in the dropdown we have custom <option> elements */
 .dropdown .conv-control-child {
   display: block;
@@ -644,6 +688,9 @@ body.darkmode {
   background-color: #434343;
 }
 
+.dropdown .conv-control.darkmode:hover {
+  background-color: #434343 !important;
+}
 
 .conversation button {
   background-color: #f0f0f0;
@@ -663,11 +710,15 @@ body.darkmode {
 }
 
 .conversation button:hover {
-  background-color: #e6e6e6;
+  background-color: #4b4b4b;
 }
 
 .conversation:hover {
   background-color: #eaeaea;
+}
+
+.conversation.darkmode:hover {
+  background-color: #3d3d3d !important;
 }
 
 .conversation:disabled {
