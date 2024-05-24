@@ -224,8 +224,6 @@ def check_limits(config):
         return False
     if config['usemyname'] not in ['true', 'false']:
         return False
-    if config['imagegen'] not in ['true', 'false']:
-        return False
     if config['websearch'] not in ['true', 'false']:
         return False
     return True

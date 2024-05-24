@@ -54,6 +54,44 @@ body.darkmode {
   padding-right: 5%;
 }
 
+#chat-bot::-webkit-scrollbar {
+  width: 10px;
+}
+
+#chat-bot::-webkit-scrollbar-thumb {
+  background-color: #dfdfdf;
+  border-radius: 5px;
+}
+
+#chat-bot.darkmode::-webkit-scrollbar-thumb {
+  background-color: #434343;
+}
+
+#chat-bot::-webkit-scrollbar-track {
+  background-color: #f0f0f0;
+  border-radius: 10px;
+}
+
+#chat-bot.darkmode::-webkit-scrollbar-track {
+  background-color: #292929;
+}
+
+#chat-bot::-webkit-scrollbar-thumb:hover {
+  background-color: #e6e6e6;
+}
+
+#chat-bot.darkmode::-webkit-scrollbar-thumb:hover {
+  background-color: #575757;
+}
+
+#chat-bot::-webkit-scrollbar-thumb:active {
+  background-color: #dcdcdc;
+}
+
+#chat-bot.darkmode::-webkit-scrollbar-thumb:active {
+  background-color: #434343;
+}
+
 #input-container {
   margin-top: 20px;
   height: 60px;
@@ -73,6 +111,7 @@ body.darkmode {
 #chat-input.darkmode {
   background-color: #181818;
   color: #ffffff;
+  border: 1px solid #343434;
 }
 
 /* Custom scrollbar for chat input */
@@ -505,9 +544,17 @@ body.darkmode {
   border-radius: 5px;
 }
 
+#conversations-list.darkmode::-webkit-scrollbar-thumb {
+  background-color: #434343;
+}
+
 #conversations-list::-webkit-scrollbar-track {
   background-color: #f0f0f0;
   border-radius: 10px;
+}
+
+#conversations-list.darkmode::-webkit-scrollbar-track {
+  background-color: #292929;
 }
 
 #conversations-list::-webkit-scrollbar-thumb:hover {
@@ -515,8 +562,17 @@ body.darkmode {
   border-radius: 10px;
 }
 
+#conversations-list.darkmode::-webkit-scrollbar-thumb:hover {
+  background-color: #575757;
+  border-radius: 10px;
+}
+
 #conversations-list::-webkit-scrollbar-thumb:active {
   background-color: #dcdcdc;
+}
+
+#conversations-list.darkmode::-webkit-scrollbar-thumb:active {
+  background-color: #434343;
 }
 
 .conversation {
