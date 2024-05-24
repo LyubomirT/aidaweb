@@ -19,6 +19,7 @@ const resetSettingsButton = document.getElementById('reset-settings');
 const sidebar = document.getElementById('sidebar');
 const closeSidebar = document.getElementById('close-sidebar');
 const fileSelector = document.getElementById('upload-button');
+var darkmodeOn = false;
 var firstClick = false;
 const model = document.getElementById('model');
 const websearch = document.getElementById('websearch');
@@ -1285,6 +1286,13 @@ function turnIntoDropdown(element) {
         }
         url = data.url
         window.location.href = url;
+      });
+    } else if (event.target.getAttribute('value') === 'switch-mode') {
+      // Get all elements on the page
+      const elements = document.querySelectorAll('*');
+      // Toggle the dark mode class
+      elements.forEach((element) => {
+        element.classList.toggle('darkmode');
       });
     }
   });
