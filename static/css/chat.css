@@ -959,3 +959,44 @@ br {
   margin: 10px 0;
   border-radius: 5px;
 }
+
+.modal.darkmode {
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content.darkmode {
+  background-color: #292929;
+  color: #ffffff;
+  border: 1px solid #434343;
+}
+
+#settingsModal.darkmode {
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+#settingsModal .modal-content.darkmode {
+  background-color: #292929;
+  color: #ffffff;
+  border: 1px solid #434343;
+}
+
+#settingsModal select.darkmode {
+  background-color: #292929;
+  color: #ffffff;
+  border: 2px solid #434343;
+}
+
+.modal.darkmode textarea {
+  background-color: #292929;
+  color: #ffffff;
+  border: 2px solid #434343;
+}
+
+.secondary.darkmode {
+  color: #ffffff !important;
+  background-color: #585858 !important;
+}
+
+.secondary.darkmode:hover {
+  background-color: #434343 !important;
+}
