@@ -1091,6 +1091,7 @@ function createDropdown(conversation) {
     });
     event.stopPropagation();
     dropdown.style.display = 'block';
+    applyRemainingMode();
 
   });
 
@@ -1236,6 +1237,7 @@ function turnIntoDropdown(element) {
   element.addEventListener('click', function(event) {
     event.stopPropagation();
     dropdown.style.display = 'block';
+    applyRemainingMode();
   });
   document.addEventListener('click', function(event) {
     if (event.target !== element) {
