@@ -19,7 +19,7 @@ const resetSettingsButton = document.getElementById('reset-settings');
 const sidebar = document.getElementById('sidebar');
 const closeSidebar = document.getElementById('close-sidebar');
 const fileSelector = document.getElementById('upload-button');
-var kangaroo = 40;
+var kangaroo;
 var darkmodeOn = false;
 var firstClick = false;
 const model = document.getElementById('model');
@@ -805,7 +805,11 @@ function postMessage(message) {
         .then(response => response.json())
         .then(data => {
           if (data.error) {
-            // Do nothing
+            chatBox.scrollTop = chatBox.scrollHeight;
+            chatInput.disabled = false;
+            sendButton.disabled = false;
+            newConvButton.disabled = false;
+            unlockChats();
           } else {
             normalName = data.title;
             normalName = fixName(normalName);
@@ -814,14 +818,23 @@ function postMessage(message) {
             convElement.setAttribute('conv_name', normalName);
             LconvName = data.title;
             statusText.innerHTML = LconvName + ` (${convId})`;
+            chatBox.scrollTop = chatBox.scrollHeight;
+            chatInput.disabled = false;
+            sendButton.disabled = false;
+            newConvButton.disabled = false;
+            unlockChats();
           }
         })
-        .catch(error => console.error('Error:', error));
-        chatBox.scrollTop = chatBox.scrollHeight;
-        chatInput.disabled = false;
-        sendButton.disabled = false;
-        newConvButton.disabled = false;
-        unlockChats();
+        .catch(error => {
+          console.error('Error:', error);
+          chatInput.disabled = false;
+          sendButton.disabled = false;
+          newConvButton.disabled = false;
+          openErrorModal(errorModal, 'Error: ' + error);
+          // Remove the last message (user message) if there is an error
+          deleteLast();
+          unlockChats();
+        });
       })
       .catch(error => {
         console.error('Error:', error);
@@ -1033,6 +1046,7 @@ function verify() {
     }
     // Create conversation elements for each conversation
     list = data.conversations;
+    kangaroo = data.kangaroo;
     // reverse the list
     list = list.reverse();
     list.forEach(conv => {

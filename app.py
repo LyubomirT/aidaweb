@@ -647,7 +647,9 @@ def joined_server():
                         print(user_convs)
                     except:
                         user_convs = []
-                    return jsonify({'joined': True, 'conversations': user_convs})
+                    # try to get the kangaroo amount based on how many conversations there are
+                    kangaroo = len(user_convs)
+                    return jsonify({'joined': True, 'conversations': user_convs, 'kangaroo': kangaroo})
                 return jsonify({'joined': True})
     except:
         print("Could not verify user. Sending them to join page.")
