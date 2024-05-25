@@ -643,7 +643,7 @@ def joined_server():
                     userid = savedtokens[authtoken]['id']
                     # get all conversations associated with the user
                     try:
-                        user_convs = [{'conv_id': conv_id, 'name': convnames[userid][conv_id]} for conv_id in conversations[userid]]
+                        user_convs = [{'conv_id': conv_id, 'name': convnames[userid][conv_id]} for conv_id in list(conversations[userid])[:40]]
                         print(user_convs)
                     except:
                         user_convs = []
