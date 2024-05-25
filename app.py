@@ -651,6 +651,26 @@ def joined_server():
                 return jsonify({'joined': True})
     except:
         print("Could not verify user. Sending them to join page.")
+    
+@app.route('/loadmoreconvs', methods=['POST'])
+@limiter.limit("5/minute")
+def loadmoreconvs():
+    try:
+        data = request.json
+        token = data['token']
+        kangaroo = data['kangaroo']
+        if not check_join(token):
+            return redirect('/join')
+        kangaroo = int(kangaroo)
+        userid = get_user_id(token)
+        # get 40 more conversations, but skip the first kangaroo amount
+        try:
+            user_convs = [{'conv_id': conv_id, 'name': convnames[userid][conv_id]} for conv_id in list(conversations[userid].keys())[kangaroo:kangaroo+40]]
+        except:
+            user_convs = []
+        return jsonify({'conversations': user_convs, 'newkangaroo': kangaroo+40})
+    except:
+        return jsonify({'error': 'Could not load more conversations. Please try again later.'}), 500
 
 
 @app.route('/get_convs', methods=['POST'])
