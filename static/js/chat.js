@@ -19,6 +19,7 @@ const resetSettingsButton = document.getElementById('reset-settings');
 const sidebar = document.getElementById('sidebar');
 const closeSidebar = document.getElementById('close-sidebar');
 const fileSelector = document.getElementById('upload-button');
+var kangaroo = 40;
 var darkmodeOn = false;
 var firstClick = false;
 const model = document.getElementById('model');
@@ -40,6 +41,13 @@ const regenlink_ = document.querySelector('#svgimport > #regen');
 const regenlink = regenlink_.textContent;
 
 const conversationsList = document.getElementById('conversations-list');
+
+// When you scroll to the bottom of the conversation list, load more conversations
+conversationsList.addEventListener('scroll', function() {
+  if (conversationsList.scrollTop + conversationsList.clientHeight >= conversationsList.scrollHeight) {
+    console.log('Reached the bottom of the conversation list');
+  }
+});
 
 function setMarked() {
   // set the marked variable to true
