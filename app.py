@@ -666,6 +666,8 @@ def loadmoreconvs():
         # get 40 more conversations, but skip the first kangaroo amount
         try:
             user_convs = [{'conv_id': conv_id, 'name': convnames[userid][conv_id]} for conv_id in list(conversations[userid].keys())[kangaroo:kangaroo+40]]
+            if len(user_convs) == 0:
+                return jsonify({'noconvs': True})
         except:
             user_convs = []
         return jsonify({'conversations': user_convs, 'newkangaroo': kangaroo+40})
