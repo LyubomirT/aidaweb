@@ -42,13 +42,6 @@ const regenlink = regenlink_.textContent;
 
 const conversationsList = document.getElementById('conversations-list');
 
-// When you scroll to the bottom of the conversation list, load more conversations
-conversationsList.addEventListener('scroll', function() {
-  if (conversationsList.scrollTop + conversationsList.clientHeight >= conversationsList.scrollHeight) {
-    console.log('Reached the bottom of the conversation list');
-  }
-});
-
 function setMarked() {
   // set the marked variable to true
   fileSelector.innerHTML = '<i class="fi fi-rr-check"></i>';
@@ -1062,6 +1055,17 @@ function verify() {
       constructConversation(convElement, conv.name);
       applyRemainingMode();
     });
+    // Create a "Load More" button
+    if (data.conversations !== undefined && data.conversations.length >= 10) {
+      const loadMore = document.createElement('button');
+      loadMore.classList.add('classicbutton');
+      loadMore.classList.add('load-more');
+      loadMore.innerHTML = 'Load More';
+      loadMore.addEventListener('click', function() {
+        loadMoreConversations();
+      });
+      conversationsList.appendChild(loadMore);
+    }
     loadConfig();
     unlockChats();
     const children = samples.children;
@@ -1075,6 +1079,66 @@ function verify() {
   })
   .catch(error => console.error('Error:', error));
 }
+
+function loadMoreConversations() {
+  // Load more conversations
+  lockChats();
+  fetch('/loadmoreconvs', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({token: oauth2Token, kangaroo: kangaroo}),
+  }).then(response => response.json())
+  .then(data => {
+    if (data.error) {
+      openErrorModal(errorModal, 'Error: ' + data.error);
+      unlockChats();
+      return;
+    }
+    if (data.noconvs) {
+      openErrorModal(errorModal, 'No more conversations to load');
+      unlockChats();
+      return;
+    }
+    kangaroo = data.newkangaroo;
+    list = data.conversations;
+
+    // reverse the list
+    list = list.reverse();
+    list.forEach(conv => {
+      const convElement = document.createElement('button');
+      convElement.classList.add('conversation');
+      const p = document.createElement('p');
+      p.id = 'name';
+      convElement.appendChild(p);
+      convElement.querySelector('#name').innerHTML = fixName(conv.name);
+      convElement.conv_id = conv.conv_id;
+      createDropdown(convElement);
+      conversationsList.appendChild(convElement);
+      constructConversation(convElement, conv.name);
+      applyRemainingMode();
+    });
+    // Remove the "Load More" button
+    const loadMore = document.querySelector('.load-more');
+    loadMore.remove();
+    // Create a new "Load More" button
+    const newLoadMore = document.createElement('button');
+    newLoadMore.classList.add('classicbutton');
+    newLoadMore.classList.add('load-more');
+    newLoadMore.innerHTML = 'Load More';
+    newLoadMore.addEventListener('click', function() {
+      loadMoreConversations();
+    });
+    conversationsList.appendChild(newLoadMore);
+    unlockChats();
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    unlockChats();
+  });
+}
+
 
 function createDropdown(conversation) {
   // we'll create a button BUT it'll use an invisible select element

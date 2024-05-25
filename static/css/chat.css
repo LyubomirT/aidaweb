@@ -883,6 +883,18 @@ br {
   background-color: #e6e6e6 !important;
 }
 
+.classicbutton {
+  background-color: #f0f0f0;
+  color: #434343;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 15px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.1s cubic-bezier(0.445, 0.05, 0.55, 0.95);
+
+}
+
 .movethehellup {
   margin-bottom: 150px;
 }

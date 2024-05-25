@@ -643,7 +643,7 @@ def joined_server():
                     userid = savedtokens[authtoken]['id']
                     # get all conversations associated with the user
                     try:
-                        user_convs = [{'conv_id': conv_id, 'name': convnames[userid][conv_id]} for conv_id in list(conversations[userid])[:40]]
+                        user_convs = [{'conv_id': conv_id, 'name': convnames[userid][conv_id]} for conv_id in list(conversations[userid])[-10:]]
                         print(user_convs)
                     except:
                         user_convs = []
@@ -667,7 +667,8 @@ def loadmoreconvs():
         userid = get_user_id(token)
         # get 40 more conversations, but skip the first kangaroo amount
         try:
-            user_convs = [{'conv_id': conv_id, 'name': convnames[userid][conv_id]} for conv_id in list(conversations[userid].keys())[kangaroo:kangaroo+40]]
+            # load from the kangaroo amount to the kangaroo amount + 40, make sure to load from the end of the list
+            user_convs = [{'conv_id': conv_id, 'name': convnames[userid][conv_id]} for conv_id in list(conversations[userid])[-(kangaroo+20):-kangaroo]]
             if len(user_convs) == 0:
                 return jsonify({'noconvs': True})
         except:
