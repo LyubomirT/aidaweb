@@ -675,6 +675,20 @@ body.darkmode {
   z-index: 10;
 }
 
+.dropdown .conv-control {
+  display: block;
+  padding: 10px;
+  text-decoration: none;
+  color: #434343;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.1s cubic-bezier(0.445, 0.05, 0.55, 0.95);
+}
+
+.dropdown .conv-control:hover {
+  background-color: #e6e6e6;
+}
+
 .dropdown .conv-control-child.darkmode {
   background-color: #292929;
   color: #ffffff;
@@ -709,8 +723,12 @@ body.darkmode {
   color: #ffffff;
 }
 
+.conversation button.darkmode:hover {
+  background-color: #434343;
+}
+
 .conversation button:hover {
-  background-color: #4b4b4b;
+  background-color: #e6e6e6;
 }
 
 .conversation:hover {
