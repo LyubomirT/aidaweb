@@ -327,6 +327,18 @@ function postEdit(editedMessage) {
   const messages = document.querySelectorAll('.messagecontainer');
   lastUsr = messages[messages.length - 2].querySelector('.USER.message').textContent;
   lastAsst = messages[messages.length - 1].querySelector('.ASSISTANT.message').textContent;
+  lastUsrImgIfPossible = messages[messages.length - 2].querySelector('.uploaded-image');
+  lastAsstImgIfPossible = messages[messages.length - 1].querySelector('.uploaded-image');
+  if (lastUsrImgIfPossible !== null) {
+    lastUsr = lastUsrImgIfPossible.src;
+  } else {
+    lastUsr = null;
+  }
+  if (lastAsstImgIfPossible !== null) {
+    lastAsst = lastAsstImgIfPossible.src;
+  } else {
+    lastAsst = null;
+  }
 
   deleteLast();
   deleteLast();
@@ -349,8 +361,8 @@ function postEdit(editedMessage) {
       chatInput.disabled = false;
       sendButton.disabled = false;
       // Restore the last two messages (edited message and assistant response)
-      chatBox.innerHTML += constructMessage(lastUsr, 'USER');
-      chatBox.innerHTML += constructMessage(lastAsst, 'ASSISTANT');
+      chatBox.innerHTML += constructMessage(lastUsr, 'USER', attachmentbase64=lastUsr);
+      chatBox.innerHTML += constructMessage(lastAsst, 'ASSISTANT', attachmentbase64=lastAsst);
       applyRemainingMode();
       unlockChats();
       return;
@@ -361,7 +373,7 @@ function postEdit(editedMessage) {
     console.log('Chat history:', chatHistory);
     // Append the edited message and the assistant response
     chatBox.innerHTML += constructMessage(editedMessage, editedMessage, 'USER', attachmentbase64=data.attachmentbase64);
-    response = constructMessage(htmlResponse, rawResponse, 'ASSISTANT');
+    response = constructMessage(htmlResponse, rawResponse, 'ASSISTANT', attachmentbase64=data.attachmentbase64);
     response.raw = rawResponse;
     chatBox.innerHTML += response;
     applyRemainingMode();
@@ -378,7 +390,7 @@ function postEdit(editedMessage) {
     sendButton.disabled = false;
     openErrorModal(errorModal, 'Error: ' + error);
     // Restore the last two messages (edited message and assistant response)
-    chatBox.innerHTML += constructMessage(lastUsr, 'USER');
+    chatBox.innerHTML += constructMessage(lastUsr, 'USER', attachmentbase64=lastUsr);
     applyRemainingMode();
     fetch('/textmanager/to_html', {
       method: 'POST',
@@ -392,7 +404,7 @@ function postEdit(editedMessage) {
       lastAsst = data.html;
     })
     .catch(error => console.error('Error:', error));
-    chatBox.innerHTML += constructMessage(lastAsst, 'ASSISTANT');
+    chatBox.innerHTML += constructMessage(lastAsst, 'ASSISTANT', attachmentbase64=lastAsst);
     applyRemainingMode();
     unlockChats();
   });
@@ -459,6 +471,9 @@ function constructMessage(message, rawmsg, role, attachmentbase64=null) {
     <i class="fi fi-rr-refresh"></i>
     </div>`;
     contentstring = ``;
+    if (attachmentbase64 !== null) {
+      contentstring = `<img src="${attachmentbase64}" alt="Assistant uploaded image" class="uploaded-image">`;
+    }
   }
   console.log(rawmsg);
   if (rawmsg.message !== undefined) {
@@ -610,7 +625,7 @@ function regenerate() {
       chatHistory[i].id = i;
     }
     console.log('Chat history:', chatHistory);
-    response = constructMessage(htmlResponse, rawResponse, 'ASSISTANT');
+    response = constructMessage(htmlResponse, rawResponse, 'ASSISTANT', data.attachmentbase64);
     response.raw = rawResponse;
     chatBox.innerHTML += response;
     applyRemainingMode();
@@ -785,7 +800,7 @@ function postMessage(message) {
           chatHistory[i].id = i;
         }
         console.log('Chat history:', chatHistory);
-        response = constructMessage(htmlResponse, rawResponse, 'ASSISTANT');
+        response = constructMessage(htmlResponse, rawResponse, 'ASSISTANT', data.attachmentbase64);
         response.raw = rawResponse;
         chatBox.innerHTML += response;
         applyRemainingMode();
@@ -895,7 +910,7 @@ function postMessage(message) {
         chatHistory[i].id = i;
       }
       console.log('Chat history:', chatHistory);
-      response = constructMessage(htmlResponse, rawResponse, 'ASSISTANT');
+      response = constructMessage(htmlResponse, rawResponse, 'ASSISTANT', data.attachmentbase64);
       response.raw = rawResponse;
       chatBox.innerHTML += response;
       applyRemainingMode();
@@ -964,7 +979,7 @@ function constructConversation(conv, name = null) {
               chatBox.innerHTML += constructMessage(message.message, message, 'USER');
             }
           } else {
-            chatBox.innerHTML += constructMessage(message.message, message, 'ASSISTANT');
+            chatBox.innerHTML += constructMessage(message.message, message, 'ASSISTANT', message.attachmentbase64);
           }
           applyRemainingMode();
         });
@@ -985,7 +1000,7 @@ function constructConversation(conv, name = null) {
               chatBox.innerHTML += constructMessage(message.message, message, 'USER');
             }
           } else {
-            chatBox.innerHTML += constructMessage(message.message, message, 'ASSISTANT');
+            chatBox.innerHTML += constructMessage(message.message, message, 'ASSISTANT', message.attachmentbase64);
           }
           applyRemainingMode();
         });

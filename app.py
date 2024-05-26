@@ -225,11 +225,12 @@ def query(filename):
     return response.json()
 
 def generate_image(text):
+    print("Generating image...")
     seed = random.randint(100000, 999999)
     payload = {"inputs": text, "seed": seed}
     headers = {"Authorization": f"Bearer {os.environ['HFACE']}"}
     try:
-        response = requests.post("https://api-inference.huggingface.co/models/sd-community/sdxl-flash", headers=headers, data=json.dumps(payload))
+        response = requests.post("https://api-inference.huggingface.co/models/Lykon/dreamshaper-7", headers=headers, data=json.dumps(payload))
         # check if it even has json
         try:
             response.json()
@@ -239,7 +240,7 @@ def generate_image(text):
         if successfuljson:
             if response.json().get('error', None):
                 while response.json().get('error', None):
-                    response = requests.post("https://api-inference.huggingface.co/models/sd-community/sdxl-flash", headers=headers, data=json.dumps(payload))
+                    response = requests.post("https://api-inference.huggingface.co/models/Lykon/dreamshaper-7", headers=headers, data=json.dumps(payload))
                     try:
                         response.json()
                         successfuljson = True
@@ -257,6 +258,8 @@ def generate_image(text):
             data = f.read()
         # now let's convert the image to base64
         randomstr_ = base64.b64encode(data).decode('utf-8')
+        # also add the metadata to the image
+        randomstr_ = f"data:image/png;base64,{randomstr_}"
         os.remove(f"imagescustom/{randomstr}.png")
         return randomstr_
     except Exception as e:
@@ -537,7 +540,18 @@ def regen():
                             chat_history=proxy[:-1], preamble=config_['preamble_override'], model=config_['model'],
                             temperature=config_['temperature'], max_tokens=config_['max_tokens'], connectors=[{'id': 'web-search'}])
         response = response.text
-        chat_history.append({"role": "ASSISTANT", "message": response})  # Add assistant response to history
+        attachment = None
+        if config_['imagegen'] == 'true':
+            if "INTERNALTOOL:IMAGEGEN>>LAUNCH--" in response and "--ENDLAUNCH" in response:
+                start = response.index("INTERNALTOOL:IMAGEGEN>>LAUNCH--") + len("INTERNALTOOL:IMAGEGEN>>LAUNCH--")
+                end = response.index("--ENDLAUNCH")
+                text = response[start:end]
+                attachment = generate_image(text)
+                # remove the image generation part from the response
+                response = response.replace(response[start:end], "")
+                # remove the internal tool part
+                response = response.replace("INTERNALTOOL:IMAGEGEN>>LAUNCH--", "").replace("--ENDLAUNCH", "")
+        chat_history.append({"role": "ASSISTANT", "message": response, 'attachmentbase64': attachment})  # Add assistant response to history
 
         # Convert markdown response to HTML
         html_response = markdown2.markdown(response, extras=["tables", "fenced-code-blocks", "spoiler", "strike", "subscript", "superscript"])
@@ -551,7 +565,7 @@ def regen():
         if not tapiaction('take', amount, str(userid)):
             return jsonify({'error': 'Could not take tokens from your account. Please try again later.'}), 500
 
-        return jsonify({'raw_response': response, 'html_response': html_response, 'chat_history': chat_history})
+        return jsonify({'raw_response': response, 'html_response': html_response, 'chat_history': chat_history, 'attachmentbase64': attachment})
     except Exception as e:
         progresses[userid] = False
         return jsonify({'error': 'Regen failed. Please try again later.'}), 500
@@ -622,8 +636,19 @@ def edit():
                             chat_history=proxy[:-1], preamble=config_['preamble_override'], model=config_['model'],
                             temperature=config_['temperature'], max_tokens=config_['max_tokens'], connectors=[{'id': 'web-search'}])
         response = response.text
+        attachment = None
+        if config_['imagegen'] == 'true':
+            if "INTERNALTOOL:IMAGEGEN>>LAUNCH--" in response and "--ENDLAUNCH" in response:
+                start = response.index("INTERNALTOOL:IMAGEGEN>>LAUNCH--") + len("INTERNALTOOL:IMAGEGEN>>LAUNCH--")
+                end = response.index("--ENDLAUNCH")
+                text = response[start:end]
+                attachment = generate_image(text)
+                # remove the image generation part from the response
+                response = response.replace(response[start:end], "")
+                # remove the internal tool part
+                response = response.replace("INTERNALTOOL:IMAGEGEN>>LAUNCH--", "").replace("--ENDLAUNCH", "")
         chat_history.pop()
-        chat_history.append({"role": "ASSISTANT", "message": response})  # Add assistant response to history
+        chat_history.append({"role": "ASSISTANT", "message": response, 'attachmentbase64': attachment})  # Add assistant response to history
 
         # Convert markdown response to HTML
         html_response = markdown2.markdown(response, extras=["tables", "fenced-code-blocks", "spoiler", "strike"])
@@ -637,7 +662,7 @@ def edit():
         if not tapiaction('take', amount, str(userid)):
             return jsonify({'error': 'Could not take tokens from your account. Please try again later.'}), 500
 
-        return jsonify({'raw_response': response, 'html_response': html_response, 'chat_history': chat_history, 'attachmentbase64': chat_history[-2].get('attachmentbase64', None)})
+        return jsonify({'raw_response': response, 'html_response': html_response, 'chat_history': chat_history, 'attachmentbase64': attachment})
     except Exception as e:
         progresses[userid] = False
         return jsonify({'error': 'Edit function committed Alt+F4. Please try again later.'}), 500
@@ -777,7 +802,7 @@ def get_conv():
             return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
         for message in copy.deepcopy(chat_history):
             if message['role'] == 'ASSISTANT':
-                chat_history_html.append({'role': 'ASSISTANT', 'message': markdown2.markdown(message['message'], extras=["tables", "fenced-code-blocks", "spoiler", "strike"])})
+                chat_history_html.append({'role': 'ASSISTANT', 'message': markdown2.markdown(message['message'], extras=["tables", "fenced-code-blocks", "spoiler", "strike"]), 'attachment': message['attachment'] if message.get('attachment', None) is not None else None, 'attachmentbase64': message.get('attachmentbase64', None)})
             else:
                 chat_history_html.append({'role': 'USER', 'message': message['message'], 'attachment': message['attachment'] if message.get('attachment', None) is not None else None, 'attachmentbase64': message.get('attachmentbase64', None)})
         return jsonify({'chat_history': chat_history, 'chat_history_html': chat_history_html, 'name': name, 'expectedlength': len(chat_history)})
