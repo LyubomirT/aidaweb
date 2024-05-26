@@ -360,7 +360,18 @@ def chat():
                                temperature=config_['temperature'], max_tokens=config_['max_tokens'], 
                                model=config_['model'], preamble=config_['preamble_override'], connectors=[{'id': 'web-search'}])
         response = response.text
-        chat_history.append({"role": "ASSISTANT", "message": response})  # Add assistant response to history
+        attachment = None
+        if config_['imagegen'] == 'true':
+            if "INTERNALTOOL:IMAGEGEN>>LAUNCH--" in response and "--ENDLAUNCH" in response:
+                start = response.index("INTERNALTOOL:IMAGEGEN>>LAUNCH--") + len("INTERNALTOOL:IMAGEGEN>>LAUNCH--")
+                end = response.index("--ENDLAUNCH")
+                text = response[start:end]
+                attachment = generate_image(text)
+                # remove the image generation part from the response
+                response = response.replace(response[start:end], "")
+                # remove the internal tool part
+                response = response.replace("INTERNALTOOL:IMAGEGEN>>LAUNCH--", "").replace("--ENDLAUNCH", "")
+        chat_history.append({"role": "ASSISTANT", "message": response, 'attachmentbase64': attachment})  # Add assistant response to history
 
         # Convert markdown response to HTML
         html_response = markdown2.markdown(response, extras=["tables", "fenced-code-blocks", "spoiler", "strike", "subscript", "superscript"])
@@ -374,7 +385,7 @@ def chat():
             return jsonify({'error': 'Could not take tokens from your account. Please try again later.'}), 500
 
 
-        return jsonify({'raw_response': response, 'html_response': html_response, 'chat_history': chat_history, 'tokens': get_tokens_by_id(userid)})
+        return jsonify({'raw_response': response, 'html_response': html_response, 'chat_history': chat_history, 'tokens': get_tokens_by_id(userid), 'attachmentbase64': attachment})
     except Exception as e:
         progresses[userid] = False
         import traceback
