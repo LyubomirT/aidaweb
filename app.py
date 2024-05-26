@@ -10,8 +10,10 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 import json
 import PIL
+from PIL import Image
 import base64
 import copy
+import io
 
 # Load the environment variables from the .env file
 dotenv.load_dotenv()
@@ -214,6 +216,48 @@ def query(filename):
         print(e)
         return None
     return response.json()
+
+def generate_image(text):
+    seed = random.randint(100000, 999999)
+    payload = {"inputs": text, "seed": seed}
+    headers = {"Authorization": f"Bearer {os.environ['HFACE']}"}
+    try:
+        response = requests.post("https://api-inference.huggingface.co/models/sd-community/sdxl-flash", headers=headers, data=json.dumps(payload))
+        # check if it even has json
+        try:
+            response.json()
+            successfuljson = True
+        except:
+            successfuljson = False
+        if successfuljson:
+            if response.json().get('error', None):
+                while response.json().get('error', None):
+                    response = requests.post("https://api-inference.huggingface.co/models/sd-community/sdxl-flash", headers=headers, data=json.dumps(payload))
+                    try:
+                        response.json()
+                        successfuljson = True
+                    except:
+                        successfuljson = False
+                        break
+                    
+                    time.sleep(1)
+        content = response.content
+        image = Image.open(io.BytesIO(content))
+        randomstr = str(random.randint(100000, 999999))
+        image.save(f"imagescustom/{randomstr}.png")
+        # get the image
+        with open(f"imagescustom/{randomstr}.png", "rb") as f:
+            data = f.read()
+        # now let's convert the image to base64
+        randomstr_ = base64.b64encode(data).decode('utf-8')
+        os.remove(f"imagescustom/{randomstr}.png")
+        return randomstr_
+    except Exception as e:
+        print(e)
+        return None
+    
+print(generate_image("Hello, world!"))
+
 
 def check_limits(config):
     if config['temperature'] > 1 or config['temperature'] < 0.1:
@@ -729,6 +773,8 @@ def auth_discord():
     except:
         return "Could not load login page. Please try again later. This means that the app is fucked."
 
+
+    
 
 @app.route('/join')
 def join():
