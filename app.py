@@ -200,6 +200,13 @@ using modified versions of Cohere's models. Good luck and have fun chatting with
     User's name: {name}
     You may mention the user's name in your responses to personalize the conversation and make it more engaging.
     """.format(name=name)
+    newconfig['imagegen'] = _config_['imagegen']
+    if newconfig['imagegen'] == 'true':
+        newconfig['preamble_override'] = newconfig['preamble_override'] + """
+    
+    Image Generation:
+    You can generate images by adding INTERNALTOOL:IMAGEGEN>>LAUNCH--{PROVIDE TEXT HERE}--ENDLAUNCH to your message.
+    """
     return newconfig
 
 def query(filename):
@@ -270,6 +277,8 @@ def check_limits(config):
     if config['usemyname'] not in ['true', 'false']:
         return False
     if config['websearch'] not in ['true', 'false']:
+        return False
+    if config['imagegen'] not in ['true', 'false']:
         return False
     return True
 
