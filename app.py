@@ -256,7 +256,8 @@ def generate_image(text):
         print(e)
         return None
     
-print(generate_image("Hello, world!"))
+generate_image("Test")
+print("Warmup complete.")
 
 
 def check_limits(config):
