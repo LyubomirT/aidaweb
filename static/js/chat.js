@@ -372,7 +372,7 @@ function postEdit(editedMessage) {
     chatHistory = data.chat_history;  // Update chat history from server
     console.log('Chat history:', chatHistory);
     // Append the edited message and the assistant response
-    chatBox.innerHTML += constructMessage(editedMessage, editedMessage, 'USER', attachmentbase64=data.attachmentbase64);
+    chatBox.innerHTML += constructMessage(editedMessage, editedMessage, 'USER', attachmentbase64=lastUsrImgIfPossible);
     response = constructMessage(htmlResponse, rawResponse, 'ASSISTANT', attachmentbase64=data.attachmentbase64);
     response.raw = rawResponse;
     chatBox.innerHTML += response;
@@ -390,7 +390,7 @@ function postEdit(editedMessage) {
     sendButton.disabled = false;
     openErrorModal(errorModal, 'Error: ' + error);
     // Restore the last two messages (edited message and assistant response)
-    chatBox.innerHTML += constructMessage(lastUsr, 'USER', attachmentbase64=lastUsr);
+    chatBox.innerHTML += constructMessage(lastUsr, 'USER', attachmentbase64=lastUsrImgIfPossible);
     applyRemainingMode();
     fetch('/textmanager/to_html', {
       method: 'POST',
@@ -404,7 +404,7 @@ function postEdit(editedMessage) {
       lastAsst = data.html;
     })
     .catch(error => console.error('Error:', error));
-    chatBox.innerHTML += constructMessage(lastAsst, 'ASSISTANT', attachmentbase64=lastAsst);
+    chatBox.innerHTML += constructMessage(lastAsst, 'ASSISTANT', attachmentbase64=lastAsstImgIfPossible);
     applyRemainingMode();
     unlockChats();
   });
