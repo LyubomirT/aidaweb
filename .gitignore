@@ -4,3 +4,5 @@ stored/
 configs/
 attachments/
 allowedmods.py
+conversations.json
+convnames.json
