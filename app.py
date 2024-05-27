@@ -15,6 +15,124 @@ import base64
 import copy
 import io
 from allowedmods import modids
+import os
+import ast
+
+class ReactiveList(list):
+    """ A special list class that triggers save on modifications """
+
+    def __init__(self, items=None, parent=None):
+        self._parent = parent
+        super().__init__(items if items is not None else [])
+
+    def _save(self):
+        """ Propagates save request up to the parent DiskDict """
+        if self._parent:
+            self._parent._save()
+
+    def __setitem__(self, index, value):
+        super().__setitem__(index, self._parent._convert_value(value))
+        self._save()
+
+    def __delitem__(self, index):
+        super().__delitem__(index)
+        self._save()
+
+    def append(self, value):
+        super().append(self._parent._convert_value(value))
+        self._save()
+
+    def extend(self, iterable):
+        super().extend(self._parent._convert_value(item) for item in iterable)
+        self._save()
+
+    def insert(self, index, value):
+        super().insert(index, self._parent._convert_value(value))
+        self._save()
+
+    def pop(self, index=-1):
+        value = super().pop(index)
+        self._save()
+        return value
+
+    def remove(self, value):
+        super().remove(value)
+        self._save()
+
+    def clear(self):
+        super().clear()
+        self._save()
+
+class DiskDict(dict):
+    def __init__(self, filepath, _data=None, _parent=None):
+        self.filepath = filepath
+        self._parent = _parent
+        self._load_initial(_data)
+
+    def _load_initial(self, _data):
+        if _data is None:
+            if os.path.exists(self.filepath):
+                with open(self.filepath, 'r') as file:
+                    file_content = file.read()
+                    if file_content:
+                        data = ast.literal_eval(file_content)
+                        for key, value in data.items():
+                            self[key] = self._convert_value(value)
+                    else:
+                        self.clear_data()
+            else:
+                self.clear_data()
+        else:
+            for key, value in _data.items():
+                self[key] = self._convert_value(value)
+
+    def clear_data(self):
+        super().clear()
+    
+    def _convert_value(self, value):
+        if isinstance(value, dict):
+            return DiskDict(self.filepath, value, self)
+        elif isinstance(value, list):
+            return ReactiveList([self._convert_value(item) for item in value], self)
+        return value
+
+    def _save(self):
+        root = self._get_root()
+        root._save_to_disk()
+
+    def _get_root(self):
+        return self if self._parent is None else self._parent._get_root()
+
+    def _save_to_disk(self):
+        with open(self.filepath, 'w') as file:
+            file.write(repr(self))
+
+    def __setitem__(self, key, value):
+        super().__setitem__(key, self._convert_value(value))
+        self._save()
+
+    def __delitem__(self, key):
+        super().__delitem__(key)
+        self._save()
+        
+    def update(self, *args, **kwargs):
+        items = {k: self._convert_value(v) for k, v in dict(*args, **kwargs).items()}
+        super().update(items)
+        self._save()
+    
+    def setdefault(self, key, default=None):
+        if key not in self:
+            self[key] = self._convert_value(default)
+        return self[key]
+    
+    def pop(self, key, *args):
+        value = super().pop(key, *args)
+        self._save()
+        return value
+    
+    def clear(self):
+        super().clear()
+        self._save()
 
 # Load the environment variables from the .env file
 dotenv.load_dotenv()
@@ -26,10 +144,10 @@ app = Flask(__name__)
 limiter = Limiter(get_remote_address, app=app, storage_uri='memory://')
 
 # Dictionary to store conversations
-conversations = {}
+conversations = DiskDict("conversations")
 progresses = {}
 savedtokens = {}
-convnames = {}
+convnames = DiskDict("convnames")
 bans = {}
 reqonroute = {}
 reqonroute_id = {}
@@ -160,6 +278,8 @@ def new_conv():
         # DELETE THAT WHEN WE HAVE A WAY TO NAME CONVERSATIONS
         return jsonify({'conv_id': conv_id, 'name': convnames[userid][conv_id]})
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         return jsonify({'error': 'Fatal error occurred. Please try again later.'}), 500
 
 @app.errorhandler(429)
@@ -266,10 +386,6 @@ def generate_image(text):
     except Exception as e:
         print(e)
         return None
-    
-generate_image("Test")
-print("Warmup complete.")
-
 
 def check_limits(config):
     if config['temperature'] > 1 or config['temperature'] < 0.1:
@@ -799,6 +915,7 @@ def get_conv():
         token = data['token']
         id = get_user_id(token)
         chat_history = conversations[id][conv_id]
+        print(chat_history)
         name = convnames[id][conv_id]
         chat_history_html = []
         if id in progresses and progresses[id]:

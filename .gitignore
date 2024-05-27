@@ -6,3 +6,17 @@ attachments/
 allowedmods.py
 conversations.json
 convnames.json
+conversations
+convnames
+conversations.dat
+convnames.dat
+conversations.db.dir
+conversations.db.dat
+convnames.db.dir
+conversations.db.bak
+convnames.db.bak
+convnames.db.dat
+conversations.dir
+convnames.dir
+conversations.bak
+convnames.bak
