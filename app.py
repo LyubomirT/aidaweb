@@ -530,9 +530,10 @@ def regen():
         proxy = copy.deepcopy(chat_history)
         for i in range(len(proxy)):
             if proxy[i]['role'] == 'USER' and proxy[i].get('attachment', None) is not None:
+                print(proxy[i]['attachment'])
                 proxy[i]['message'] = proxy[i]['message'] + "\n\n\n[Attachment Description: " + proxy[i]['attachment'] + "]"
         if config_['websearch'] != 'true':
-            response = client.chat(message=chat_history[-1]['message'],
+            response = client.chat(message=proxy[-1]['message'],
                             chat_history=proxy[:-1], preamble=config_['preamble_override'], model=config_['model'],
                             temperature=config_['temperature'], max_tokens=config_['max_tokens'])
         else:
