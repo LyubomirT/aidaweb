@@ -109,6 +109,27 @@ class DiskDict(dict):
             with open(filepath, 'w') as file:
                 file.write(repr(value))
 
+    def _load_from_disk(self, key):
+        filepath = os.path.join(self.directory, f"{str(key)}.aidacf")
+        if os.path.exists(filepath):
+            with open(filepath, 'r') as file:
+                file_content = file.read()
+                if file_content:
+                    data = ast.literal_eval(file_content)
+                    return self._convert_value(data)
+        return None
+
+    def __getitem__(self, key):
+        if key in self:
+            return super().__getitem__(key)
+        else:
+            value = self._load_from_disk(key)
+            if value is not None:
+                self[key] = value
+                return value
+            else:
+                raise KeyError(key)
+
     def __setitem__(self, key, value):
         super().__setitem__(key, self._convert_value(value))
         self._save()
@@ -135,6 +156,7 @@ class DiskDict(dict):
     def clear(self):
         super().clear()
         self._save()
+
 
 
 # Load the environment variables from the .env file
@@ -928,6 +950,7 @@ def get_conv():
                 chat_history_html.append({'role': 'ASSISTANT', 'message': markdown2.markdown(message['message'], extras=["tables", "fenced-code-blocks", "spoiler", "strike"]), 'attachment': message['attachment'] if message.get('attachment', None) is not None else None, 'attachmentbase64': message.get('attachmentbase64', None)})
             else:
                 chat_history_html.append({'role': 'USER', 'message': message['message'], 'attachment': message['attachment'] if message.get('attachment', None) is not None else None, 'attachmentbase64': message.get('attachmentbase64', None)})
+        conversations._save()
         return jsonify({'chat_history': chat_history, 'chat_history_html': chat_history_html, 'name': name, 'expectedlength': len(chat_history)})
     except Exception as e:
         print(f"Error: {str(e)}")
