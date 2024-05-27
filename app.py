@@ -64,34 +64,34 @@ class ReactiveList(list):
         self._save()
 
 class DiskDict(dict):
-    def __init__(self, filepath, _data=None, _parent=None):
-        self.filepath = filepath
+    def __init__(self, directory, _data=None, _parent=None):
+        self.directory = directory
         self._parent = _parent
         self._load_initial(_data)
 
     def _load_initial(self, _data):
         if _data is None:
-            if os.path.exists(self.filepath):
-                with open(self.filepath, 'r') as file:
-                    file_content = file.read()
-                    if file_content:
-                        data = ast.literal_eval(file_content)
-                        for key, value in data.items():
-                            self[key] = self._convert_value(value)
+            if os.path.exists(self.directory):
+                for filename in os.listdir(self.directory):
+                    filepath = os.path.join(self.directory, filename)
+                    if os.path.isfile(filepath) and filename.endswith('.aidacf'):
+                        with open(filepath, 'r') as file:
+                            file_content = file.read()
+                            if file_content:
+                                data = ast.literal_eval(file_content)
+                                key = int(filename.split('.')[0])
+                                self[key] = self._convert_value(data)
                     else:
-                        self.clear_data()
+                        print(f"Ignoring non-AIDACF file: {filename}")
             else:
-                self.clear_data()
+                os.makedirs(self.directory, exist_ok=True)
         else:
             for key, value in _data.items():
                 self[key] = self._convert_value(value)
 
-    def clear_data(self):
-        super().clear()
-    
     def _convert_value(self, value):
         if isinstance(value, dict):
-            return DiskDict(self.filepath, value, self)
+            return DiskDict(self.directory, value, self)
         elif isinstance(value, list):
             return ReactiveList([self._convert_value(item) for item in value], self)
         return value
@@ -104,8 +104,10 @@ class DiskDict(dict):
         return self if self._parent is None else self._parent._get_root()
 
     def _save_to_disk(self):
-        with open(self.filepath, 'w') as file:
-            file.write(repr(self))
+        for key, value in self.items():
+            filepath = os.path.join(self.directory, f"{str(key)}.aidacf")
+            with open(filepath, 'w') as file:
+                file.write(repr(value))
 
     def __setitem__(self, key, value):
         super().__setitem__(key, self._convert_value(value))
@@ -133,6 +135,7 @@ class DiskDict(dict):
     def clear(self):
         super().clear()
         self._save()
+
 
 # Load the environment variables from the .env file
 dotenv.load_dotenv()
