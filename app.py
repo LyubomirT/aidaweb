@@ -14,6 +14,7 @@ from PIL import Image
 import base64
 import copy
 import io
+from allowedmods import modids
 
 # Load the environment variables from the .env file
 dotenv.load_dotenv()
