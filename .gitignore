@@ -3,3 +3,4 @@ stored/
 .env
 configs/
 attachments/
+allowedmods.py

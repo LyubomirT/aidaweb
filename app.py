@@ -569,6 +569,7 @@ def regen():
         return jsonify({'raw_response': response, 'html_response': html_response, 'chat_history': chat_history, 'attachmentbase64': attachment})
     except Exception as e:
         progresses[userid] = False
+        print(e)
         return jsonify({'error': 'Regen failed. Please try again later.'}), 500
 
 @app.route('/textmanager/to_html', methods=['POST'])
