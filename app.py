@@ -95,10 +95,9 @@ class DiskDict(dict):
 
     def _save_to_disk(self):
         for key, value in self.items():
-            if key in self._loaded_keys:  # Save only loaded keys
-                filepath = os.path.join(self.directory, f"{str(key)}.aidacf")
-                with open(filepath, 'w') as file:
-                    file.write(repr(value))
+            filepath = os.path.join(self.directory, f"{str(key)}.aidacf")
+            with open(filepath, 'w') as file:
+                file.write(repr(value))
 
     def _load_from_disk(self, key):
         filepath = os.path.join(self.directory, f"{str(key)}.aidacf")
@@ -161,6 +160,7 @@ class DiskDict(dict):
         super().clear()
         self._loaded_keys.clear()  # Clear all loaded keys
         self._save()
+
 
 # Load the environment variables from the .env file
 dotenv.load_dotenv()

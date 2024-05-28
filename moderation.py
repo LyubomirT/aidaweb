@@ -1,10 +1,3 @@
-# sample (path: conversations/861620168370683924.aidacf):
-# {243334: [{'role': 'USER', 'message': 'Hey!', 'attachment': None, 'attachmentbase64': None}, {'role': 'ASSISTANT', 'message': 'Hi lyubomirt! How can I assist you today?', 'attachmentbase64': None}]}
-# THIS IS NOT JSON, JSON CAN'T HAVE INT KEYS
-# .aidacf is a custom file extension, it's not a standard file extension
-# conversation names (path: convnames/861620168370683924.aidacf):
-# {243334: 'Greetings'}
-
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
@@ -15,24 +8,7 @@ import os
 import json
 import re
 import base64
-
-# the moderation app lets you ban users and delete conversations from the database. It also lets you view the conversations in a chat-like interface
-# the app is a tkinter app with a treeview widget for the conversations and a text widget for the messages
-# the app has a menu with options to ban users, delete conversations, and save the database
-# the app has a toolbar with buttons to ban users, delete conversations, and save the database
-# banned user ids are stored in banned.txt (create it if it doesn't exist)
-# directly edit the user data (conversations and convnames) in the database folders
-# the database folders are in the same directory as the moderation app
-# the database folders are conversations and convnames
-# we should use re or something for loading the user data as it's not valid json (int keys)
-# also i guess we can just convert the string to a dict instead of going through all this re bullshit
-# by default present with a dropdown to select the user id to view the conversations of
-# also make sure that all operations use dropdowns for user-friendlyness
-# do not load the entire database into memory, only load the data for the selected user
-# do not load anything from the database until the user selects a user id and clicks the load button
-# the keys in conversations and convnames are the same, and those are conversation ids
-# we can retrieve conversation names from convnames using the conversation id
-# the conversation names are displayed in the treeview
+import random
 
 class ModerationApp:
     def __init__(self, root):
@@ -72,6 +48,14 @@ class ModerationApp:
         load_button = tk.Button(toolbar, text="Load", command=self.load_user_data)
         load_button.pack(side=tk.LEFT, padx=2, pady=2)
 
+        self.search_var = tk.StringVar()
+        search_label = tk.Label(toolbar, text="Search:")
+        search_label.pack(side=tk.LEFT, padx=2, pady=2)
+        self.search_entry = tk.Entry(toolbar, textvariable=self.search_var)
+        self.search_entry.pack(side=tk.LEFT, padx=2, pady=2)
+        search_button = tk.Button(toolbar, text="Search", command=self.search_data)
+        search_button.pack(side=tk.LEFT, padx=2, pady=2)
+
         ban_button = tk.Button(toolbar, text="Ban User", command=self.ban_user)
         ban_button.pack(side=tk.LEFT, padx=2, pady=2)
         delete_button = tk.Button(toolbar, text="Delete Conversation", command=self.delete_conversation)
@@ -80,17 +64,35 @@ class ModerationApp:
         save_button.pack(side=tk.LEFT, padx=2, pady=2)
         refresh_button = tk.Button(toolbar, text="Refresh", command=self.load_dropdown)
         refresh_button.pack(side=tk.LEFT, padx=2, pady=2)
+        random_button = tk.Button(toolbar, text="Random", command=self.load_random_conversation)
+        random_button.pack(side=tk.LEFT, padx=2, pady=2)
 
-        # Treeview for conversations
-        self.tree = ttk.Treeview(self.root, columns=('ID', 'Name'), show='headings')
+        # Notebook for tabs
+        self.notebook = ttk.Notebook(self.root)
+        self.notebook.pack(fill=tk.BOTH, expand=True)
+
+        # Normal tab
+        self.normal_tab = ttk.Frame(self.notebook)
+        self.notebook.add(self.normal_tab, text="Normal")
+
+        # Treeview for conversations in Normal tab
+        self.tree = ttk.Treeview(self.normal_tab, columns=('ID', 'Name'), show='headings')
         self.tree.heading('ID', text='ID')
         self.tree.heading('Name', text='Name')
         self.tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         self.tree.bind('<ButtonRelease-1>', self.on_conversation_select)
 
-        # Text widget for messages
-        self.text = tk.Text(self.root)
+        # Text widget for messages in Normal tab
+        self.text = tk.Text(self.normal_tab)
         self.text.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+
+        # Random tab
+        self.random_tab = ttk.Frame(self.notebook)
+        self.notebook.add(self.random_tab, text="Random")
+
+        # Text widget for messages in Random tab
+        self.random_text = tk.Text(self.random_tab)
+        self.random_text.pack(fill=tk.BOTH, expand=True)
 
     def load_banned_users(self):
         if os.path.exists("banned.txt"):
@@ -138,6 +140,74 @@ class ModerationApp:
             role = msg['role']
             message = msg['message']
             self.text.insert(tk.END, f"{role}: {message}\n")
+
+    def load_random_conversation(self):
+        user_ids = [f.split(".")[0] for f in os.listdir(self.conversations_path) if f.endswith(".aidacf")]
+        if not user_ids:
+            messagebox.showerror("Error", "No users found.")
+            return
+
+        random_user_id = random.choice(user_ids)
+        conversation_file = os.path.join(self.conversations_path, f"{random_user_id}.aidacf")
+        convname_file = os.path.join(self.convnames_path, f"{random_user_id}.aidacf")
+
+        if not os.path.exists(conversation_file) or not os.path.exists(convname_file):
+            messagebox.showerror("Error", "Random user data not found.")
+            return
+
+        with open(conversation_file, "r") as f:
+            conversation_data = eval(f.read())  # Direct conversion to dict
+        with open(convname_file, "r") as f:
+            convname_data = eval(f.read())  # Direct conversion to dict
+
+        random_conversation_id = random.choice(list(conversation_data.keys()))
+        messages = conversation_data[random_conversation_id]
+
+        self.user_id_var.set(random_user_id)
+        self.load_user_data()
+        self.tree.selection_set(self.tree.get_children()[list(conversation_data.keys()).index(random_conversation_id)])
+
+        self.text.delete(1.0, tk.END)
+        for msg in messages:
+            role = msg['role']
+            message = msg['message']
+            self.text.insert(tk.END, f"{role}: {message}\n")
+
+        self.random_text.delete(1.0, tk.END)
+        for msg in messages:
+            role = msg['role']
+            message = msg['message']
+            self.random_text.insert(tk.END, f"{role}: {message}\n")
+
+    def search_data(self):
+        search_query = self.search_var.get().strip()
+        if not search_query:
+            messagebox.showerror("Error", "Please enter a search query.")
+            return
+
+        user_ids = [f.split(".")[0] for f in os.listdir(self.conversations_path) if f.endswith(".aidacf")]
+
+        matching_user_ids = [user_id for user_id in user_ids if search_query in user_id]
+        matching_conv_ids = []
+
+        for user_id in user_ids:
+            conversation_file = os.path.join(self.conversations_path, f"{user_id}.aidacf")
+            if os.path.exists(conversation_file):
+                with open(conversation_file, "r") as f:
+                    conversation_data = eval(f.read())
+                for conv_id in conversation_data.keys():
+                    if search_query in str(conv_id):
+                        matching_conv_ids.append((user_id, conv_id))
+
+        if matching_user_ids:
+            self.user_id_var.set(matching_user_ids[0])
+            self.load_user_data()
+
+        if matching_conv_ids:
+            user_id, conv_id = matching_conv_ids[0]
+            self.user_id_var.set(user_id)
+            self.load_user_data()
+            self.tree.selection_set(self.tree.get_children()[list(self.conversation_data.keys()).index(conv_id)])
 
     def ban_user(self):
         if not self.selected_user_id:
