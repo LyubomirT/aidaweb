@@ -28,3 +28,5 @@ configs/*
 !conversations/.gitkeep
 !convnames/.gitkeep
 !configs/.gitkeep
+
+banned.txt
