@@ -78,6 +78,8 @@ class ModerationApp:
         delete_button.pack(side=tk.LEFT, padx=2, pady=2)
         save_button = tk.Button(toolbar, text="Save Database", command=self.save_database)
         save_button.pack(side=tk.LEFT, padx=2, pady=2)
+        refresh_button = tk.Button(toolbar, text="Refresh", command=self.load_dropdown)
+        refresh_button.pack(side=tk.LEFT, padx=2, pady=2)
 
         # Treeview for conversations
         self.tree = ttk.Treeview(self.root, columns=('ID', 'Name'), show='headings')
