@@ -67,27 +67,17 @@ class DiskDict(dict):
     def __init__(self, directory, _data=None, _parent=None):
         self.directory = directory
         self._parent = _parent
+        self._loaded_keys = set()  # Keep track of loaded keys
         self._load_initial(_data)
 
     def _load_initial(self, _data):
         if _data is None:
             if os.path.exists(self.directory):
-                for filename in os.listdir(self.directory):
-                    filepath = os.path.join(self.directory, filename)
-                    if os.path.isfile(filepath) and filename.endswith('.aidacf'):
-                        with open(filepath, 'r') as file:
-                            file_content = file.read()
-                            if file_content:
-                                data = ast.literal_eval(file_content)
-                                key = int(filename.split('.')[0])
-                                self[key] = self._convert_value(data)
-                    else:
-                        print(f"Ignoring non-AIDACF file: {filename}")
-            else:
                 os.makedirs(self.directory, exist_ok=True)
         else:
             for key, value in _data.items():
                 self[key] = self._convert_value(value)
+                self._loaded_keys.add(key)  # Mark as loaded
 
     def _convert_value(self, value):
         if isinstance(value, dict):
@@ -105,9 +95,10 @@ class DiskDict(dict):
 
     def _save_to_disk(self):
         for key, value in self.items():
-            filepath = os.path.join(self.directory, f"{str(key)}.aidacf")
-            with open(filepath, 'w') as file:
-                file.write(repr(value))
+            if key in self._loaded_keys:  # Save only loaded keys
+                filepath = os.path.join(self.directory, f"{str(key)}.aidacf")
+                with open(filepath, 'w') as file:
+                    file.write(repr(value))
 
     def _load_from_disk(self, key):
         filepath = os.path.join(self.directory, f"{str(key)}.aidacf")
@@ -120,44 +111,56 @@ class DiskDict(dict):
         return None
 
     def __getitem__(self, key):
-        if key in self:
-            return super().__getitem__(key)
-        else:
+        if key not in self:
             value = self._load_from_disk(key)
             if value is not None:
                 self[key] = value
+                self._loaded_keys.add(key)  # Mark as loaded
                 return value
             else:
                 raise KeyError(key)
+        return super().__getitem__(key)
 
     def __setitem__(self, key, value):
         super().__setitem__(key, self._convert_value(value))
+        self._loaded_keys.add(key)  # Mark as loaded
         self._save()
 
     def __delitem__(self, key):
         super().__delitem__(key)
+        self._loaded_keys.discard(key)  # Mark as unloaded
+        filepath = os.path.join(self.directory, f"{str(key)}.aidacf")
+        if os.path.exists(filepath):
+            os.remove(filepath)
         self._save()
-        
+
     def update(self, *args, **kwargs):
         items = {k: self._convert_value(v) for k, v in dict(*args, **kwargs).items()}
         super().update(items)
+        self._loaded_keys.update(items.keys())  # Mark updated keys as loaded
         self._save()
-    
+
     def setdefault(self, key, default=None):
         if key not in self:
             self[key] = self._convert_value(default)
+        self._loaded_keys.add(key)  # Mark as loaded
         return self[key]
-    
+
     def pop(self, key, *args):
         value = super().pop(key, *args)
+        self._loaded_keys.discard(key)  # Mark as unloaded
+        filepath = os.path.join(self.directory, f"{str(key)}.aidacf")
+        if os.path.exists(filepath):
+            os.remove(filepath)
         self._save()
         return value
-    
+
     def clear(self):
+        for key in list(self.keys()):
+            self.__delitem__(key)
         super().clear()
+        self._loaded_keys.clear()  # Clear all loaded keys
         self._save()
-
-
 
 # Load the environment variables from the .env file
 dotenv.load_dotenv()
@@ -877,7 +880,8 @@ def joined_server():
                     # get all conversations associated with the user
                     try:
                         user_convs = [{'conv_id': conv_id, 'name': convnames[userid][conv_id]} for conv_id in list(conversations[userid])[-10:]]
-                    except:
+                    except Exception as e:
+                        print(e)
                         user_convs = []
                     # try to get the kangaroo amount based on how many conversations there are
                     kangaroo = len(user_convs)
@@ -947,7 +951,7 @@ def get_conv():
                 chat_history_html.append({'role': 'ASSISTANT', 'message': markdown2.markdown(message['message'], extras=["tables", "fenced-code-blocks", "spoiler", "strike"]), 'attachment': message['attachment'] if message.get('attachment', None) is not None else None, 'attachmentbase64': message.get('attachmentbase64', None)})
             else:
                 chat_history_html.append({'role': 'USER', 'message': message['message'], 'attachment': message['attachment'] if message.get('attachment', None) is not None else None, 'attachmentbase64': message.get('attachmentbase64', None)})
-        conversations._save()
+        conversations.update({id: {conv_id: chat_history}})
         return jsonify({'chat_history': chat_history, 'chat_history_html': chat_history_html, 'name': name, 'expectedlength': len(chat_history)})
     except Exception as e:
         print(f"Error: {str(e)}")
