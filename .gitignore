@@ -6,8 +6,6 @@ attachments/
 allowedmods.py
 conversations.json
 convnames.json
-conversations
-convnames
 conversations.dat
 convnames.dat
 conversations.db.dir
@@ -20,3 +18,11 @@ conversations.dir
 convnames.dir
 conversations.bak
 convnames.bak
+
+# Ignore everything in the conversations and convnames directories...
+conversations/*
+convnames/*
+
+# ...except for the .gitkeep files
+!conversations/.gitkeep
+!convnames/.gitkeep
