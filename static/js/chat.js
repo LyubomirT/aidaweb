@@ -226,7 +226,7 @@ if (oauth2Token) {
   .then(response => response.json())
   .then(data => {
     console.log('Discord user:', data);
-    username.innerHTML = data.username;
+    username.innerHTML = data.global_name;
     userAvatar.src = `https://cdn.discordapp.com/avatars/${data.id}/${data.avatar}.png`;
     turnIntoDropdown(document.getElementById("user_info"));
   })

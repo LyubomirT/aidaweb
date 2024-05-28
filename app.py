@@ -850,7 +850,7 @@ def get_usernames(token):
     print(g1)
     lasttimewechecked = time.time()
     # get the id of the user
-    username = g1['username']
+    username = g1['global_name']
 
     return username
 
