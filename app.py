@@ -475,7 +475,6 @@ def chat():
                     f.write(attachment)
                 response = query(f"attachments/{userid}_{conv_id}.png")
                 os.remove(f"attachments/{userid}_{conv_id}.png")
-                print(response)
                 if response is not None:
                     attachmentstr = response[0]['generated_text']
                 else:
@@ -878,7 +877,6 @@ def joined_server():
                     # get all conversations associated with the user
                     try:
                         user_convs = [{'conv_id': conv_id, 'name': convnames[userid][conv_id]} for conv_id in list(conversations[userid])[-10:]]
-                        print(user_convs)
                     except:
                         user_convs = []
                     # try to get the kangaroo amount based on how many conversations there are
@@ -940,7 +938,6 @@ def get_conv():
         token = data['token']
         id = get_user_id(token)
         chat_history = conversations[id][conv_id]
-        print(chat_history)
         name = convnames[id][conv_id]
         chat_history_html = []
         if id in progresses and progresses[id]:
