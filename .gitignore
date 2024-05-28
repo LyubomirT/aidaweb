@@ -22,7 +22,9 @@ convnames.bak
 # Ignore everything in the conversations and convnames directories...
 conversations/*
 convnames/*
+configs/*
 
 # ...except for the .gitkeep files
 !conversations/.gitkeep
 !convnames/.gitkeep
+!configs/.gitkeep
