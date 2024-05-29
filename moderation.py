@@ -3,18 +3,23 @@ from tkinter import ttk
 from tkinter import messagebox
 from tkinter import filedialog
 from tkinter import simpledialog
-import pickle
 import os
-import json
-import re
 import base64
 import random
+
+class DetailedText(tk.Text):
+    """A Text widget that allows scrolling."""
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+        scrollbar = tk.Scrollbar(parent, command=self.yview)
+        self['yscrollcommand'] = scrollbar.set
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        self.pack(fill=tk.BOTH, expand=True)
 
 class ModerationApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Moderation App")
-
         self.banned_users = self.load_banned_users()
         self.selected_user_id = None
         self.conversations_path = "conversations"
@@ -76,18 +81,20 @@ class ModerationApp:
         self.notebook.add(self.normal_tab, text="Normal")
 
         # Treeview for conversations in Normal tab
-        self.tree = ttk.Treeview(self.normal_tab, columns=('ID', 'Name'), show='headings')
-        self.tree.heading('ID', text='ID')
-        self.tree.heading('Name', text='Name')
-        self.tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-        self.tree.bind('<ButtonRelease-1>', self.on_conversation_select)
+        self.conversation_tree = ttk.Treeview(self.normal_tab, columns=('ID', 'Name'), show='headings')
+        self.conversation_tree.heading('ID', text='ID')
+        self.conversation_tree.heading('Name', text='Name')
+        conversation_scrollbar = ttk.Scrollbar(self.normal_tab, orient="vertical", command=self.conversation_tree.yview)
+        self.conversation_tree.configure(yscrollcommand=conversation_scrollbar.set)
+        conversation_scrollbar.pack(side=tk.LEFT, fill=tk.Y)
+        self.conversation_tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        self.conversation_tree.bind('<ButtonRelease-1>', self.on_conversation_select)
 
-        # Treeview for messages in Normal tab
-        self.message_tree = ttk.Treeview(self.normal_tab, columns=('Role', 'Message'), show='headings')
-        self.message_tree.heading('Role', text='Role')
-        self.message_tree.heading('Message', text='Message')
-        self.message_tree.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
-
+        # Scrollable Text for messages in Normal tab
+        message_frame = tk.Frame(self.normal_tab)
+        message_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+        self.message_text = DetailedText(message_frame, wrap=tk.WORD, state=tk.DISABLED)
+        
         # Search Results tabs
         self.search_user_tab = ttk.Frame(self.notebook)
         self.notebook.add(self.search_user_tab, text="User Search Results")
@@ -96,7 +103,12 @@ class ModerationApp:
         self.notebook.add(self.search_conv_tab, text="Conversation Search Results")
 
         # Listbox for user search results
-        self.user_listbox = tk.Listbox(self.search_user_tab)
+        user_list_frame = tk.Frame(self.search_user_tab)
+        user_list_frame.pack(fill=tk.BOTH, expand=True)
+        user_scrollbar = ttk.Scrollbar(user_list_frame, orient="vertical")
+        self.user_listbox = tk.Listbox(user_list_frame, yscrollcommand=user_scrollbar.set)
+        user_scrollbar.configure(command=self.user_listbox.yview)
+        user_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         self.user_listbox.pack(fill=tk.BOTH, expand=True)
         self.user_listbox.bind('<Double-1>', self.load_selected_user)
 
@@ -104,6 +116,9 @@ class ModerationApp:
         self.conv_tree = ttk.Treeview(self.search_conv_tab, columns=('User ID', 'Conv ID'), show='headings')
         self.conv_tree.heading('User ID', text='User ID')
         self.conv_tree.heading('Conv ID', text='Conversation ID')
+        conv_search_scrollbar = ttk.Scrollbar(self.search_conv_tab, orient='vertical', command=self.conv_tree.yview)
+        self.conv_tree.configure(yscrollcommand=conv_search_scrollbar.set)
+        conv_search_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         self.conv_tree.pack(fill=tk.BOTH, expand=True)
         self.conv_tree.bind('<ButtonRelease-1>', self.on_search_conversation_select)
 
@@ -111,17 +126,20 @@ class ModerationApp:
         self.random_tab = ttk.Frame(self.notebook)
         self.notebook.add(self.random_tab, text="Random")
 
-        # Treeview for messages in Random tab
-        self.random_message_tree = ttk.Treeview(self.random_tab, columns=('Role', 'Message'), show='headings')
-        self.random_message_tree.heading('Role', text='Role')
-        self.random_message_tree.heading('Message', text='Message')
-        self.random_message_tree.pack(fill=tk.BOTH, expand=True)
+        # Scrollable Text for random messages
+        random_message_frame = tk.Frame(self.random_tab)
+        random_message_frame.pack(fill=tk.BOTH, expand=True)
+        self.random_message_text = DetailedText(random_message_frame, wrap=tk.WORD, state=tk.DISABLED)
 
     def load_banned_users(self):
         if os.path.exists("banned.txt"):
             with open("banned.txt", "r") as file:
                 return set(file.read().splitlines())
         return set()
+
+    def load_dropdown(self):
+        user_ids = [f.split(".")[0] for f in os.listdir(self.conversations_path) if f.endswith(".aidacf")]
+        self.user_id_entry['values'] = user_ids
 
     def load_user_data(self):
         user_id = self.user_id_var.get().strip()
@@ -139,30 +157,37 @@ class ModerationApp:
                 return
 
             with open(conversation_file, "r") as f:
-                conversation_data = eval(f.read())  # Direct conversion to dict
+                conversation_data = eval(f.read())  # Convert directly to dict
             with open(convname_file, "r") as f:
-                convname_data = eval(f.read())  # Direct conversion to dict
+                convname_data = eval(f.read())  # Convert directly to dict
 
             self.conversation_data = conversation_data
             self.convname_data = convname_data
 
-            self.tree.delete(*self.tree.get_children())
+            self.conversation_tree.delete(*self.conversation_tree.get_children())
             for conv_id, conv_name in self.convname_data.items():
-                self.tree.insert("", "end", values=(conv_id, conv_name))
+                self.conversation_tree.insert("", "end", values=(conv_id, conv_name))
 
         except Exception as e:
             messagebox.showerror("Error", f"Failed to load user data: {e}")
 
-    def on_conversation_select(self, event):
-        selected_item = self.tree.selection()[0]
-        conv_id = self.tree.item(selected_item, 'values')[0]
+    def display_messages_in_text(self, text_widget, messages):
+        text_widget.configure(state=tk.NORMAL)
+        text_widget.delete(1.0, tk.END)
 
-        messages = self.conversation_data[int(conv_id)]
-        self.message_tree.delete(*self.message_tree.get_children())
         for msg in messages:
             role = msg['role']
             message = msg['message']
-            self.message_tree.insert("", "end", values=(role, message))
+            text_widget.insert(tk.END, f"{role}: {message}\n\n")
+
+        text_widget.configure(state=tk.DISABLED)
+
+    def on_conversation_select(self, event):
+        selected_item = self.conversation_tree.selection()[0]
+        conv_id = self.conversation_tree.item(selected_item, 'values')[0]
+
+        messages = self.conversation_data[int(conv_id)]
+        self.display_messages_in_text(self.message_text, messages)
 
     def on_search_conversation_select(self, event):
         selected_item = self.conv_tree.selection()[0]
@@ -170,7 +195,7 @@ class ModerationApp:
 
         self.user_id_var.set(user_id)
         self.load_user_data()
-        self.tree.selection_set(self.tree.get_children()[list(self.conversation_data.keys()).index(conv_id)])
+        self.conversation_tree.selection_set(self.conversation_tree.get_children()[list(map(str, self.conversation_data.keys())).index(str(conv_id))])
 
     def load_random_conversation(self):
         user_ids = [f.split(".")[0] for f in os.listdir(self.conversations_path) if f.endswith(".aidacf")]
@@ -196,19 +221,10 @@ class ModerationApp:
 
         self.user_id_var.set(random_user_id)
         self.load_user_data()
-        self.tree.selection_set(self.tree.get_children()[list(conversation_data.keys()).index(random_conversation_id)])
+        self.conversation_tree.selection_set(self.conversation_tree.get_children()[list(map(str, self.conversation_data.keys())).index(str(random_conversation_id))])
 
-        self.message_tree.delete(*self.message_tree.get_children())
-        for msg in messages:
-            role = msg['role']
-            message = msg['message']
-            self.message_tree.insert("", "end", values=(role, message))
-
-        self.random_message_tree.delete(*self.random_message_tree.get_children())
-        for msg in messages:
-            role = msg['role']
-            message = msg['message']
-            self.random_message_tree.insert("", "end", values=(role, message))
+        self.display_messages_in_text(self.message_text, messages)
+        self.display_messages_in_text(self.random_message_text, messages)
 
     def search_data(self):
         search_query = self.search_var.get().strip()
@@ -255,17 +271,19 @@ class ModerationApp:
         messagebox.showinfo("Info", f"User {self.selected_user_id} has been banned.")
 
     def delete_conversation(self):
-        selected_item = self.tree.selection()
+        selected_item = self.conversation_tree.selection()
         if not selected_item:
             messagebox.showerror("Error", "No conversation selected.")
             return
 
-        conv_id = self.tree.item(selected_item[0], 'values')[0]
+        conv_id = self.conversation_tree.item(selected_item[0], 'values')[0]
         del self.conversation_data[int(conv_id)]
         del self.convname_data[int(conv_id)]
 
-        self.tree.delete(selected_item[0])
-        self.message_tree.delete(*self.message_tree.get_children())
+        self.conversation_tree.delete(selected_item[0])
+        self.message_text.configure(state=tk.NORMAL)
+        self.message_text.delete(1.0, tk.END)
+        self.message_text.configure(state=tk.DISABLED)
 
     def save_database(self):
         try:
@@ -278,16 +296,11 @@ class ModerationApp:
             with open(convname_file, "w") as f:
                 f.write(str(self.convname_data))
 
-            messagebox.showinfo("Info", "Database saved successfully.")
+            messagebox.showinfo("Info", f"User {user_id}'s data has been saved.")
         except Exception as e:
             messagebox.showerror("Error", f"Failed to save database: {e}")
-        
-    def load_dropdown(self):
-        # Load the user ids from the conversations folder
-        user_ids = [f.split(".")[0] for f in os.listdir(self.conversations_path) if f.endswith(".aidacf")]
-        self.user_id_entry['values'] = user_ids
 
-if __name__ == "__main__":
-    root = tk.Tk()
-    app = ModerationApp(root)
-    root.mainloop()
+# Create the main application window
+root = tk.Tk()
+app = ModerationApp(root)
+root.mainloop()
