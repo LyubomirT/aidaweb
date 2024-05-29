@@ -82,17 +82,40 @@ class ModerationApp:
         self.tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         self.tree.bind('<ButtonRelease-1>', self.on_conversation_select)
 
-        # Text widget for messages in Normal tab
-        self.text = tk.Text(self.normal_tab)
-        self.text.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+        # Treeview for messages in Normal tab
+        self.message_tree = ttk.Treeview(self.normal_tab, columns=('Role', 'Message'), show='headings')
+        self.message_tree.heading('Role', text='Role')
+        self.message_tree.heading('Message', text='Message')
+        self.message_tree.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+
+        # Search Results tabs
+        self.search_user_tab = ttk.Frame(self.notebook)
+        self.notebook.add(self.search_user_tab, text="User Search Results")
+
+        self.search_conv_tab = ttk.Frame(self.notebook)
+        self.notebook.add(self.search_conv_tab, text="Conversation Search Results")
+
+        # Listbox for user search results
+        self.user_listbox = tk.Listbox(self.search_user_tab)
+        self.user_listbox.pack(fill=tk.BOTH, expand=True)
+        self.user_listbox.bind('<Double-1>', self.load_selected_user)
+
+        # Treeview for conversation search results
+        self.conv_tree = ttk.Treeview(self.search_conv_tab, columns=('User ID', 'Conv ID'), show='headings')
+        self.conv_tree.heading('User ID', text='User ID')
+        self.conv_tree.heading('Conv ID', text='Conversation ID')
+        self.conv_tree.pack(fill=tk.BOTH, expand=True)
+        self.conv_tree.bind('<ButtonRelease-1>', self.on_search_conversation_select)
 
         # Random tab
         self.random_tab = ttk.Frame(self.notebook)
         self.notebook.add(self.random_tab, text="Random")
 
-        # Text widget for messages in Random tab
-        self.random_text = tk.Text(self.random_tab)
-        self.random_text.pack(fill=tk.BOTH, expand=True)
+        # Treeview for messages in Random tab
+        self.random_message_tree = ttk.Treeview(self.random_tab, columns=('Role', 'Message'), show='headings')
+        self.random_message_tree.heading('Role', text='Role')
+        self.random_message_tree.heading('Message', text='Message')
+        self.random_message_tree.pack(fill=tk.BOTH, expand=True)
 
     def load_banned_users(self):
         if os.path.exists("banned.txt"):
@@ -135,11 +158,19 @@ class ModerationApp:
         conv_id = self.tree.item(selected_item, 'values')[0]
 
         messages = self.conversation_data[int(conv_id)]
-        self.text.delete(1.0, tk.END)
+        self.message_tree.delete(*self.message_tree.get_children())
         for msg in messages:
             role = msg['role']
             message = msg['message']
-            self.text.insert(tk.END, f"{role}: {message}\n")
+            self.message_tree.insert("", "end", values=(role, message))
+
+    def on_search_conversation_select(self, event):
+        selected_item = self.conv_tree.selection()[0]
+        user_id, conv_id = self.conv_tree.item(selected_item, 'values')
+
+        self.user_id_var.set(user_id)
+        self.load_user_data()
+        self.tree.selection_set(self.tree.get_children()[list(self.conversation_data.keys()).index(conv_id)])
 
     def load_random_conversation(self):
         user_ids = [f.split(".")[0] for f in os.listdir(self.conversations_path) if f.endswith(".aidacf")]
@@ -167,17 +198,17 @@ class ModerationApp:
         self.load_user_data()
         self.tree.selection_set(self.tree.get_children()[list(conversation_data.keys()).index(random_conversation_id)])
 
-        self.text.delete(1.0, tk.END)
+        self.message_tree.delete(*self.message_tree.get_children())
         for msg in messages:
             role = msg['role']
             message = msg['message']
-            self.text.insert(tk.END, f"{role}: {message}\n")
+            self.message_tree.insert("", "end", values=(role, message))
 
-        self.random_text.delete(1.0, tk.END)
+        self.random_message_tree.delete(*self.random_message_tree.get_children())
         for msg in messages:
             role = msg['role']
             message = msg['message']
-            self.random_text.insert(tk.END, f"{role}: {message}\n")
+            self.random_message_tree.insert("", "end", values=(role, message))
 
     def search_data(self):
         search_query = self.search_var.get().strip()
@@ -199,15 +230,18 @@ class ModerationApp:
                     if search_query in str(conv_id):
                         matching_conv_ids.append((user_id, conv_id))
 
-        if matching_user_ids:
-            self.user_id_var.set(matching_user_ids[0])
-            self.load_user_data()
+        self.user_listbox.delete(0, tk.END)
+        for user_id in matching_user_ids:
+            self.user_listbox.insert(tk.END, user_id)
 
-        if matching_conv_ids:
-            user_id, conv_id = matching_conv_ids[0]
-            self.user_id_var.set(user_id)
-            self.load_user_data()
-            self.tree.selection_set(self.tree.get_children()[list(self.conversation_data.keys()).index(conv_id)])
+        self.conv_tree.delete(*self.conv_tree.get_children())
+        for user_id, conv_id in matching_conv_ids:
+            self.conv_tree.insert("", "end", values=(user_id, conv_id))
+
+    def load_selected_user(self, event):
+        selected_user = self.user_listbox.get(self.user_listbox.curselection())
+        self.user_id_var.set(selected_user)
+        self.load_user_data()
 
     def ban_user(self):
         if not self.selected_user_id:
@@ -231,7 +265,7 @@ class ModerationApp:
         del self.convname_data[int(conv_id)]
 
         self.tree.delete(selected_item[0])
-        self.text.delete(1.0, tk.END)
+        self.message_tree.delete(*self.message_tree.get_children())
 
     def save_database(self):
         try:
