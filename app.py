@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template, redirect, make_response
+from flask import Flask, request, jsonify, render_template, redirect, make_response, send_file, url_for
 import cohere
 import markdown2  # for converting markdown to HTML
 import dotenv
@@ -914,6 +914,8 @@ def joined_server():
         g1 = g1.json()
         g2 = requests.get(f"https://discord.com/api/users/@me", headers={"Authorization": f"Bearer {authtoken}"})
         g2 = g2.json()
+        if checkBan(int(g2['id'])):
+            return url_for('banned')
         for i in g1:
             if i['id'] == serverid:
                 savedtokens[authtoken] = {'id': None, 'expiry': None}
