@@ -249,6 +249,8 @@ def get_tokens():
         data = request.json
         token = data['token']
         id = get_user_id(token)
+        if checkBan(id):
+            return jsonify({'error': 'You are banned from using the service. Please contact the system administrator (LyubomirT) for more information.'}), 403
         return jsonify({'tokens': get_tokens_by_id(id)})
     except Exception as e:
         return jsonify({'error': 'Could not retrieve token balance. Please try again later.'}), 500
@@ -261,6 +263,8 @@ def config():
         data = request.json
         token = data['token']
         id = get_user_id(token)
+        if checkBan(id):
+            return jsonify({'error': 'You are banned from using the service. Please contact the system administrator (LyubomirT) for more information.'}), 403
         if id in progresses and progresses[id]:
             return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
         # if possible, retrieve the user's config from the file system
@@ -279,6 +283,8 @@ def save_config():
         token = data['token']
         config_ = data['config']
         id = get_user_id(token)
+        if checkBan(id):
+            return jsonify({'error': 'You are banned from using the service. Please contact the system administrator (LyubomirT) for more information.'}), 403
         if id in progresses and progresses[id]:
             return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
         save_user_config(id, config_)
@@ -299,6 +305,8 @@ def new_conv():
         if not check_join(token):
             return redirect('/join')
         userid = get_user_id(token)
+        if checkBan(userid):
+            return jsonify({'error': 'You are banned from using the service. Please contact the system administrator (LyubomirT) for more information.'}), 403
         if userid in progresses and progresses[userid]:
             return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
         # Generate a new conversation ID
@@ -452,6 +460,8 @@ def chat():
         if not check_join(token):
             return redirect('/join')
         userid = get_user_id(token)
+        if checkBan(userid):
+            return jsonify({'error': 'You are banned from using the service. Please contact the system administrator (LyubomirT) for more information.'}), 403
         config_ = process_config(retrieve_user_config(userid), get_usernames(token))
         if not check_limits(config_):
             return jsonify({'error': 'Invalid configuration settings. You either are on an outdated version of the page, or you are trying to mess with the system. Very funny if it\'s the latter.'}), 400
@@ -600,6 +610,8 @@ def name_conv():
         if not check_join(token):
             return redirect('/join')
         userid = get_user_id(token)
+        if checkBan(userid):
+            return jsonify({'error': 'You are banned from using the service. Please contact the system administrator (LyubomirT) for more information.'}), 403
         if userid in progresses and progresses[userid]:
             return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
         chatHistory = conversations[userid][conv_id]
@@ -625,6 +637,8 @@ def delete_conv():
         if not check_join(token):
             return redirect('/join')
         userid = get_user_id(token)
+        if checkBan(userid):
+            return jsonify({'error': 'You are banned from using the service. Please contact the system administrator (LyubomirT) for more information.'}), 403
         if userid in progresses and progresses[userid]:
             return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
         del conversations[userid][conv_id]
@@ -644,6 +658,8 @@ def rename_conv():
         if not check_join(token):
             return redirect('/join')
         userid = get_user_id(token)
+        if checkBan(userid):
+            return jsonify({'error': 'You are banned from using the service. Please contact the system administrator (LyubomirT) for more information.'}), 403
         if userid in progresses and progresses[userid]:
             return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
         convnames[userid][conv_id] = new_name
@@ -663,6 +679,8 @@ def regen():
         if not check_join(token):
             return redirect('/join')
         userid = get_user_id(token)
+        if checkBan(userid):
+            return jsonify({'error': 'You are banned from using the service. Please contact the system administrator (LyubomirT) for more information.'}), 403
         config_ = process_config(retrieve_user_config(userid), get_usernames(token))
         if not check_limits(config_):
             return jsonify({'error': 'Invalid configuration settings. You either are on an outdated version of the page, or you are trying to mess with the system. Very funny if it\'s the latter.'}), 400
@@ -743,6 +761,8 @@ def get_history():
         if not check_join(token):
             return redirect('/join')
         userid = get_user_id(token)
+        if checkBan(userid):
+            return jsonify({'error': 'You are banned from using the service. Please contact the system administrator (LyubomirT) for more information.'}), 403
         chat_history = conversations[userid][conv_id]
         return jsonify({'chat_history': chat_history})
     except Exception as e:
@@ -759,6 +779,8 @@ def edit():
         conv_id = data['conv_id']
         token = data['token']
         userid = get_user_id(token)
+        if checkBan(userid):
+            return jsonify({'error': 'You are banned from using the service. Please contact the system administrator (LyubomirT) for more information.'}), 403
         name = get_usernames(token)
         config_ = process_config(retrieve_user_config(userid), name)
         if not check_limits(config_):
@@ -909,6 +931,8 @@ def loadmoreconvs():
             return redirect('/join')
         kangaroo = int(kangaroo)
         userid = get_user_id(token)
+        if checkBan(userid):
+            return jsonify({'error': 'You are banned from using the service. Please contact the system administrator (LyubomirT) for more information.'}), 403
         # get 40 more conversations, but skip the first kangaroo amount
         try:
             # load from the kangaroo amount to the kangaroo amount + 40, make sure to load from the end of the list
@@ -931,6 +955,8 @@ def get_convs():
         if not check_join(token):
             return redirect('/join')
         userid = get_user_id(token)
+        if checkBan(userid):
+            return jsonify({'error': 'You are banned from using the service. Please contact the system administrator (LyubomirT) for more information.'}), 403
         # get all conversations associated with the user
         try:
             user_convs = [{'conv_id': conv_id, 'name': convnames[userid][conv_id]} for conv_id in conversations[userid]]
@@ -949,6 +975,8 @@ def get_conv():
         conv_id = data['conv_id']
         token = data['token']
         id = get_user_id(token)
+        if checkBan(id):
+            return jsonify({'error': 'You are banned from using the service. Please contact the system administrator (LyubomirT) for more information.'}), 403
         chat_history = conversations[id][conv_id]
         name = convnames[id][conv_id]
         chat_history_html = []
@@ -974,6 +1002,12 @@ def auth_discord():
     except:
         return "Could not load login page. Please try again later. This means that the app is fucked."
 
+@app.route('/banned')
+def render_ban():
+    try:
+        return render_template('banned.html')
+    except:
+        return "You Are Banned."
 
     
 
