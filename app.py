@@ -548,6 +548,11 @@ def chat():
             amount = 1
         if not tapiaction('take', amount, str(userid)):
             return jsonify({'error': 'Could not take tokens from your account. Please try again later.'}), 500
+        
+        newtokens = get_tokens_by_id(userid)
+        if newtokens < 1:
+            if not tapiaction('give', 0 - newtokens, str(userid)):
+                return jsonify({'error': 'Could not regen due to a bug in the token system. Please try again later.'}), 500
 
 
         return jsonify({'raw_response': response, 'html_response': html_response, 'chat_history': chat_history, 'tokens': get_tokens_by_id(userid), 'attachmentbase64': attachment})
@@ -733,8 +738,14 @@ def regen():
         amount = length // 250
         if amount < 1:
             amount = 1
+        # if the user has negative tokens, give them some till they have enough to continue chatting
         if not tapiaction('take', amount, str(userid)):
             return jsonify({'error': 'Could not take tokens from your account. Please try again later.'}), 500
+        
+        newtokens = get_tokens_by_id(userid)
+        if newtokens < 1:
+            if not tapiaction('give', 0 - newtokens, str(userid)):
+                return jsonify({'error': 'Could not regen due to a bug in the token system. Please try again later.'}), 500
 
         return jsonify({'raw_response': response, 'html_response': html_response, 'chat_history': chat_history, 'attachmentbase64': attachment})
     except Exception as e:
@@ -837,6 +848,11 @@ def edit():
             amount = 1
         if not tapiaction('take', amount, str(userid)):
             return jsonify({'error': 'Could not take tokens from your account. Please try again later.'}), 500
+        
+        newtokens = get_tokens_by_id(userid)
+        if newtokens < 1:
+            if not tapiaction('give', 0 - newtokens, str(userid)):
+                return jsonify({'error': 'Could not regen due to a bug in the token system. Please try again later.'}), 500
 
         return jsonify({'raw_response': response, 'html_response': html_response, 'chat_history': chat_history, 'attachmentbase64': attachment})
     except Exception as e:
