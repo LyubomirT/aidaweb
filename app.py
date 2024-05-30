@@ -915,7 +915,7 @@ def joined_server():
         g2 = requests.get(f"https://discord.com/api/users/@me", headers={"Authorization": f"Bearer {authtoken}"})
         g2 = g2.json()
         if checkBan(int(g2['id'])):
-            return url_for('banned')
+            return jsonify({'error': 'You are banned from using the service. Please contact the system administrator (LyubomirT) for more information.', 'urlban': url_for('banned')}), 403
         for i in g1:
             if i['id'] == serverid:
                 savedtokens[authtoken] = {'id': None, 'expiry': None}
