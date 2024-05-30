@@ -36,6 +36,8 @@ class ModerationApp:
         file_menu = tk.Menu(menu, tearoff=0)
         menu.add_cascade(label="File", menu=file_menu)
         file_menu.add_command(label="Ban User", command=self.ban_user)
+        file_menu.add_command(label="Unban User", command=self.unban_user)
+        file_menu.add_command(label="Edit Conversation Title", command=self.edit_conversation_title)
         file_menu.add_command(label="Delete Conversation", command=self.delete_conversation)
         file_menu.add_command(label="Save Database", command=self.save_database)
         file_menu.add_separator()
@@ -63,6 +65,10 @@ class ModerationApp:
 
         ban_button = tk.Button(toolbar, text="Ban User", command=self.ban_user)
         ban_button.pack(side=tk.LEFT, padx=2, pady=2)
+        unban_button = tk.Button(toolbar, text="Unban User", command=self.unban_user)
+        unban_button.pack(side=tk.LEFT, padx=2, pady=2)
+        edit_title_button = tk.Button(toolbar, text="Edit Title", command=self.edit_conversation_title)
+        edit_title_button.pack(side=tk.LEFT, padx=2, pady=2)
         delete_button = tk.Button(toolbar, text="Delete Conversation", command=self.delete_conversation)
         delete_button.pack(side=tk.LEFT, padx=2, pady=2)
         save_button = tk.Button(toolbar, text="Save Database", command=self.save_database)
@@ -269,6 +275,31 @@ class ModerationApp:
             for user in self.banned_users:
                 file.write(f"{user}\n")
         messagebox.showinfo("Info", f"User {self.selected_user_id} has been banned.")
+
+    def unban_user(self):
+        user_id = simpledialog.askstring("Unban User", "Enter the User ID to unban:")
+        if user_id:
+            if user_id in self.banned_users:
+                self.banned_users.remove(user_id)
+                with open("banned.txt", "w") as file:
+                    for user in self.banned_users:
+                        file.write(f"{user}\n")
+                messagebox.showinfo("Info", f"User {user_id} has been unbanned.")
+            else:
+                messagebox.showerror("Error", f"User {user_id} is not banned.")
+
+    def edit_conversation_title(self):
+        selected_item = self.conversation_tree.selection()
+        if not selected_item:
+            messagebox.showerror("Error", "No conversation selected.")
+            return
+
+        conv_id = self.conversation_tree.item(selected_item[0], 'values')[0]
+        new_title = simpledialog.askstring("Edit Title", f"Enter new title for conversation {conv_id}:")
+        if new_title:
+            self.convname_data[int(conv_id)] = new_title
+            self.conversation_tree.item(selected_item[0], values=(conv_id, new_title))
+            messagebox.showinfo("Info", f"Conversation {conv_id}'s title has been updated.")
 
     def delete_conversation(self):
         selected_item = self.conversation_tree.selection()
