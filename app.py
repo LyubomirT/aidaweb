@@ -902,7 +902,7 @@ def get_usernames(token):
 
 
 @app.route('/joined_server', methods=['POST'])
-@limiter.limit("100/10minute")
+@limiter.limit("50/10minute")
 def joined_server():
     try:
         data = request.json
@@ -914,8 +914,10 @@ def joined_server():
         g1 = g1.json()
         g2 = requests.get(f"https://discord.com/api/users/@me", headers={"Authorization": f"Bearer {authtoken}"})
         g2 = g2.json()
-        if checkBan(int(g2['id'])):
-            return jsonify({'error': 'You are banned from using the service. Please contact the system administrator (LyubomirT) for more information.', 'urlban': url_for('banned')}), 403
+        print(g2)
+        if checkBan(g2['id']):
+            # return error and urlban (for the '/banned' page)
+            return jsonify({'error': 'You are banned from using the service. Please contact the system administrator (LyubomirT) for more information.', 'urlban': '/banned'}), 403
         for i in g1:
             if i['id'] == serverid:
                 savedtokens[authtoken] = {'id': None, 'expiry': None}
@@ -937,6 +939,9 @@ def joined_server():
                 return jsonify({'joined': True})
     except:
         print("Could not verify user. Sending them to join page.")
+        import traceback
+        traceback.print_exc()
+    return jsonify({'joined': False})
     
 @app.route('/loadmoreconvs', methods=['POST'])
 @limiter.limit("5/minute")

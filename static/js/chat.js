@@ -1053,6 +1053,10 @@ function verify() {
     body: JSON.stringify({authtoken: oauth2Token, give_convs: true,}),
   }).then(response => response.json())
   .then(data => {
+    console.warn('Data:', data);
+    if (data.urlban) {
+      window.location.href = '/banned';
+    }
     if (data.joined === false) {
       window.location.href = '/join';
     } else {
