@@ -30,3 +30,6 @@ configs/*
 !configs/.gitkeep
 
 banned.txt
+
+# ignore this
+psychologistnotes.md
