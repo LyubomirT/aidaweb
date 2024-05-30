@@ -18,6 +18,14 @@ from allowedmods import modids
 import os
 import ast
 
+def checkBan(id):
+    # load the bans from the file
+    with open("banned.txt", "r") as f:
+        bans = f.read().split("\n")
+    if str(id) in bans:
+        return True
+    return False
+
 class ReactiveList(list):
     """ A special list class that triggers save on modifications """
 
