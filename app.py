@@ -1056,10 +1056,6 @@ def logout():
 def renderhelp():
     return render_template('help.html')
 
-@app.route('/favicon.ico')
-def favicon():
-        return send_file('favicon.ico', mimetype='image/vnd.microsoft.icon')
-
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000, host='0.0.0.0')
