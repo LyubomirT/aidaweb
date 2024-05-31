@@ -1052,6 +1052,10 @@ def logout():
     except:
         return jsonify({'error': "Logout failed."}), 500
 
+@app.route('/help')
+def renderhelp():
+    return render_template('help.html')
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000, host='0.0.0.0')
