@@ -1339,11 +1339,17 @@ function turnIntoDropdown(element) {
   switchMode.classList.add('conv-control-child');
   switchMode.innerHTML = 'Toggle Light Mode';
   switchMode.value = 'switch-mode';
+  var getHelp = document.createElement('div');
+  getHelp.classList.add('get-help');
+  getHelp.classList.add('conv-control-child');
+  getHelp.innerHTML = 'Get Help';
+  getHelp.value = 'get-help';
   var optionlist = [];
   optionlist.push(settingsButton);
   optionlist.push(logoutButton);
   optionlist.push(tokenAmount);
   optionlist.push(switchMode);
+  optionlist.push(getHelp);
   element.appendChild(dropdown);
   element.addEventListener('click', function(event) {
     event.stopPropagation();
@@ -1422,6 +1428,8 @@ function turnIntoDropdown(element) {
       });
       darkmodeOn = !darkmodeOn;
       localStorage.setItem('darkmode', darkmodeOn);
+    } else if (event.target.getAttribute('value') === 'get-help') {
+      window.location.href = '/help';
     }
   });
   for (var i = 0; i < optionlist.length; i++) {
