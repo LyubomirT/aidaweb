@@ -34,6 +34,7 @@ body.darkmode {
   padding: 20px;
   box-sizing: border-box;
   max-height: 100vh;
+  width: 100%;
 }
 
 #status-bar {
