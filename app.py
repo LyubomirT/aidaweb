@@ -104,13 +104,13 @@ class DiskDict(dict):
     def _save_to_disk(self):
         for key, value in self.items():
             filepath = os.path.join(self.directory, f"{str(key)}.aidacf")
-            with open(filepath, 'w') as file:
+            with open(filepath, 'w', encoding='utf-8') as file:
                 file.write(repr(value))
 
     def _load_from_disk(self, key):
         filepath = os.path.join(self.directory, f"{str(key)}.aidacf")
         if os.path.exists(filepath):
-            with open(filepath, 'r') as file:
+            with open(filepath, 'r', encoding='utf-8') as file:
                 file_content = file.read()
                 if file_content:
                     data = ast.literal_eval(file_content)
@@ -746,7 +746,6 @@ def regen():
         if newtokens < 1:
             if not tapiaction('give', 0 - newtokens, str(userid)):
                 return jsonify({'error': 'Could not regen due to a bug in the token system. Please try again later.'}), 500
-
         return jsonify({'raw_response': response, 'html_response': html_response, 'chat_history': chat_history, 'attachmentbase64': attachment})
     except Exception as e:
         progresses[userid] = False
