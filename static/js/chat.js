@@ -525,7 +525,7 @@ function getItem(id) {
   }
   // Get from chat history
   for (var i = 0; i < chatHistory.length; i++) {
-    if (chatHistory[i].id === id) {
+    if (chatHistory[i] !== undefined && i === id) {
       return chatHistory[i];
     }
   }
