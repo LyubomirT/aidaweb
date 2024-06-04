@@ -27,6 +27,9 @@ def checkBan(id):
         return True
     return False
 
+import os
+import ast
+
 class ReactiveList(list):
     """ A special list class that triggers save on modifications """
 
@@ -103,6 +106,8 @@ class DiskDict(dict):
         return self if self._parent is None else self._parent._get_root()
 
     def _save_to_disk(self):
+        if not os.path.exists(self.directory):
+            os.makedirs(self.directory, exist_ok=True)
         for key, value in self.items():
             filepath = os.path.join(self.directory, f"{str(key)}.aidacf")
             with open(filepath, 'w', encoding='utf-8') as file:
@@ -169,6 +174,7 @@ class DiskDict(dict):
         super().clear()
         self._loaded_keys.clear()  # Clear all loaded keys
         self._save()
+
 
 
 # Load the environment variables from the .env file
@@ -1026,7 +1032,7 @@ def get_conv():
                 chat_history_html.append({'role': 'ASSISTANT', 'message': markdown2.markdown(message['message'], extras=["tables", "fenced-code-blocks", "spoiler", "strike"]), 'attachment': message['attachment'] if message.get('attachment', None) is not None else None, 'attachmentbase64': message.get('attachmentbase64', None)})
             else:
                 chat_history_html.append({'role': 'USER', 'message': message['message'], 'attachment': message['attachment'] if message.get('attachment', None) is not None else None, 'attachmentbase64': message.get('attachmentbase64', None)})
-        conversations.update({id: {conv_id: chat_history}})
+        conversations._save_to_disk()
         return jsonify({'chat_history': chat_history, 'chat_history_html': chat_history_html, 'name': name, 'expectedlength': len(chat_history)})
     except Exception as e:
         print(f"Error: {str(e)}")
