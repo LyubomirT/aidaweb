@@ -4,10 +4,11 @@ This is the web interface for the AIDA project. It is a web application that all
 
 ## Installation
 
-AIDA is self-hosted by me and is available for public use at (will add link later). However, if you want to host your own instance of AIDA, you can follow the instructions below.
+AIDA is self-hosted by me and is available for public use at <https://aidaweb.jprq.app/>. However, if you want to host your own instance of AIDA, you can follow the instructions below.
 
 ### Prerequisites
 
+- A valid JPRQ account (for tunneling)
 - Python 3.8 or higher
 - All the dependencies in the `requirements.txt` file
 - Your own instance of the AIDA token backend (will explain later)
