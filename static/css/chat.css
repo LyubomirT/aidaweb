@@ -1032,7 +1032,7 @@ br {
   background-color: #434343 !important;
 }
 
-pre[class*="language-"] {
+#chat-box pre {
   position: relative;
   margin: 5px 0 ;
   padding: 1.75rem 0 1.75rem 1rem;
@@ -1040,10 +1040,30 @@ pre[class*="language-"] {
   /* more stuff */
 }
 
-pre[class*="language-"] button{
+#chat-box pre button {
   position: absolute;
   top: 5px;
   right: 5px;
+  background-color: #f0f0f0;
+  border: none;
+  border-radius: 5px;
+  padding: 5px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.1s cubic-bezier(0.445, 0.05, 0.55, 0.95);
 
   /* more stuff */
+}
+
+#chat-box pre button.darkmode {
+  background-color: #292929;
+  color: #ffffff;
+}
+
+#chat-box pre button:hover {
+  background-color: #e6e6e6;
+}
+
+#chat-box pre button.darkmode:hover {
+  background-color: #434343;
 }
