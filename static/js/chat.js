@@ -363,6 +363,7 @@ function postEdit(editedMessage) {
       // Restore the last two messages (edited message and assistant response)
       chatBox.innerHTML += constructMessage(lastUsr, 'USER', attachmentbase64=lastUsr);
       chatBox.innerHTML += constructMessage(lastAsst, 'ASSISTANT', attachmentbase64=lastAsst);
+      constructCopyCodeButton();
       applyRemainingMode();
       unlockChats();
       return;
@@ -376,6 +377,7 @@ function postEdit(editedMessage) {
     response = constructMessage(htmlResponse, rawResponse, 'ASSISTANT', attachmentbase64=data.attachmentbase64);
     response.raw = rawResponse;
     chatBox.innerHTML += response;
+    constructCopyCodeButton();
     applyRemainingMode();
     MathJax.typeset();
     hljs.highlightAll();
@@ -391,6 +393,7 @@ function postEdit(editedMessage) {
     openErrorModal(errorModal, 'Error: ' + error);
     // Restore the last two messages (edited message and assistant response)
     chatBox.innerHTML += constructMessage(lastUsr, 'USER', attachmentbase64=lastUsrImgIfPossible);
+    constructCopyCodeButton();
     applyRemainingMode();
     fetch('/textmanager/to_html', {
       method: 'POST',
@@ -405,6 +408,7 @@ function postEdit(editedMessage) {
     })
     .catch(error => console.error('Error:', error));
     chatBox.innerHTML += constructMessage(lastAsst, 'ASSISTANT', attachmentbase64=lastAsstImgIfPossible);
+    constructCopyCodeButton();
     applyRemainingMode();
     unlockChats();
   });
@@ -650,6 +654,7 @@ function regenerate() {
     response = constructMessage(htmlResponse, rawResponse, 'ASSISTANT', data.attachmentbase64);
     response.raw = rawResponse;
     chatBox.innerHTML += response;
+    constructCopyCodeButton();
     applyRemainingMode();
     MathJax.typeset();
     hljs.highlightAll();
@@ -737,6 +742,7 @@ function postMessage(message) {
 
   // Create a preview of the message
   chatBox.innerHTML += constructMessage(message, message, 'USER');
+  constructCopyCodeButton();
   chatBox.scrollTop = chatBox.scrollHeight;
   applyRemainingMode();
 
@@ -825,6 +831,7 @@ function postMessage(message) {
         response = constructMessage(htmlResponse, rawResponse, 'ASSISTANT', data.attachmentbase64);
         response.raw = rawResponse;
         chatBox.innerHTML += response;
+        constructCopyCodeButton();
         applyRemainingMode();
         MathJax.typeset();
         hljs.highlightAll();
@@ -935,6 +942,7 @@ function postMessage(message) {
       response = constructMessage(htmlResponse, rawResponse, 'ASSISTANT', data.attachmentbase64);
       response.raw = rawResponse;
       chatBox.innerHTML += response;
+      constructCopyCodeButton();
       applyRemainingMode();
       MathJax.typeset();
       hljs.highlightAll();
@@ -997,11 +1005,14 @@ function constructConversation(conv, name = null) {
           if (message.role === 'USER') {
             if (message.attachmentbase64 !== null) {
               chatBox.innerHTML += constructMessage(message.message, message, 'USER', message.attachmentbase64);
+              constructCopyCodeButton();
             } else {
               chatBox.innerHTML += constructMessage(message.message, message, 'USER');
+              constructCopyCodeButton();
             }
           } else {
             chatBox.innerHTML += constructMessage(message.message, message, 'ASSISTANT', message.attachmentbase64);
+            constructCopyCodeButton();
           }
           applyRemainingMode();
         });
@@ -1018,11 +1029,14 @@ function constructConversation(conv, name = null) {
           if (message.role === 'USER') {
             if (message.attachmentbase64 !== null) {
               chatBox.innerHTML += constructMessage(message.message, message, 'USER', message.attachmentbase64);
+              constructCopyCodeButton();
             } else {
               chatBox.innerHTML += constructMessage(message.message, message, 'USER');
+              constructCopyCodeButton();
             }
           } else {
             chatBox.innerHTML += constructMessage(message.message, message, 'ASSISTANT', message.attachmentbase64);
+            constructCopyCodeButton();
           }
           applyRemainingMode();
         });
