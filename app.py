@@ -228,7 +228,9 @@ def retrieve_user_config(id):
         with open(f"configs/{id}.json", "r") as f:
             return json.loads(f.read())
     except:
-        return None
+        save_user_config(id, init_config())
+        store_user_config(id, init_config())
+        return init_config()
 
 @app.route('/')
 def index():
@@ -374,6 +376,17 @@ using modified versions of Cohere's models. Good luck and have fun chatting with
     You can generate images by adding INTERNALTOOL:IMAGEGEN>>LAUNCH--{PROVIDE TEXT HERE}--ENDLAUNCH to your message.
     """
     return newconfig
+
+def init_config():
+    return {
+        "temperature": 0.7,
+        "max_tokens": 100,
+        "model": "command",
+        "preamble_override": "",
+        "usemyname": "false",
+        "websearch": "false",
+        "imagegen": "false"
+    }
 
 def query(filename):
     with open(filename, "rb") as f:
