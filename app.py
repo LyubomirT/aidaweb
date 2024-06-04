@@ -17,6 +17,7 @@ import io
 from allowedmods import modids
 import os
 import ast
+import threading
 
 def checkBan(id):
     # load the bans from the file
@@ -1023,7 +1024,7 @@ def auth_discord():
     try:
         return render_template('loginprod.html')
     except:
-        return "Could not load login page. Please try again later. This means that the app is fucked."
+        return "Could not load login page. Please try again later. This means that the app is dead."
 
 @app.route('/banned')
 def render_ban():
@@ -1056,6 +1057,24 @@ def logout():
 def renderhelp():
     return render_template('help.html')
 
+def trylaunchjprq():
+    jprqpath = os.environ["PATH_TO_JPRQ"]
+    if jprqpath is None:
+        return False
+    try:
+        os.system(f"{jprqpath} auth {os.environ['JPRQAUTH']}")
+        os.system(f"{jprqpath} http 5000 -s {os.environ['JPRQNAME']} --reconnect")
+        return True
+    except:
+        return False
+        
+def launchjprqinthread():
+    if not trylaunchjprq():
+        print("Could not launch jprq. Please make sure that the PATH_TO_JPRQ and JPRQAUTH environment variables are set.")
+
+# start the jprq server
+t = threading.Thread(target=launchjprqinthread)
+t.start()
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000, host='0.0.0.0')
