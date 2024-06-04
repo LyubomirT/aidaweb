@@ -424,6 +424,28 @@ function edit(id) {
   openEditModal(editModal, item.message);
 }
 
+function constructCopyCodeButton() {
+  let blocks = document.querySelectorAll('pre');
+
+  if (blocks.length > 0) {
+    blocks.forEach((block) => {
+      if (block.querySelector('.copy-code')) {
+        return;
+      }
+      let button = document.createElement('button');
+      button.innerHTML = '<i class="fi fi-rr-copy"></i>';
+      button.classList.add('copy-code');
+      button.addEventListener('click', function() {
+        navigator.clipboard.writeText(block.textContent).then(function() {
+          console.log('Copied to clipboard:', block.textContent);
+        }, function(err) {
+          console.error('Error:', err);
+        });
+      });
+      block.appendChild(button);
+    });
+  }
+}
 
 function constructMessage(message, rawmsg, role, attachmentbase64=null) { 
   // Remove all regen and edit buttons
