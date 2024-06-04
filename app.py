@@ -336,7 +336,7 @@ def handle_too_many_requests(error):
   return make_response(jsonify({"error": message}), 429)
 
 def process_config(_config_, name=None):
-    _config_ = json.loads(_config_)
+    _config_ = json.loads(str(_config_))
     newconfig = {}
     if 'temperature' in _config_:
         newconfig['temperature'] = float(_config_['temperature'])
