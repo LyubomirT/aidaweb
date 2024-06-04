@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login with Discord</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="login-box">
+            <h1>Welcome to AIDA Web</h1>
+            <p>AIDA Web requires you to authorize in order to continue, please click the button below to login with Discord. This will allow us to access your Discord account information and provide you with the best experience.</p>
+            <a href="https://discord.com/oauth2/authorize?client_id=1155512630627270727&response_type=token&redirect_uri=https%3A%2F%2Faidaweb.jprq.app%2F&scope=identify+guilds+guilds.members.read" class="discord-btn">
+                <img src="https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/discord-white-icon.png" alt="Login With Discord">
+                Login with Discord
+            </a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1019,8 +1019,9 @@ def get_conv():
 
 @app.route('/auth/discord')
 def auth_discord():
+    # if the user IP is the same as the server IP, render login.html. Otherwise, render loginprod.html
     try:
-        return render_template('login.html')
+        return render_template('loginprod.html')
     except:
         return "Could not load login page. Please try again later. This means that the app is fucked."
 
