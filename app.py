@@ -18,6 +18,7 @@ from allowedmods import modids
 import os
 import ast
 import threading
+import datetime
 
 def checkBan(id):
     # load the bans from the file
@@ -1083,6 +1084,212 @@ def renderhelp():
 @app.route('/library')
 def renderlibrary():
     return render_template('library.html')
+
+@app.route('/addtolibrary', methods=['POST'])
+@limiter.limit("5/minute")
+def addtolibrary():
+    try:
+        data = request.json
+        token = data['token']
+        title = data['title']
+        prompt = data['prompt']
+        # sample of how the library variable must look like:
+
+        # {1: {'title': 'Title', 'prompt': 'Prompt', 'creatorid': 1, 'creatorname': 'Name', 'date': 'Date', 'upvotes': [], 'downvotes': [], 'comments': []}}
+        # the first key is the id of the prompt
+
+        # get the user id
+        userid = get_user_id(token)
+        # get the username
+        username = get_usernames(token)
+        # get the date
+        date = datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+        # get the id of the prompt
+        id = max(library.keys()) + 1
+        library[id] = {'title': title, 'prompt': prompt, 'creatorid': userid, 'creatorname': username, 'date': date, 'upvotes': [], 'downvotes': [], 'comments': []}
+        return jsonify({'id': id})
+    except:
+        return jsonify({'error': 'Could not add to library. Please try again later.'}), 500
+
+@app.route('/getlibrary', methods=['POST'])
+@limiter.limit("5/minute")
+def getlibrary():
+    try:
+        data = request.json
+        token = data['token']
+        kangaroo = data['kangaroo']
+        sortingmode = data['sortingmode']
+        
+        # load 10 more prompts, but skip the first kangaroo amount
+        kangaroo = int(kangaroo)
+        
+        # load from library from the kangaroo amount to the kangaroo amount + 10, make sure to load sorting by the sorting mode (recent, top, specificid_id)
+        if sortingmode == 'recent':
+            # load the most recent prompts
+            librarylist = sorted(library.items(), key=lambda x: datetime.datetime.strptime(x[1]['date'], "%d/%m/%Y %H:%M:%S"), reverse=True)
+        elif sortingmode == 'top':
+            # load the top prompts
+            librarylist = sorted(library.items(), key=lambda x: x[1]['upvotes'] - x[1]['downvotes'], reverse=True)
+        elif 'specificid_' in sortingmode:
+            # load the prompts by the specific id
+            specificid = int(sortingmode.split('_')[1])
+            librarylist = [(specificid, library[specificid])]
+        else:
+            librarylist = []
+        
+        # only load 10 prompts at a time
+        librarylist = librarylist[kangaroo:kangaroo+10]
+        return jsonify({'library': librarylist, 'newkangaroo': kangaroo+10})
+    except:
+        return jsonify({'error': 'Could not load more prompts. Please try again later.'}), 500
+
+@app.route('/upvote', methods=['POST'])
+@limiter.limit("5/minute")
+def upvote():
+    try:
+        data = request.json
+        token = data['token']
+        id = data['id']
+        # get the user id
+        userid = get_user_id(token)
+        
+        # add the user id to the upvotes list of the prompt
+        # if the user is already in the upvotes list, remove them
+        # also if there is already a downvote from the user, remove it
+        if userid in library[id]['upvotes']:
+            library[id]['upvotes'].remove(userid)
+        else:
+            if userid in library[id]['downvotes']:
+                library[id]['downvotes'].remove(userid)
+            library[id]['upvotes'].append(userid)
+        return jsonify({'upvotes': len(library[id]['upvotes'])})
+    except:
+        return jsonify({'error': 'Could not upvote. Please try again later.'}), 500
+
+@app.route('/downvote', methods=['POST'])
+@limiter.limit("5/minute")
+def downvote():
+    try:
+        data = request.json
+        token = data['token']
+        id = data['id']
+        # get the user id
+        userid = get_user_id(token)
+        
+        # add the user id to the downvotes list of the prompt
+        # if the user is already in the downvotes list, remove them
+        # also if there is already an upvote from the user, remove it
+        if userid in library[id]['downvotes']:
+            library[id]['downvotes'].remove(userid)
+        else:
+            if userid in library[id]['upvotes']:
+                library[id]['upvotes'].remove(userid)
+            library[id]['downvotes'].append(userid)
+    
+        return jsonify({'downvotes': len(library[id]['downvotes'])})
+    except:
+        return jsonify({'error': 'Could not downvote. Please try again later.'}), 500
+
+@app.route('/comment', methods=['POST'])
+@limiter.limit("5/minute")
+def comment():
+    try:
+        data = request.json
+        token = data['token']
+        id = data['id']
+        comment = data['comment']
+        # get the user id
+        userid = get_user_id(token)
+        # get the username
+        username = get_usernames(token)
+        # get the date
+        date = datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+        # add the comment to the prompt
+        library[id]['comments'].append({'comment': comment, 'userid': userid, 'username': username, 'date': date})
+        return jsonify({'comments': library[id]['comments']})
+    except:
+        return jsonify({'error': 'Could not comment. Please try again later.'}), 500
+
+@app.route('/deletecomment', methods=['POST'])
+@limiter.limit("5/minute")
+def deletecomment():
+    try:
+        data = request.json
+        token = data['token']
+        id = data['id']
+        commentid = data['commentid']
+        # get the user id
+        userid = get_user_id(token)
+        # check if the user is the creator of the comment
+        if library[id]['comments'][commentid]['userid'] == userid:
+            # delete the comment
+            del library[id]['comments'][commentid]
+            return jsonify({'deleted': True})
+        return jsonify({'error': 'You are not the creator of the comment.'})
+    except:
+        return jsonify({'error': 'Could not delete comment. Please try again later.'}), 500
+    
+@app.route('/deleteprompt', methods=['POST'])
+@limiter.limit("5/minute")
+def deleteprompt():
+    try:
+        data = request.json
+        token = data['token']
+        id = data['id']
+        # get the user id
+        userid = get_user_id(token)
+        # check if the user is the creator of the prompt
+        if library[id]['creatorid'] == userid:
+            # delete the prompt
+            del library[id]
+            return jsonify({'deleted': True})
+        return jsonify({'error': 'You are not the creator of the prompt.'})
+    except:
+        return jsonify({'error': 'Could not delete prompt. Please try again later.'}), 500
+
+@app.route('/getprompt', methods=['POST'])
+@limiter.limit("5/minute")
+def getprompt():
+    try:
+        data = request.json
+        id = data['id']
+        return jsonify({'prompt': library[id]})
+    except:
+        return jsonify({'error': 'Could not retrieve prompt. Please try again later.'}), 500
+
+@app.route('/getcomments', methods=['POST'])
+@limiter.limit("5/minute")
+def getcomments():
+    try:
+        data = request.json
+        id = data['id']
+        return jsonify({'comments': library[id]['comments']})
+    except:
+        return jsonify({'error': 'Could not retrieve comments. Please try again later.'}), 500
+
+@app.route('/getuser', methods=['POST'])
+@limiter.limit("5/minute")
+def getuser():
+    try:
+        data = request.json
+        token = data['token']
+        userid = get_user_id(token)
+        return jsonify({'userid': userid})
+    except:
+        return jsonify({'error': 'Could not retrieve user. Please try again later.'}), 500
+
+@app.route('/myprompts', methods=['POST'])
+@limiter.limit("5/minute")
+def myprompts():
+    try:
+        data = request.json
+        token = data['token']
+        userid = get_user_id(token)
+        userprompts = {i: library[i] for i in library if library[i]['creatorid'] == userid}
+        return jsonify({'userprompts': userprompts})
+    except:
+        return jsonify({'error': 'Could not retrieve user prompts. Please try again later.'}), 500
+
 
 def trylaunchjprq():
     jprqpath = os.environ["PATH_TO_JPRQ"]
