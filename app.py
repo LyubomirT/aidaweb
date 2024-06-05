@@ -1085,6 +1085,18 @@ def renderhelp():
 def renderlibrary():
     return render_template('library.html')
 
+@app.route('/generalcheckjoin', methods=['POST'])
+@limiter.limit("5/minute")
+def generalcheckjoin():
+    try:
+        data = request.json
+        token = data['token']
+        if not check_join(token):
+            return jsonify({'joined': False})
+        return jsonify({'joined': True})
+    except:
+        return jsonify({'joined': False})
+
 @app.route('/addtolibrary', methods=['POST'])
 @limiter.limit("5/minute")
 def addtolibrary():
