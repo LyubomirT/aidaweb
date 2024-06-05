@@ -197,6 +197,7 @@ reqonroute_id = {}
 lastreqroute = {}
 lastreqroute_id = {}
 ipban = {}
+library = DiskDict("library")
 
 lasttimewechecked = None
 
@@ -1078,6 +1079,10 @@ def logout():
 @app.route('/help')
 def renderhelp():
     return render_template('help.html')
+
+@app.route('/library')
+def renderlibrary():
+    return render_template('library.html')
 
 def trylaunchjprq():
     jprqpath = os.environ["PATH_TO_JPRQ"]
