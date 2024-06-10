@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AIDA Web Client</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:400,500,600,700&display=swap">
+<!-- Markdown GitHub CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
+<link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.3.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
+<!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/chat.css') }}"> -->
+<!-- SEO -->
+<meta name="description" content="AIDA is an AI assistant that can help you with a variety of tasks (For The Orange Squad only)">
+<meta name="keywords" content="AIDA, AI, Assistant, The Orange Squad, Chatbot">
+<meta name="author" content="The Orange Squad">
+<meta name="robots" content="index, follow">
+<!-- Favicon.ico -->
+<link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
+    <style>
+        body {
+            background-color: #f2f2f2;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #5d0084;
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        
+        p {
+            color: #666;
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+        
+        .logo {
+            max-width: 200px;
+            margin-bottom: 30px;
+        }
+
+        .discord-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    box-sizing: border-box;
+    border: none;
+    border-radius: 5px;
+    background-color: #5865F2;
+    color: #fff;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.discord-btn:hover {
+    background-color: #4054b2;
+}
+
+.discord-btn img {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="{{ url_for('static', filename='img/favicon.ico') }}" alt="AIDA Web Logo" class="logo">
+        <h1>Welcome to AIDA Web</h1>
+        <p>Experience the power of AI in web development</p>
+        <button class="discord-btn">Get Started</button>
+    </div>
+</body>
+</html>

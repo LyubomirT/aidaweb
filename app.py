@@ -242,6 +242,10 @@ def retrieve_user_config(id):
 def index():
     return render_template('index.html')
 
+@app.route('/landing')
+def landing():
+    return render_template('landing.html')
+
 def get_tokens_by_id(id):
     response = requests.post("https://aida-token-api-d4fa1941f7a6.herokuapp.com/api/{id}".format(id=id), 
                   headers={"apikey": os.getenv("OKEY"), "Content-Type": "application/json"}, timeout=20)
