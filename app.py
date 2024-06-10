@@ -14,7 +14,7 @@ from PIL import Image
 import base64
 import copy
 import io
-from allowedmods import modids
+# from allowedmods import modids
 import os
 import ast
 import threading
@@ -181,7 +181,7 @@ class DiskDict(dict):
 dotenv.load_dotenv()
 
 # Create a new Cohere client
-client = cohere.Client(os.getenv("CKEY"))
+client = cohere.Client(os.getenv("CO_API_KEY"))
 
 app = Flask(__name__)
 limiter = Limiter(get_remote_address, app=app, storage_uri='memory://')
