@@ -556,11 +556,12 @@ function constructMessage(message, rawmsg, role, attachmentbase64=null) {
     var _username = "Assistant"
     // get the svg from the file at regenlink
     var svg = document.createElement('div');
-    regenstring = `<div class="msgcontrol regen" onclick="regenerate()">
-    <i class="fi fi-rr-refresh"></i>
-    </div>
+    regenstring = `
     <div class="msgcontrol rewind" onclick="rewind(${id})">
-    <i class="fi fi-rr-arrow-left"></i>
+    <i class="fi fi-rr-rewind"></i>
+    </div>
+    <div class="msgcontrol regen" onclick="regenerate()">
+    <i class="fi fi-rr-refresh"></i>
     </div>
     `;
     contentstring = ``;
