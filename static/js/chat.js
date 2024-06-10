@@ -453,13 +453,26 @@ function constructCopyCodeButton() {
 
 function rewind(id) {
   // Rewind to the message with the specified id
-  const item = getItem(id);
-  if (item === undefined) {
+  console.log('id:', id);
+  console.log('Chat history:', chatHistory);
+  // Before proceeding, reassign IDs to all messages (because it might be broken)
+  for (var i = 0; i < chatHistory.length; i++) {
+    chatHistory[i].id = i;
+    // same for messages in the html
+    var messages = document.querySelectorAll('.messagecontainer');
+    for (var j = 0; j < messages.length; j++) {
+      messages[j].id = j;
+    }
+  }
+  // if the id is even and not 0, subtract 1
+  if (id % 2 === 0 && id !== 0) {
+    id -= 1;
+  }
+  // if the id is 0, just refuse to rewind
+  if (id === 0) {
+    openErrorModal(errorModal, 'The chat, apparently, is broken.');
     return;
   }
-  chatBox.innerHTML = '';
-  chatHistory = chatHistory.slice(0, id + 1);
-  console.log('Chat history:', chatHistory);
   lockChats();
   fetch('/rewind', {
     method: 'POST',
@@ -485,10 +498,9 @@ function rewind(id) {
     console.log('Chat history:', chatHistory);
     // same for what's currently in the html
     var messages = document.querySelectorAll('.messagecontainer');
-    for (var i = 0; i < messages.length; i++) {
-      if (i >= expectedLength) {
-        messages[i].remove();
-      }
+    // remove all messages after the expected length
+    for (var i = expectedLength; i < messages.length; i++) {
+      messages[i].remove();
     }
     unlockChats();
   });
