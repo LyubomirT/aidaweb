@@ -1038,6 +1038,32 @@ def get_conv():
         print(f"Error: {str(e)}")
         return jsonify({'error': 'Could not retrieve conversation. Please try again later.'}), 500
 
+@app.route('/rewind', methods=['POST'])
+@limiter.limit("10/5minute")
+def rewind():
+    try:
+        data = request.json
+        conv_id = data['conv_id']
+        token = data['token']
+        to = data['to']
+        id = get_user_id(token)
+        if checkBan(id):
+            return jsonify({'error': 'You are banned from using the service. Please contact the system administrator (LyubomirT) for more information.'}), 403
+        chat_history = conversations[id][conv_id]
+        if id in progresses and progresses[id]:
+            return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
+        # to must be odd and greater than 0
+        to = int(to)
+        if to % 2 == 0 or to < 1:
+            return jsonify({'error': 'Invalid rewind value.'}), 400
+        if to > len(chat_history):
+            return jsonify({'error': 'Invalid rewind value.'}), 400
+        chat_history = chat_history[:to]
+        conversations[id][conv_id] = chat_history
+        conversations._save_to_disk()
+        return jsonify({'rewound': True, 'expectedlength': len(chat_history)})
+    except Exception as e:
+        return jsonify({'error': 'Could not rewind conversation. Please try again later.'}), 500
 
 
 @app.route('/auth/discord')
