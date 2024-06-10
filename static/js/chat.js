@@ -503,6 +503,14 @@ function rewind(id) {
       messages[i].remove();
     }
     unlockChats();
+    // Delete the last two messages
+    deleteLast();
+    deleteLast();
+    // Reconstruct the two last messages
+    const lastUsr = chatHistory[chatHistory.length - 2];
+    const lastAsst = chatHistory[chatHistory.length - 1];
+    chatBox.innerHTML += constructMessage(lastUsr.message, lastUsr.message, 'USER');
+    chatBox.innerHTML += constructMessage(lastAsst.message, lastAsst.message, 'ASSISTANT');
   });
 }
 
