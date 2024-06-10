@@ -140,7 +140,9 @@ IT JUST WORKS (No, I'm not Todd Howard)
 
 
 <-> CURRENT: WORKING ON IMAGE GENERATION <->
-
+<-> IT'S A PAIN IN ONE PLACE <->
+<-> BUT IT WORKS NOW <->
+<-> I'M HAPPY <->
 
 
 +++++++++++++++++++++ BETA OPEN +++++++++++++++++++++
