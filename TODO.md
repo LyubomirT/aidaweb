@@ -205,11 +205,6 @@ IT JUST WORKS (No, I'm not Todd Howard)
 
 
 
-
-
-+++++++++++++++++++++ HOSTING +++++++++++++++++++++
-
-
 - [ ] Put "Made with ❤️ by The Orange Squad" somewhere
     - [ ] Make sure it's visible
     - [ ] Make sure it's not too big
