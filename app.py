@@ -384,6 +384,7 @@ using modified versions of Cohere's models. Good luck and have fun chatting with
     Image Generation:
     You can generate images by adding INTERNALTOOL:IMAGEGEN>>LAUNCH--{PROVIDE TEXT HERE}--ENDLAUNCH to your message.
     """
+    newconfig['top_p'] = _config_['top_p']
     return newconfig
 
 def init_config():
@@ -394,7 +395,8 @@ def init_config():
         "preamble_override": "",
         "usemyname": "false",
         "websearch": "false",
-        "imagegen": "false"
+        "imagegen": "false",
+        "top_p": 0.9
     }
 
 def query(filename):
@@ -466,6 +468,8 @@ def check_limits(config):
     if config['websearch'] not in ['true', 'false']:
         return False
     if config['imagegen'] not in ['true', 'false']:
+        return False
+    if config['top_p'] > 1 or config['top_p'] < 0:
         return False
     return True
 
