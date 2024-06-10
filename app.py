@@ -348,15 +348,15 @@ def process_config(_config_, name=None):
         _config_ = _config_
     newconfig = {}
     if 'temperature' in _config_:
-        newconfig['temperature'] = float(_config_['temperature'])
+        newconfig['temperature'] = float(_config_.get('temperature', 0.7))
     if 'max_tokens' in _config_:
-        newconfig['max_tokens'] = int(_config_['max_tokens'])
+        newconfig['max_tokens'] = int(_config_.get('max_tokens', 100))
     if 'model' in _config_:
-        newconfig['model'] = _config_['model']
+        newconfig['model'] = _config_.get('model', 'command')
     if 'preamble_override' in _config_:
-        newconfig['preamble_override'] = _config_['preamble_override']
+        newconfig['preamble_override'] = _config_.get('preamble_override', '')
     if 'websearch' in _config_:
-        newconfig['websearch'] = _config_['websearch']
+        newconfig['websearch'] = _config_.get('websearch', 'false')
     if newconfig['preamble_override'] == '':
         newconfig['preamble_override'] = """
 Your name is AIDA, an AI designed to assist users with their queries. Your goal is to provide accurate and helpful
@@ -370,21 +370,21 @@ assistance if the user's request is illegal, unethical or harmful. If you encoun
 the system administrator or a human moderator for assistance. You're developed by LyubomirT, a young coding enthusiast,
 using modified versions of Cohere's models. Good luck and have fun chatting with the user!
 """.replace("\n", " ").strip()
-    newconfig['usemyname'] = _config_['usemyname']
+    newconfig['usemyname'] = _config_.get('usemyname', 'false')
     if newconfig['usemyname'] == 'true' and name is not None:
         newconfig['preamble_override'] = newconfig['preamble_override'] + """
     Additional information:
     User's name: {name}
     You may mention the user's name in your responses to personalize the conversation and make it more engaging.
     """.format(name=name)
-    newconfig['imagegen'] = _config_['imagegen']
+    newconfig['imagegen'] = _config_.get('imagegen', 'false')
     if newconfig['imagegen'] == 'true':
         newconfig['preamble_override'] = newconfig['preamble_override'] + """
     
     Image Generation:
     You can generate images by adding INTERNALTOOL:IMAGEGEN>>LAUNCH--{PROVIDE TEXT HERE}--ENDLAUNCH to your message.
     """
-    newconfig['top_p'] = _config_['top_p']
+    newconfig['top_p'] = _config_.get('top_p', 0.9)
     return newconfig
 
 def init_config():
