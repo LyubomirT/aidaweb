@@ -451,6 +451,49 @@ function constructCopyCodeButton() {
   }
 }
 
+function rewind(id) {
+  // Rewind to the message with the specified id
+  const item = getItem(id);
+  if (item === undefined) {
+    return;
+  }
+  chatBox.innerHTML = '';
+  chatHistory = chatHistory.slice(0, id + 1);
+  console.log('Chat history:', chatHistory);
+  lockChats();
+  fetch('/rewind', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      conv_id: convId,
+      token: oauth2Token,
+      to: id,
+    }),
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.error) {
+      openErrorModal(errorModal, 'Error: ' + data.error);
+      unlockChats();
+      return;
+    }
+    // it returns expectedlength, remove all messages after that length
+    const expectedLength = data.expectedlength;
+    chatHistory = chatHistory.slice(0, expectedLength);
+    console.log('Chat history:', chatHistory);
+    // same for what's currently in the html
+    var messages = document.querySelectorAll('.messagecontainer');
+    for (var i = 0; i < messages.length; i++) {
+      if (i >= expectedLength) {
+        messages[i].remove();
+      }
+    }
+    unlockChats();
+  });
+}
+
 function constructMessage(message, rawmsg, role, attachmentbase64=null) { 
   // Remove all regen and edit buttons
   const regen = document.querySelectorAll('.regen');
@@ -495,7 +538,11 @@ function constructMessage(message, rawmsg, role, attachmentbase64=null) {
     var svg = document.createElement('div');
     regenstring = `<div class="msgcontrol regen" onclick="regenerate()">
     <i class="fi fi-rr-refresh"></i>
-    </div>`;
+    </div>
+    <div class="msgcontrol rewind" onclick="rewind(${id})">
+    <i class="fi fi-rr-arrow-left"></i>
+    </div>
+    `;
     contentstring = ``;
     if (attachmentbase64 !== null) {
       contentstring = `<img src="${attachmentbase64}" alt="Assistant uploaded image" class="uploaded-image">`;
