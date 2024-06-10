@@ -302,6 +302,8 @@ def save_config():
             return jsonify({'error': 'Invalid configuration settings. You either are on an outdated version of the page, or you are trying to mess with the system. Very funny if it\'s the latter.'}), 400
         return jsonify({'saved': True})
     except:
+        import traceback
+        traceback.print_exc()
         return jsonify({'error': 'Fatal error occured. Try again later.'}), 429
 
 
@@ -469,7 +471,7 @@ def check_limits(config):
         return False
     if config['imagegen'] not in ['true', 'false']:
         return False
-    if config['top_p'] > 1 or config['top_p'] < 0:
+    if float(config['top_p']) > 1 or float(config['top_p']) < 0:
         return False
     return True
 
