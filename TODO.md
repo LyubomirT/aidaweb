@@ -190,11 +190,11 @@ IT JUST WORKS (No, I'm not Todd Howard)
     - [ ] 400
     - [ ] 429
 
-- [ ] Add a proper favicon
-    - [ ] Add a favicon to the website
-    - [ ] Make sure it's a good one
-    - [ ] Let Lyu know if you need help with design
-    - [ ] Don't laugh at the favicon
+- [x] Add a proper favicon
+    - [x] Add a favicon to the website
+    - [x] Make sure it's a good one
+    - [x] Let Lyu know if you need help with design
+    - [x] Don't laugh at the favicon
 
 
 +++++++++++++++++++++ FINAL +++++++++++++++++++++
@@ -209,27 +209,6 @@ IT JUST WORKS (No, I'm not Todd Howard)
 
 +++++++++++++++++++++ HOSTING +++++++++++++++++++++
 
---------------------- STAGE 1 ---------------------
-
-- [ ] Host on Heroku
-     - [ ] Talk to Lyu about this
-        - [ ] He's got the money
-    - [ ] Buy a domain
-         - [ ] Decide who pays the bills
-            - [ ] Eh, we'll figure it out
-
-- [ ] Set up the purchase of AIDA Tokens
-    - [ ] Make sure the Discord bot is ready
-    - [ ] Ask Lyu to write the code for that thing
-    - [ ] NO REFUNDS
-
-- [ ] Force Orange Utilities to show the link
-    - [ ] Make sure the link is shown on the main page
-    - [ ] Make sure the link is shown on the Discord server
-    - [ ] Make sure the link is shown on the GitHub repo
-
-
---------------------- STAGE 2 ---------------------
 
 - [ ] Put "Made with ❤️ by The Orange Squad" somewhere
     - [ ] Make sure it's visible
