@@ -1058,12 +1058,14 @@ def rewind():
             return jsonify({'error': 'Invalid rewind value.'}), 400
         if to > len(chat_history):
             return jsonify({'error': 'Invalid rewind value.'}), 400
-        chat_history = chat_history[:to]
+        # Preserve the message at index 'to' by slicing up to 'to + 1'
+        chat_history = chat_history[:to + 1]
         conversations[id][conv_id] = chat_history
         conversations._save_to_disk()
         return jsonify({'rewound': True, 'expectedlength': len(chat_history)})
     except Exception as e:
         return jsonify({'error': 'Could not rewind conversation. Please try again later.'}), 500
+
 
 
 @app.route('/auth/discord')
