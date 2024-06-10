@@ -11,7 +11,18 @@ AIDA is self-hosted by me and is available for public use at <https://aidaweb.jp
 - A valid JPRQ account (for tunneling)
 - Python 3.8 or higher
 - All the dependencies in the `requirements.txt` file
-- Your own instance of the AIDA token backend (will explain later)
+- Your own instance of the AIDA token backend (<https://github.com/The-Orange-Squad/token-api>)
+
+### Environment Variables
+
+You need to set the following environment variables:
+
+- `HFACE`: The Hugging Face model ID for image generation and image captioning.
+- `CKEY`: The Cohere API key for the chatbot. You can get one by signing up at <https://dashboard.cohere.com/>.
+- `OKEY`: The API key you set for your own instance of the AIDA token backend. (<https://github.com/The-Orange-Squad/token-api>). This is used to check the user's balance and deduct tokens for each message.
+- `PATH_TO_JPRQ`: The path to the JPRQ executable on your system. Can be set to `jprq` if it is in your PATH.
+- `JPRQAUTH`: The JPRQ authentication token for your account. You can get one by signing up at <https://jprq.io/auth>.
+- `JPRQNAME`: The JPRQ subdomain you want to use for your AIDA instance. You can select any available subdomain you want (if you have a paid JPRQ account).
 
 ### Steps
 
