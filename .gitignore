@@ -36,3 +36,4 @@ psychologistnotes.md
 
 .env
 virtual_env/
+node_modules/

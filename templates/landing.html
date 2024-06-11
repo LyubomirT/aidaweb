@@ -8,7 +8,7 @@
 <!-- Markdown GitHub CSS -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
 <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.3.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
-<!-- <link rel="stylesheet" href="{{ url_for('static', filename='css/chat.css') }}"> -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/all.css') }}">
 <!-- SEO -->
 <meta name="description" content="AIDA is an AI assistant that can help you with a variety of tasks (For The Orange Squad only)">
 <meta name="keywords" content="AIDA, AI, Assistant, The Orange Squad, Chatbot">
@@ -16,7 +16,7 @@
 <meta name="robots" content="index, follow">
 <!-- Favicon.ico -->
 <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
-    <style>
+    <!-- <style>
         body {
             background-color: #f2f2f2;
             font-family: Arial, sans-serif;
@@ -71,10 +71,10 @@
     height: 24px;
     margin-right: 10px;
 }
-    </style>
+    </style> -->
 </head>
 <body>
-    <div class="container">
+    <div class="container border-2 border-red-500">
         <img src="{{ url_for('static', filename='img/favicon.ico') }}" alt="AIDA Web Logo" class="logo">
         <h1>Welcome to AIDA Web</h1>
         <p>Experience the power of AI in web development</p>
