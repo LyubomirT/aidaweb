@@ -256,6 +256,10 @@ newConvButton.addEventListener('click', function() {
 });
 
 chatInput.addEventListener('keydown', function(e) {
+  // if the screen is too small, simply return
+  if (window.innerWidth < 768) {
+    return;
+  }
   if (e.shiftKey && e.key === 'Enter') {
     chatInput.value += '\n';
   } else if (e.key === 'Enter') {
