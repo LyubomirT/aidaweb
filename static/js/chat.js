@@ -1046,6 +1046,10 @@ function constructConversation(conv, name = null) {
   conv.setAttribute('conv_id', conv.conv_id);
   conv.addEventListener('click', function () {
     setUnmarked();
+    // if the screen is too small (768px-), close the sidebar
+    if (window.innerWidth <= 768) {
+      closeSidebar.click();
+    }
     statusText.innerHTML = conv.getAttribute('conv_name') + ` (${conv.conv_id})` || 'Conversation (?)';
     chatBox.innerHTML = '';
     chatHistory = [];
