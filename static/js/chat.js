@@ -462,6 +462,9 @@ function constructCopyCodeButton() {
 }
 
 function rewind(id) {
+  if (!confirm('Are you sure you want to rewind to this message?')) {
+    return;
+  }
   // Rewind to the message with the specified id
   console.log('id:', id);
   console.log('Chat history:', chatHistory);
