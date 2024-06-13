@@ -120,10 +120,19 @@
   <div class="try-again">
     <button id="action">Join The Orange Squad</button>
   </div>
+  <div class="accident">
+    <p>
+      If you believe this is a mistake, please click here to relogin.
+    </p>
+    <button id="actio2">Relogin</button>
+  </div>
 </div>
 <script>
   document.getElementById('action').addEventListener('click', function() {
     window.location.href = 'https://discord.gg/9XTyEPy7Dj';
+  });
+  document.getElementById('actio2').addEventListener('click', function() {
+    window.location.href = '/auth/discord';
   });
 </script>
 </body>
