@@ -6,14 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AIDA Web Client</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:400,500,600,700&display=swap">
-  <!-- Markdown GitHub CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/default.min.css">
-  <link rel='stylesheet'
-    href='https://cdn-uicons.flaticon.com/2.3.0/uicons-regular-rounded/css/uicons-regular-rounded.css'>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/all.css') }}">
-  <!-- SEO -->
-  <meta name="description"
-    content="AIDA is an AI assistant that can help you with a variety of tasks (For The Orange Squad only)">
+  <meta name="description" content="AIDA is an AI assistant that can help you with a variety of tasks (For The Orange Squad only)">
   <meta name="keywords" content="AIDA, AI, Assistant, The Orange Squad, Chatbot">
   <meta name="author" content="The Orange Squad">
   <meta name="robots" content="index, follow">
@@ -21,7 +16,6 @@
     integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A=="
     crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
-  <!-- Favicon.ico -->
   <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
   <style>
     body {
@@ -181,10 +175,15 @@
       color: #d1d5db;
       width: 100%;
       max-width: 20rem;
+      transition: transform 0.3s ease;
     }
 
-    .service-card img {
-      height: 4rem;
+    .service-card:hover {
+      transform: translateY(-10px);
+    }
+
+    .service-card i {
+      font-size: 3rem;
       margin-bottom: 1rem;
     }
 
@@ -207,6 +206,121 @@
 
     .service-card a:hover {
       background-color: #2f1753;
+    }
+
+    .features-section {
+      padding: 4rem 1rem;
+      background-color: #1a1a1a;
+    }
+
+    .features-section h1 {
+      font-size: 2.25rem;
+      font-weight: 700;
+      color: #d1d5db;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .features-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+    }
+
+    .feature-card {
+      background-color: #292929;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      color: #d1d5db;
+      width: 100%;
+      max-width: 20rem;
+    }
+
+    .feature-card i {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .feature-card h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .benefits-section {
+      padding: 4rem 1rem;
+    }
+
+    .benefits-section h1 {
+      font-size: 2.25rem;
+      font-weight: 700;
+      color: #d1d5db;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .benefits-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+    }
+
+    .benefit-card {
+      background-color: #292929;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      color: #d1d5db;
+      width: 100%;
+      max-width: 20rem;
+    }
+
+    .benefit-card i {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .benefit-card h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .faq-section {
+      padding: 4rem 1rem;
+      background-color: #1a1a1a;
+    }
+
+    .faq-section h1 {
+      font-size: 2.25rem;
+      font-weight: 700;
+      color: #d1d5db;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .faq-list {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .faq-item {
+      margin-bottom: 1rem;
+      background-color: #292929;
+      padding: 1rem;
+      border-radius: 0.5rem;
+    }
+
+    .faq-item h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .faq-item p {
+      font-size: 1rem;
+      margin: 0;
     }
 
     footer {
@@ -293,7 +407,7 @@
       <p>Explore the power of AI with AIDA, your virtual assistant for all tasks.</p>
       <div class="hero-buttons">
         <a href="/">Get Started</a>
-        <a href="/login" class="secondary-btn">Log in <i class="fi fi-rr-arrow-small-right"></i></a>
+        <a href="/login" class="secondary-btn">Log in <i class="fas fa-arrow-right"></i></a>
       </div>
     </div>
   </div>
@@ -303,35 +417,104 @@
       <h1>Ring any bells? AIDA can do all of these for you!</h1>
       <div class="service-cards">
         <div class="service-card">
-          <img src="https://cdn-icons-png.flaticon.com/512/6803/6803847.png" alt="Translate Language">
+          <i class="fas fa-language"></i>
           <p>Translate text between different languages.</p>
           <a href="/">Try it out</a>
         </div>
         <div class="service-card">
-          <img src="https://cdn-icons-png.flaticon.com/512/7328/7328329.png" alt="Learn Python">
+          <i class="fas fa-laptop-code"></i>
           <p>Learn Python programming with interactive examples.</p>
           <a href="/">Try it out</a>
         </div>
         <div class="service-card">
-          <img src="https://cdn-icons-png.flaticon.com/512/6404/6404031.png" alt="Content Writer">
+          <i class="fas fa-pen-alt"></i>
           <p>Get assistance with writing and editing content.</p>
           <a href="/">Try it out</a>
         </div>
         <div class="service-card">
-          <img src="https://cdn-icons-png.flaticon.com/512/10164/10164555.png" alt="Image Recognition">
+          <i class="fas fa-image"></i>
           <p>Analyze and recognize objects in images.</p>
           <a href="/">Try it out</a>
         </div>
         <div class="service-card">
-          <img src="https://cdn-icons-png.flaticon.com/512/2316/2316070.png" alt="Fitness Coach">
+          <i class="fas fa-dumbbell"></i>
           <p>Get personalized fitness coaching and workout plans.</p>
           <a href="/">Try it out</a>
         </div>
         <div class="service-card">
-          <img src="https://cdn-icons-png.flaticon.com/512/8438/8438991.png" alt="Cooking Assistant">
+          <i class="fas fa-utensils"></i>
           <p>Find recipes and get cooking assistance.</p>
           <a href="/">Try it out</a>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="features-section">
+    <div class="container">
+      <h1>AIDA Features</h1>
+      <div class="features-list">
+        <div class="feature-card">
+          <i class="fas fa-brain"></i>
+          <h3>AI-Powered Intelligence</h3>
+          <p>Leverage the power of AI to automate and enhance your tasks.</p>
+        </div>
+        <div class="feature-card">
+          <i class="fas fa-bolt"></i>
+          <h3>Fast and Reliable</h3>
+          <p>Experience lightning-fast responses and reliable assistance.</p>
+        </div>
+        <div class="feature-card">
+          <i class="fas fa-lock"></i>
+          <h3>Secure and Private</h3>
+          <p>Keep your data secure with top-notch privacy measures.</p>
+        </div>
+        <!-- Add more feature cards as needed -->
+      </div>
+    </div>
+  </div>
+
+  <div class="benefits-section">
+    <div class="container">
+      <h1>Benefits of Using AIDA</h1>
+      <div class="benefits-list">
+        <div class="benefit-card">
+          <i class="fas fa-clock"></i>
+          <h3>Save Time</h3>
+          <p>Automate repetitive tasks and focus on what matters most.</p>
+        </div>
+        <div class="benefit-card">
+          <i class="fas fa-tasks"></i>
+          <h3>Boost Productivity</h3>
+          <p>Increase your efficiency and get more done with AIDA.</p>
+        </div>
+        <div class="benefit-card">
+          <i class="fas fa-smile"></i>
+          <h3>Enhance Your Skills</h3>
+          <p>Learn new skills and improve your expertise with guided assistance.</p>
+        </div>
+        <!-- Add more benefit cards as needed -->
+      </div>
+    </div>
+  </div>
+
+  <div class="faq-section">
+    <div class="container">
+      <h1>Frequently Asked Questions</h1>
+      <div class="faq-list">
+        <div class="faq-item">
+          <h3>What is AIDA?</h3>
+          <p>AIDA is an AI assistant that helps you with various tasks, from translations to coding assistance.</p>
+        </div>
+        <div class="faq-item">
+          <h3>How do I start using AIDA?</h3>
+          <p>You can start by clicking on the "Get Started" button on the home page or logging in if you already have an account.</p>
+        </div>
+        <div class="faq-item">
+          <h3>Is my data secure with AIDA?</h3>
+          <p>Yes, we take privacy and security seriously. Your data is protected with advanced security measures.</p>
+        </div>
+        <!-- Add more FAQ items as needed -->
       </div>
     </div>
   </div>
