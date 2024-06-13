@@ -181,7 +181,8 @@ class DiskDict(dict):
 dotenv.load_dotenv()
 
 # Create a new Cohere client
-client = cohere.Client(os.getenv("CO_API_KEY"))
+# client = cohere.Client(os.getenv("CO_API_KEY"))
+client = cohere.Client(os.getenv("CKEY"))
 
 app = Flask(__name__)
 limiter = Limiter(get_remote_address, app=app, storage_uri='memory://')
