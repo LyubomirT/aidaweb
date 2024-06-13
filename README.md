@@ -32,6 +32,19 @@ You need to set the following environment variables:
 4. Visit `http://localhost:5000` in your browser to access the AIDA web interface.
 5. Enjoy!
 
+> ## new version ( <em> Kindly remove this after you get it running or update it accordingly </em>)
+* <em>NOTE that, I did not push the virtual environbent file due to the size.
+* you can just create it from your side by running `python -m venv virtual_env`.
+* remember to add `virtual_env/` and `node_modules/` to the `.gitignore` file so that you don't push them
+</em>
+>> 1. Activate the virtual environment by running `source virtual_env/bin/activate` 
+>> 2. Install the dependencies by running `pip install -r requirements.txt`.
+>> 3. Install node dependencies(tailwindcss) by running `npm install` 
+>> 4. Run the tailwindcss 'watcher' by running `npm run build` (you won't need this if you just want to preview the website. but it wouldn't hurt to)
+>> 5. Run the application by running `python app.py`.
+>> 6. Visit `http://localhost:5000/landing` in your browser to access the AIDA web landing interface.
+
+
 ## Usage
 
 The AIDA web interface is very simple to use. You can interact with the AIDA bot by typing in the chat box and pressing the `Enter` key. The bot will respond to your messages in real-time. Everything else is pretty self-explanatory and intuitive, try to explore the interface yourself!

@@ -14,7 +14,7 @@ from PIL import Image
 import base64
 import copy
 import io
-from allowedmods import modids
+# from allowedmods import modids
 import os
 import ast
 import threading
@@ -181,6 +181,7 @@ class DiskDict(dict):
 dotenv.load_dotenv()
 
 # Create a new Cohere client
+# client = cohere.Client(os.getenv("CO_API_KEY"))
 client = cohere.Client(os.getenv("CKEY"))
 
 app = Flask(__name__)
@@ -241,6 +242,10 @@ def retrieve_user_config(id):
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route('/landing')
+def landing():
+    return render_template('landing.html')
 
 def get_tokens_by_id(id):
     response = requests.post("https://aida-token-api-d4fa1941f7a6.herokuapp.com/api/{id}".format(id=id), 
