@@ -23,312 +23,334 @@
   <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
   <!-- Favicon.ico -->
   <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/favicon.ico') }}">
-  <!-- 
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #000000;
+      color: #d1d5db;
+      margin: 0;
+      padding: 0;
+    }
 
-#2e0049
-#57008a
-#2f1753
-#262549
-  -->
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+
+    header {
+      background-color: #2e0049;
+      border-bottom: 2px solid #595869;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .nav-flex {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem;
+    }
+
+    .nav-links {
+      display: flex;
+    }
+
+    .nav-links a {
+      color: #d1d5db;
+      font-weight: 600;
+      margin-left: 1rem;
+      text-decoration: none;
+    }
+
+    .nav-links a:hover {
+      color: #ffffff;
+    }
+
+    .mobile-menu-btn {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 0.5rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #d1d5db;
+    }
+
+    .mobile-menu-btn i {
+      font-size: 1.5rem;
+    }
+
+    .mobile-menu {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 100%;
+      width: 100%;
+      background-color: #2e0049;
+      border-top: 1px solid #595869;
+      z-index: 1000;
+    }
+
+    .mobile-menu a {
+      display: block;
+      padding: 1rem;
+      color: #d1d5db;
+      text-decoration: none;
+    }
+
+    .mobile-menu a:hover {
+      background-color: #262549;
+      color: #ffffff;
+    }
+
+    .hero-section {
+      padding: 4rem 1rem;
+      text-align: center;
+      background-color: #000000;
+    }
+
+    .hero-section h1 {
+      font-size: 2.25rem;
+      font-weight: 700;
+      color: #d1d5db;
+      margin-bottom: 1rem;
+      border-bottom: 4px solid #57008a;
+      display: inline-block;
+      padding-bottom: 0.25rem;
+    }
+
+    .hero-section p {
+      font-size: 1.125rem;
+      color: #9ca3af;
+      margin-bottom: 2rem;
+    }
+
+    .hero-buttons a {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #ffffff;
+      background-color: #4f46e5;
+      border-radius: 9999px;
+      text-decoration: none;
+      margin-right: 0.5rem;
+      margin-left: 0.5rem;
+      transition: background-color 0.3s ease;
+    }
+
+    .hero-buttons a:hover {
+      background-color: #2f1753;
+    }
+
+    .hero-buttons .secondary-btn {
+      background-color: #262549;
+    }
+
+    .hero-buttons .secondary-btn:hover {
+      background-color: #4f46e5;
+    }
+
+    .services-section {
+      padding: 4rem 1rem;
+    }
+
+    .services-section h1 {
+      font-size: 2.25rem;
+      font-weight: 700;
+      color: #d1d5db;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .service-cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+    }
+
+    .service-card {
+      background-color: #36213e;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      text-align: center;
+      color: #d1d5db;
+      width: 100%;
+      max-width: 20rem;
+    }
+
+    .service-card img {
+      height: 4rem;
+      margin-bottom: 1rem;
+    }
+
+    .service-card p {
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .service-card a {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #ffffff;
+      background-color: #4f46e5;
+      border-radius: 9999px;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+    }
+
+    .service-card a:hover {
+      background-color: #2f1753;
+    }
+
+    footer {
+      background-color: #000000;
+      padding: 3rem 1rem;
+      text-align: center;
+    }
+
+    footer .social-links {
+      margin-bottom: 1rem;
+    }
+
+    footer .social-links a {
+      color: #d1d5db;
+      margin: 0 0.5rem;
+      font-size: 1.5rem;
+      transition: color 0.3s ease;
+    }
+
+    footer .social-links a:hover {
+      color: #ffffff;
+    }
+
+    footer p {
+      color: #9ca3af;
+      font-size: 0.875rem;
+    }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        background-color: #2e0049;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        z-index: 1000;
+      }
+
+      .nav-links a {
+        padding: 1rem;
+        text-align: center;
+        border-top: 1px solid #595869;
+      }
+
+      .mobile-menu-btn {
+        display: flex;
+      }
+
+      .mobile-menu {
+        display: block;
+      }
+    }
+  </style>
 </head>
 
 <body>
-  <div class="bg-[#000000]">
-    <header class="absolute inset-x-0 top-0 z-50 ">
-      <nav class="flex items-center justify-between p-4 lg:px-8 border-b-2 border-[#595869] sticky top-0 bg-[#2e0049]"
-        aria-label="Global">
-        <div class="flex lg:flex-1">
-          <a href="#" class="-m-1.5 p-1.5">
-            <span class="sr-only border-b-4 border-indigo-500">Welcome to AIDA Web</span>
-            <img class="h-12 w-auto rounded-full" src="{{ url_for('static', filename='img/assistant.png') }}"
-              alt="AIDA Web Logo">
-          </a>
-        </div>
-        <div class="flex lg:hidden">
-          <button id="open-btn" type="button"
-            class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-400">
-            <span class="sr-only">Open main menu</span>
-            <i class="fa-solid fa-bars h-6 w-6"></i>
-          </button>
-        </div>
-        <div class="hidden lg:flex lg:gap-x-12">
-          <a href="/" class="text-sm font-semibold leading-6 text-gray-400">Try</a>
-          <a href="/help" class="text-sm font-semibold leading-6 text-gray-400">Help</a>
-          <a href="https://aidawebpren.jprq.app/" class="text-sm font-semibold leading-6 text-gray-400">Prompt Engineering</a>
-        </div>
-        <div class="hidden lg:flex lg:flex-1 lg:justify-end">
-          <a href="#" class="text-sm font-semibold leading-6 text-gray-400">Log in <span
-              aria-hidden="true">&rarr;</span></a>
-        </div>
-      </nav>
-      <!-- Mobile menu, show/hide based on menu open state. -->
-      <div class="lg:hidden " role="dialog" aria-modal="true">
-        <!-- Background backdrop, show/hide based on slide-over state. -->
-        <div class="fixed inset-0 z-50"></div>
-        <div id="menu"
-          class="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-[#2e0049] px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
-          <div class="flex items-center justify-between">
-            <a href="#" class="-m-1.5 p-1.5">
-              <span class="sr-only">The Orange Squad</span>
-              <img class="h-12 w-auto" src="{{ url_for('static', filename='img/favicon.ico') }}" alt="">
-            </a>
-            <button id="close-btn" type="button" class="-m-2.5 rounded-md p-2.5 text-gray-400">
-              <span class="sr-only">Close menu</span>
-              <i class="fa-solid fa-xmark h-11 w-6"></i>
-            </button>
-
-          </div>
-          <div class="mt-6 flow-root">
-            <div class="-my-6 divide-y divide-gray-500/10">
-              <div class="space-y-2 py-6">
-                <a href="#"
-                  class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-400 hover:bg-gray-50">Product</a>
-                <a href="#"
-                  class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-400 hover:bg-gray-50">Features</a>
-                <a href="#"
-                  class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-400 hover:bg-gray-50">Marketplace</a>
-                <a href="#"
-                  class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-400 hover:bg-gray-50">Company</a>
-              </div>
-              <div class="py-6">
-                <a href="#"
-                  class="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-400 hover:bg-gray-50">Log
-                  in</a>
-              </div>
-            </div>
-          </div>
-        </div>
+  <header>
+    <nav class="container nav-flex">
+      <div>
+        <a href="#"><img class="h-12 w-auto rounded-full" src="{{ url_for('static', filename='img/assistant.png') }}" alt="AIDA Web Logo"></a>
       </div>
-    </header>
-
-    <div class="flex flex-col md:flex-row justify-around md:justify-center items-center">
-
-      <div class="relative isolate px-6 pt-14 lg:px-8 bg-[#000000]">
-        <div class="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80"
-          aria-hidden="true">
-          <div
-            class="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"
-            style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)">
-          </div>
-        </div>
-        <div class="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
-          <div class="hidden sm:mb-8 sm:flex sm:justify-center">
-            <div
-              class="relative rounded-full px-3 py-1 text-sm leading-6 text-gray-400 ring-1 ring-gray-900/10 hover:ring-gray-300/20">
-              Announcing our ongoing prompt engineering competition. <a href="https://aidawebpren.jprq.app/"
-                class="font-semibold text-indigo-600"><span class="absolute inset-0" aria-hidden="true"></span>Read more
-                <span aria-hidden="true">&rarr;</span></a>
-            </div>
-          </div>
-          <div class="text-center">
-            <h1 class="text-4xl font-bold tracking-tight text-gray-300 sm:text-6xl border-b-4 border-[#57008a]">Welcome
-              to AIDA Web</h1>
-            <p class="mt-6 text-lg leading-8 text-gray-400">A platform for chatting with an AI assistant that can help
-              you with a variety of tasks. <br> <span class="text-indigo-600">For The Orange Squad only</span></p>
-            <div class="mt-10 flex items-center justify-center gap-x-6">
-              <a href="/" id="open-btn"
-                class="rounded-3xl bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[#2f1753] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Get
-                started</a>
-              <a href="/help" class="text-sm bg-[#262549]  
-          px-3 py-2 shadow-sm hover:bg-indigo-600 
-          rounded-3xl font-semibold w-auto flex items-center justify-center flex-column gap-x-4
-          leading-6 text-gray-400">Learn more <span class="" aria-hidden="true">
-                  <i class="fa-solid fa-play bg-[#5f1591] px-3 py-2 rounded-full"></i>
-                </span></a>
-            </div>
-          </div>
-        </div>
-        <div
-          class="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]"
-          aria-hidden="true">
-          <div
-            class="relative left-[calc(50%+3rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]"
-            style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)">
-          </div>
-        </div>
+      <div class="nav-links">
+        <a href="/">Try</a>
+        <a href="/help">Help</a>
+        <a href="https://aidawebpren.jprq.app/">Prompt Engineering</a>
       </div>
-      <div class=" z-20">
-        <img class=" w-auto " src="{{ url_for('static', filename='img/bot-nobg.png') }}" alt="">
+      <div>
+        <button id="open-btn" class="mobile-menu-btn"><i class="fa-solid fa-bars"></i></button>
       </div>
+    </nav>
+    <div id="menu" class="mobile-menu">
+      <a href="/">Try</a>
+      <a href="/help">Help</a>
+      <a href="https://aidawebpren.jprq.app/">Prompt Engineering</a>
+      <a href="#">Log in <span>&rarr;</span></a>
+    </div>
+  </header>
 
-      <div class="absolute -bottom-20">
-        <i class="fa-solid fa-diagram-next text-red-200 text-4xl"></i>
+  <div class="hero-section">
+    <div class="container">
+      <h1>Welcome to AIDA Web Client</h1>
+      <p>Explore the power of AI with AIDA, your virtual assistant for all tasks.</p>
+      <div class="hero-buttons">
+        <a href="/">Get Started</a>
+        <a href="/login" class="secondary-btn">Log in <i class="fi fi-rr-arrow-small-right"></i></a>
       </div>
     </div>
+  </div>
 
-    <section class="h-auto md:h-screen bg-[#000000]">
-
-      <div class="mb-20">
-        <h1 class="text-3xl font-bold tracking-tight text-gray-300 sm:text-6xl text-center">Services...</h1>
-      </div>
-
-
-      <div class="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-180"
-        aria-hidden="true">
-        <div
-          class="relative left-[calc(50%-11rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 rotate-[30deg] bg-gradient-to-tr from-[#66d34a] to-[#9089fc] opacity-30 sm:left-[calc(50%-30rem)] sm:w-[72.1875rem]"
-          style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)">
+  <div class="services-section">
+    <div class="container">
+      <h1>Ring any bells? AIDA can do all of these for you!</h1>
+      <div class="service-cards">
+        <div class="service-card">
+          <img src="https://cdn-icons-png.flaticon.com/512/6803/6803847.png" alt="Translate Language">
+          <p>Translate text between different languages.</p>
+          <a href="/">Try it out</a>
+        </div>
+        <div class="service-card">
+          <img src="https://cdn-icons-png.flaticon.com/512/7328/7328329.png" alt="Learn Python">
+          <p>Learn Python programming with interactive examples.</p>
+          <a href="/">Try it out</a>
+        </div>
+        <div class="service-card">
+          <img src="https://cdn-icons-png.flaticon.com/512/6404/6404031.png" alt="Content Writer">
+          <p>Get assistance with writing and editing content.</p>
+          <a href="/">Try it out</a>
+        </div>
+        <div class="service-card">
+          <img src="https://cdn-icons-png.flaticon.com/512/10164/10164555.png" alt="Image Recognition">
+          <p>Analyze and recognize objects in images.</p>
+          <a href="/">Try it out</a>
+        </div>
+        <div class="service-card">
+          <img src="https://cdn-icons-png.flaticon.com/512/2316/2316070.png" alt="Fitness Coach">
+          <p>Get personalized fitness coaching and workout plans.</p>
+          <a href="/">Try it out</a>
+        </div>
+        <div class="service-card">
+          <img src="https://cdn-icons-png.flaticon.com/512/8438/8438991.png" alt="Cooking Assistant">
+          <p>Find recipes and get cooking assistance.</p>
+          <a href="/">Try it out</a>
         </div>
       </div>
+    </div>
+  </div>
 
-      <div class="flex flex-col justify-evenly items-center md:flex-row gap-x-12 md:gap-x-2 px-10">
-
-        <div class="relative h-72 flex flex-col justify-between pt-28 bg-[#36213e] rounded-2xl p-4 w-full md:w-52">
-          <div class="absolute -top-2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20">
-            <img class="h-28 w-auto " src="{{ url_for('static', filename='img/bot.png') }}" alt="">
-          </div>
-
-          <p class="text-sm font-bold tracking-tight text-gray-300 sm:text-md text-center">Welcome to AIDA Web...</p>
-          <a href="#" class="rounded-3xl bg-indigo-600 px-3.5 py-2.5 text-sm
-                   font-semibold text-white shadow-sm hover:bg-[#2f1753] focus-visible:outline
-                    focus-visible:outline-2 focus-visible:outline-offset-2
-                     focus-visible:outline-indigo-600 text-center ">Get
-            started</a>
-        </div>
-
-        <div class="relative h-72 flex flex-col justify-between pt-28 bg-[#36213e] rounded-2xl p-4 w-full md:w-52 m-5 md:m-0">
-          <div class="absolute -top-2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20">
-            <img class="h-28 w-auto " src="{{ url_for('static', filename='img/bot.png') }}" alt="">
-          </div>
-
-          <p class="text-sm font-bold tracking-tight text-gray-300 sm:text-md text-center">Welcome to AIDA Web...</p>
-          <a href="#" class="rounded-3xl bg-indigo-600 px-3.5 py-2.5 text-sm
-                   font-semibold text-white shadow-sm hover:bg-[#2f1753] focus-visible:outline
-                    focus-visible:outline-2 focus-visible:outline-offset-2
-                     focus-visible:outline-indigo-600 text-center ">Get
-            started</a>
-        </div>
-
-        <div class="relative h-72 flex flex-col justify-between pt-28 bg-[#36213e] rounded-2xl p-4 w-full md:w-52 m-5 md:m-0">
-          <div class="absolute -top-2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20">
-            <img class="h-28 w-auto " src="{{ url_for('static', filename='img/bot.png') }}" alt="">
-          </div>
-
-          <p class="text-sm font-bold tracking-tight text-gray-300 sm:text-md text-center">Welcome to AIDA Web...</p>
-          <a href="#" class="rounded-3xl bg-indigo-600 px-3.5 py-2.5 text-sm
-                   font-semibold text-white shadow-sm hover:bg-[#2f1753] focus-visible:outline
-                    focus-visible:outline-2 focus-visible:outline-offset-2
-                     focus-visible:outline-indigo-600 text-center ">Get
-            started</a>
-        </div>
-
+  <footer>
+    <div class="container">
+      <div class="social-links">
+        <a href="https://github.com/LyubomirT/aidaweb" target="_blank"><i class="fab fa-github"></i></a>
+        <a href="https://discord.gg/9XTyEPy7Dj" target="_blank"><i class="fab fa-discord"></i></a>
       </div>
+      <p>&copy; 2024 The Orange Squad. All rights reserved.</p>
+    </div>
+  </footer>
 
-      <div
-        class="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]"
-        aria-hidden="true">
-        <div
-          class="relative left-[calc(50%+3rem)] aspect-[1155/678] w-[36.125rem] -translate-x-1/2 bg-gradient-to-tr from-[#ff80b5] to-[#9089fc] opacity-30 sm:left-[calc(50%+36rem)] sm:w-[72.1875rem]"
-          style="clip-path: polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)">
-        </div>
-      </div>
-    </section>
-
-    <sction>
-      <div class="mb-20">
-        <h1 class="text-3xl font-bold tracking-tight text-gray-300 sm:text-6xl text-center">Something...</h1>
-      </div>
-
-      <div class="flex flex-col justify-center items-center gap-y-11">
-        <div class="flex justify-center flex-col md:flex-row items-center">
-          <div class="flex justify-center  flex-col items-center">
-            <div class="h-32 flex justify-center items-center bg-[#36213e] rounded-full p-4 w-32">
-
-              <img class="h-1/2 w-auto rounded-full" src="{{ url_for('static', filename='img/assistant.png') }}" alt="">
-            </div>
-
-            <p class="text-lg font-bold tracking-tight text-gray-300 sm:text-md text-center">Welcome to AIDA Web...</p>
-
-            <p class="text-sm tracking-tight text-gray-300 sm:text-md text-center">Welcome to AIDA Web...</p>
-          </div>
-
-          <div class="flex justify-center  flex-col items-center">
-            <div class="h-32 flex justify-center items-center bg-[#36213e] rounded-full p-4 w-32">
-
-              <img class="h-1/2 w-auto rounded-full" src="{{ url_for('static', filename='img/assistant.png') }}" alt="">
-            </div>
-
-            <p class="text-lg font-bold tracking-tight text-gray-300 sm:text-md text-center">Welcome to AIDA Web Prompt
-              Engineering...</p>
-
-            <p class="text-sm tracking-tight text-gray-300 sm:text-md text-center">Welcome to AIDA Web Prompt
-              Engineering...</p>
-          </div>
-
-          <div class="flex justify-center  flex-col items-center">
-            <div class="h-32 flex justify-center items-center bg-[#36213e] rounded-full p-4 w-32">
-
-              <img class="h-1/2 w-auto rounded-full" src="{{ url_for('static', filename='img/assistant.png') }}" alt="">
-            </div>
-
-            <p class="text-lg font-bold tracking-tight text-gray-300 sm:text-md text-center">Welcome to AIDA Web Prompt
-              Engineering...</p>
-
-            <p class="text-sm tracking-tight text-gray-300 sm:text-md text-center">Welcome to AIDA Web Prompt
-              Engineering...</p>
-          </div>
-
-        </div>
-        <a href="#" class="rounded-3xl bg-indigo-600 px-3.5 py-2.5 text-sm
-          font-semibold text-white shadow-sm hover:bg-[#2f1753] focus-visible:outline
-           focus-visible:outline-2 focus-visible:outline-offset-2
-            focus-visible:outline-indigo-600 text-center ">Get
-          started</a>
-
-      </div>
-
-    </sction>
-
-    <section>
-      <div class="my-20">
-        <h1 class="text-3xl font-bold tracking-tight text-gray-300 sm:text-6xl text-center">Something...</h1>
-      </div>
-
-
-      <div class="relative h-72 flex flex-row justify-center pt-28 bg-[#36213e] rounded-2xl p-4 w-auto mx-20">
-        <div class="absolute -bottom-1/2 left-0 transform -translate-x-1/2 -translate-y-1/2 z-20">
-          <img class="h-48 w-auto " src="{{ url_for('static', filename='img/bot.png') }}" alt="">
-        </div>
-
-        <div class="flex justify flex-col items-center ml-0">
-          <p class="text-sm font-bold tracking-tight text-gray-300 sm:text-md text-center">Welcome to AIDA Web Prompt
-            Engineering...</p>
-          <p class="text-sm font-bold tracking-tight text-gray-300 sm:text-md text-center">
-            A platform for creating, managing, and exploring creative
-            prompts
-          </p>
-
-          <a href="#" class="rounded-3xl bg-indigo-600 px-3.5 py-2.5 text-sm
-                   font-semibold text-white shadow-sm hover:bg-[#2f1753] focus-visible:outline
-                    focus-visible:outline-2 focus-visible:outline-offset-2
-                     focus-visible:outline-indigo-600 text-center ">Get
-            started</a>
-        </div>
-      </div>
-    </section>
-
-    <script src="{{ url_for('static', filename='js/all.js') }}"></script>
-
-    <footer class="bg-[#000000]">
-      <div class="flex flex-col items-center justify-center py-12">
-        <div class="flex items
-      -center justify-center gap-x-4">
-          <a href="#" class="text-gray-400 hover:text-gray-300">
-            <span class="sr-only">GitHub</span>
-            <i class="fab fa-github h-6 w-6"></i>
-          </a>
-          <a href="#" class="text-gray-400 hover:text-gray-300">
-            <span class="sr-only">Twitter</span>
-            <i class="fab fa-twitter h-6 w-6"></i>
-          </a>
-          <a href="#" class="text-gray-400 hover:text-gray-300">
-            <span class="sr-only">LinkedIn</span>
-            <i class="fab fa-linkedin h-6 w-6"></i>
-          </a>
-        </div>
-        <p class="mt-6 text-sm text-gray-400">© 2021 AIDA Web. All rights reserved.</p>
-      </div>
-    </footer>
+  <script>
+    document.getElementById('open-btn').addEventListener('click', function () {
+      document.querySelector('.nav-links').classList.toggle('hidden');
+    });
+  </script>
 </body>
 
 </html>
