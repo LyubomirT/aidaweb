@@ -16,6 +16,7 @@ const customInstructions = document.getElementById('preamble-override');
 const useMyName = document.getElementById('use-my-name');
 const imageGen = document.getElementById('image-gen');
 const topP = document.getElementById('top-p');
+const topPValue = document.getElementById('top-p-value');
 const saveSettingsButton = document.getElementById('save-settings');
 const resetSettingsButton = document.getElementById('reset-settings');
 const sidebar = document.getElementById('sidebar');
@@ -118,6 +119,10 @@ settingsTemperature.addEventListener('input', function() {
 
 maxTokens.addEventListener('input', function() {
   maxTokensValue.innerHTML = maxTokens.value;
+});
+
+topP.addEventListener('input', function() {
+  topPValue.innerHTML = topP.value;
 });
 
 function loadConfig() {
