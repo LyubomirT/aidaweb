@@ -464,7 +464,7 @@ def generate_image(text):
         return None
 
 def check_limits(config):
-    if config['temperature'] > 3 or config['temperature'] < 0.1:
+    if config['temperature'] > 1 or config['temperature'] < 0.1:
         return False
     if config['max_tokens'] > 3000 or config['max_tokens'] < 1:
         return False
