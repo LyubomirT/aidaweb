@@ -257,6 +257,11 @@ newConvButton.addEventListener('click', function() {
   chatHistory = [];
   convId = null;
   statusText.innerHTML = 'New conversation';
+  // on mobile, close the sidebar
+  if (window.innerWidth < 768) {
+    sidebar.style.display = 'none';
+    closeSidebar.innerHTML = '<i class="fi fi-rr-angle-double-right"></i>';
+  }
   setUnmarked();
 });
 
