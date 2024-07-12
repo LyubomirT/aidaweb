@@ -539,12 +539,12 @@ def chat():
                 traceback.print_exc()
                 attachmentstr = ""
         
-        chat_history.append({"role": "USER", "message": message, 'attachment': attachmentstr if attachmentstr != "" else None, 'attachmentbase64': data.get('attachmentbase64', None)})  # Add user message to history
+        chat_history.append({"role": "User", "message": message, 'attachment': attachmentstr if attachmentstr != "" else None, 'attachmentbase64': data.get('attachmentbase64', None)})  # Add user message to history
 
         # Add a hidden part to the message to descrine the attachment
         proxy = copy.deepcopy(chat_history)
         for i in range(len(proxy)):
-            if proxy[i]['role'] == 'USER' and proxy[i].get('attachment', None) is not None:
+            if proxy[i]['role'] == 'User' and proxy[i].get('attachment', None) is not None:
                 proxy[i]['message'] = proxy[i]['message'] + "\n\n\n[Attachment Description: " + proxy[i]['attachment'] + "]"
 
         # Send the updated chat history
@@ -570,7 +570,7 @@ def chat():
                 response = response.replace(response[start:end], "")
                 # remove the internal tool part
                 response = response.replace("INTERNALTOOL:IMAGEGEN>>LAUNCH--", "").replace("--ENDLAUNCH", "")
-        chat_history.append({"role": "ASSISTANT", "message": response, 'attachmentbase64': attachment})  # Add assistant response to history
+        chat_history.append({"role": "Chatbot", "message": response, 'attachmentbase64': attachment})  # Add assistant response to history
 
         # Convert markdown response to HTML
         html_response = markdown2.markdown(response, extras=["tables", "fenced-code-blocks", "spoiler", "strike", "subscript", "superscript"])
@@ -738,7 +738,7 @@ def regen():
         # Add a hidden part to the message to descrine the attachment
         proxy = copy.deepcopy(chat_history)
         for i in range(len(proxy)):
-            if proxy[i]['role'] == 'USER' and proxy[i].get('attachment', None) is not None:
+            if proxy[i]['role'] == 'User' and proxy[i].get('attachment', None) is not None:
                 print(proxy[i]['attachment'])
                 proxy[i]['message'] = proxy[i]['message'] + "\n\n\n[Attachment Description: " + proxy[i]['attachment'] + "]"
         if config_['websearch'] != 'true':
@@ -761,7 +761,7 @@ def regen():
                 response = response.replace(response[start:end], "")
                 # remove the internal tool part
                 response = response.replace("INTERNALTOOL:IMAGEGEN>>LAUNCH--", "").replace("--ENDLAUNCH", "")
-        chat_history.append({"role": "ASSISTANT", "message": response, 'attachmentbase64': attachment})  # Add assistant response to history
+        chat_history.append({"role": "Chatbot", "message": response, 'attachmentbase64': attachment})  # Add assistant response to history
 
         # Convert markdown response to HTML
         html_response = markdown2.markdown(response, extras=["tables", "fenced-code-blocks", "spoiler", "strike", "subscript", "superscript"])
@@ -841,11 +841,11 @@ def edit():
         if tokens * 250 < maxtokens_char:
             return jsonify({'error': 'Your maximum token limit is too high for your current token balance. Please lower it to continue chatting, or buy more tokens at The Orange Squad to generate more responses.'}), 402
         progresses[userid] = True
-        chat_history[-2] = {"role": "USER", "message": new_message, 'attachment': chat_history[-2].get('attachment', None), 'attachmentbase64': chat_history[-2].get('attachmentbase64', None)}  # Edit user message in history
+        chat_history[-2] = {"role": "User", "message": new_message, 'attachment': chat_history[-2].get('attachment', None), 'attachmentbase64': chat_history[-2].get('attachmentbase64', None)}  # Edit user message in history
         # Add a hidden part to the message to descrine the attachment
         proxy = copy.deepcopy(chat_history)
         for i in range(len(proxy)):
-            if proxy[i]['role'] == 'USER' and proxy[i].get('attachment', None) is not None:
+            if proxy[i]['role'] == 'User' and proxy[i].get('attachment', None) is not None:
                 proxy[i]['message'] = proxy[i]['message'] + "\n\n\n[Attachment Description: " + proxy[i]['attachment'] + "]"
         if config_['websearch'] != 'true':
             response = client.chat(message=new_message,
@@ -868,7 +868,7 @@ def edit():
                 # remove the internal tool part
                 response = response.replace("INTERNALTOOL:IMAGEGEN>>LAUNCH--", "").replace("--ENDLAUNCH", "")
         chat_history.pop()
-        chat_history.append({"role": "ASSISTANT", "message": response, 'attachmentbase64': attachment})  # Add assistant response to history
+        chat_history.append({"role": "Chatbot", "message": response, 'attachmentbase64': attachment})  # Add assistant response to history
 
         # Convert markdown response to HTML
         html_response = markdown2.markdown(response, extras=["tables", "fenced-code-blocks", "spoiler", "strike"])
@@ -1039,10 +1039,10 @@ def get_conv():
         if id in progresses and progresses[id]:
             return jsonify({'error': 'Please wait for the AI to finish processing your previous message.'}), 429
         for message in copy.deepcopy(chat_history):
-            if message['role'] == 'ASSISTANT':
-                chat_history_html.append({'role': 'ASSISTANT', 'message': markdown2.markdown(message['message'], extras=["tables", "fenced-code-blocks", "spoiler", "strike"]), 'attachment': message['attachment'] if message.get('attachment', None) is not None else None, 'attachmentbase64': message.get('attachmentbase64', None)})
+            if message['role'] == 'Chatbot':
+                chat_history_html.append({'role': 'Chatbot', 'message': markdown2.markdown(message['message'], extras=["tables", "fenced-code-blocks", "spoiler", "strike"]), 'attachment': message['attachment'] if message.get('attachment', None) is not None else None, 'attachmentbase64': message.get('attachmentbase64', None)})
             else:
-                chat_history_html.append({'role': 'USER', 'message': message['message'], 'attachment': message['attachment'] if message.get('attachment', None) is not None else None, 'attachmentbase64': message.get('attachmentbase64', None)})
+                chat_history_html.append({'role': 'User', 'message': message['message'], 'attachment': message['attachment'] if message.get('attachment', None) is not None else None, 'attachmentbase64': message.get('attachmentbase64', None)})
         conversations._save_to_disk()
         return jsonify({'chat_history': chat_history, 'chat_history_html': chat_history_html, 'name': name, 'expectedlength': len(chat_history)})
     except Exception as e:
