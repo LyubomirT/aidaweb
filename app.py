@@ -119,6 +119,9 @@ class DiskDict(dict):
             with open(filepath, 'r', encoding='utf-8') as file:
                 file_content = file.read()
                 if file_content:
+                    # Perform the replacements
+                    file_content = file_content.replace("'role': 'ASSISTANT'", "'role': 'Chatbot'")
+                    file_content = file_content.replace("'role': 'USER'", "'role': 'User'")
                     data = ast.literal_eval(file_content)
                     return self._convert_value(data)
         return None
@@ -174,6 +177,7 @@ class DiskDict(dict):
         super().clear()
         self._loaded_keys.clear()  # Clear all loaded keys
         self._save()
+
 
 
 
