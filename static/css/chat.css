@@ -319,7 +319,7 @@ body.darkmode {
   color: #ffffff;
 }
 
-.message.ASSISTANT {
+.message.Chatbot {
   border-left: 3px solid #8346f3;
   padding-left: 15px;
 }
