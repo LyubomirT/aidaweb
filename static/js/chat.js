@@ -345,8 +345,8 @@ function postEdit(editedMessage) {
 
   // Save the last two messages (edited message and assistant response)
   const messages = document.querySelectorAll('.messagecontainer');
-  lastUsr = messages[messages.length - 2].querySelector('.USER.message').textContent;
-  lastAsst = messages[messages.length - 1].querySelector('.ASSISTANT.message').textContent;
+  lastUsr = messages[messages.length - 2].querySelector('.User.message').textContent;
+  lastAsst = messages[messages.length - 1].querySelector('.Chatbot.message').textContent;
   lastUsrImgIfPossible = messages[messages.length - 2].querySelector('.uploaded-image');
   lastAsstImgIfPossible = messages[messages.length - 1].querySelector('.uploaded-image');
   if (lastUsrImgIfPossible !== null) {
@@ -381,8 +381,8 @@ function postEdit(editedMessage) {
       chatInput.disabled = false;
       sendButton.disabled = false;
       // Restore the last two messages (edited message and assistant response)
-      chatBox.innerHTML += constructMessage(lastUsr, 'USER', attachmentbase64=lastUsr);
-      chatBox.innerHTML += constructMessage(lastAsst, 'ASSISTANT', attachmentbase64=lastAsst);
+      chatBox.innerHTML += constructMessage(lastUsr, 'User', attachmentbase64=lastUsr);
+      chatBox.innerHTML += constructMessage(lastAsst, 'Chatbot', attachmentbase64=lastAsst);
       constructCopyCodeButton();
       applyRemainingMode();
       unlockChats();
@@ -393,8 +393,8 @@ function postEdit(editedMessage) {
     chatHistory = data.chat_history;  // Update chat history from server
     console.log('Chat history:', chatHistory);
     // Append the edited message and the assistant response
-    chatBox.innerHTML += constructMessage(editedMessage, editedMessage, 'USER', attachmentbase64=lastUsrImgIfPossible);
-    response = constructMessage(htmlResponse, rawResponse, 'ASSISTANT', attachmentbase64=data.attachmentbase64);
+    chatBox.innerHTML += constructMessage(editedMessage, editedMessage, 'User', attachmentbase64=lastUsrImgIfPossible);
+    response = constructMessage(htmlResponse, rawResponse, 'Chatbot', attachmentbase64=data.attachmentbase64);
     response.raw = rawResponse;
     chatBox.innerHTML += response;
     constructCopyCodeButton();
@@ -412,7 +412,7 @@ function postEdit(editedMessage) {
     sendButton.disabled = false;
     openErrorModal(errorModal, 'Error: ' + error);
     // Restore the last two messages (edited message and assistant response)
-    chatBox.innerHTML += constructMessage(lastUsr, 'USER', attachmentbase64=lastUsrImgIfPossible);
+    chatBox.innerHTML += constructMessage(lastUsr, 'User', attachmentbase64=lastUsrImgIfPossible);
     constructCopyCodeButton();
     applyRemainingMode();
     fetch('/textmanager/to_html', {
@@ -427,7 +427,7 @@ function postEdit(editedMessage) {
       lastAsst = data.html;
     })
     .catch(error => console.error('Error:', error));
-    chatBox.innerHTML += constructMessage(lastAsst, 'ASSISTANT', attachmentbase64=lastAsstImgIfPossible);
+    chatBox.innerHTML += constructMessage(lastAsst, 'Chatbot', attachmentbase64=lastAsstImgIfPossible);
     constructCopyCodeButton();
     applyRemainingMode();
     unlockChats();
@@ -532,8 +532,8 @@ function rewind(id) {
     // Reconstruct the two last messages
     const lastUsr = chatHistory[chatHistory.length - 2];
     const lastAsst = chatHistory[chatHistory.length - 1];
-    chatBox.innerHTML += constructMessage(lastUsr.message, lastUsr.message, 'USER');
-    chatBox.innerHTML += constructMessage(lastAsst.message, lastAsst.message, 'ASSISTANT');
+    chatBox.innerHTML += constructMessage(lastUsr.message, lastUsr.message, 'User');
+    chatBox.innerHTML += constructMessage(lastAsst.message, lastAsst.message, 'Chatbot');
   });
 }
 
@@ -541,7 +541,7 @@ function constructMessage(message, rawmsg, role, attachmentbase64=null) {
   // Remove all regen and edit buttons
   const regen = document.querySelectorAll('.regen');
   const edit = document.querySelectorAll('.edit');
-  if (role==="ASSISTANT") {
+  if (role==="Chatbot") {
     regen.forEach((element) => {
       element.remove();
       console.log("Removed regen button");
@@ -554,7 +554,7 @@ function constructMessage(message, rawmsg, role, attachmentbase64=null) {
     var id = 0;
   }
   var regenstring;
-  if (role === "USER") {
+  if (role === "User") {
     imgsrc = userAvatar.src;
     var _username = username.innerHTML;
     message.textToEdit = rawmsg;
@@ -598,11 +598,11 @@ function constructMessage(message, rawmsg, role, attachmentbase64=null) {
   } else {
     rawmsg = rawmsg;
   }
-  if (role === "USER") {
+  if (role === "User") {
     message = message.replace(/(?:\r\n|\r|\n)/g, '<br>');
     message = message.replace('<br><br>', '<br>');
     // I don't know why this bug happens, but it does, so...
-  } else if (role === "ASSISTANT") {
+  } else if (role === "Chatbot") {
     // We need to replace $something$ with $$something$$ for MathJax to render it
     // In both the raw message and the HTML message
     // something can be any string of characters
@@ -742,7 +742,7 @@ function regenerate() {
       chatHistory[i].id = i;
     }
     console.log('Chat history:', chatHistory);
-    response = constructMessage(htmlResponse, rawResponse, 'ASSISTANT', data.attachmentbase64);
+    response = constructMessage(htmlResponse, rawResponse, 'Chatbot', data.attachmentbase64);
     response.raw = rawResponse;
     chatBox.innerHTML += response;
     constructCopyCodeButton();
@@ -832,7 +832,7 @@ function postMessage(message) {
   });
 
   // Create a preview of the message
-  chatBox.innerHTML += constructMessage(message, message, 'USER');
+  chatBox.innerHTML += constructMessage(message, message, 'User');
   constructCopyCodeButton();
   chatBox.scrollTop = chatBox.scrollHeight;
   applyRemainingMode();
@@ -919,7 +919,7 @@ function postMessage(message) {
           chatHistory[i].id = i;
         }
         console.log('Chat history:', chatHistory);
-        response = constructMessage(htmlResponse, rawResponse, 'ASSISTANT', data.attachmentbase64);
+        response = constructMessage(htmlResponse, rawResponse, 'Chatbot', data.attachmentbase64);
         response.raw = rawResponse;
         chatBox.innerHTML += response;
         constructCopyCodeButton();
@@ -1030,7 +1030,7 @@ function postMessage(message) {
         chatHistory[i].id = i;
       }
       console.log('Chat history:', chatHistory);
-      response = constructMessage(htmlResponse, rawResponse, 'ASSISTANT', data.attachmentbase64);
+      response = constructMessage(htmlResponse, rawResponse, 'Chatbot', data.attachmentbase64);
       response.raw = rawResponse;
       chatBox.innerHTML += response;
       constructCopyCodeButton();
@@ -1097,16 +1097,16 @@ function constructConversation(conv, name = null) {
 
         // Append all messages except the last two
         chatHistoryHtml.slice(0, -2).forEach(message => {
-          if (message.role === 'USER') {
+          if (message.role === 'User') {
             if (message.attachmentbase64 !== null) {
-              chatBox.innerHTML += constructMessage(message.message, message, 'USER', message.attachmentbase64);
+              chatBox.innerHTML += constructMessage(message.message, message, 'User', message.attachmentbase64);
               constructCopyCodeButton();
             } else {
-              chatBox.innerHTML += constructMessage(message.message, message, 'USER');
+              chatBox.innerHTML += constructMessage(message.message, message, 'User');
               constructCopyCodeButton();
             }
           } else {
-            chatBox.innerHTML += constructMessage(message.message, message, 'ASSISTANT', message.attachmentbase64);
+            chatBox.innerHTML += constructMessage(message.message, message, 'Chatbot', message.attachmentbase64);
             constructCopyCodeButton();
           }
           applyRemainingMode();
@@ -1121,16 +1121,16 @@ function constructConversation(conv, name = null) {
         // Append the last two messages individually to ensure they are displayed correctly
         const lastTwo = chatHistoryHtml.slice(-2);
         lastTwo.forEach(message => {
-          if (message.role === 'USER') {
+          if (message.role === 'User') {
             if (message.attachmentbase64 !== null) {
-              chatBox.innerHTML += constructMessage(message.message, message, 'USER', message.attachmentbase64);
+              chatBox.innerHTML += constructMessage(message.message, message, 'User', message.attachmentbase64);
               constructCopyCodeButton();
             } else {
-              chatBox.innerHTML += constructMessage(message.message, message, 'USER');
+              chatBox.innerHTML += constructMessage(message.message, message, 'User');
               constructCopyCodeButton();
             }
           } else {
-            chatBox.innerHTML += constructMessage(message.message, message, 'ASSISTANT', message.attachmentbase64);
+            chatBox.innerHTML += constructMessage(message.message, message, 'Chatbot', message.attachmentbase64);
             constructCopyCodeButton();
           }
           applyRemainingMode();
