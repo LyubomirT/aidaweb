@@ -196,6 +196,7 @@ conversations = DiskDict("conversations")
 progresses = {}
 savedtokens = {}
 convnames = DiskDict("convnames")
+memories = DiskDict("memories")
 bans = {}
 reqonroute = {}
 reqonroute_id = {}
