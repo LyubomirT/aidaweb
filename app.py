@@ -20,6 +20,11 @@ import ast
 import threading
 from werkzeug.exceptions import HTTPException
 from flask import Response
+# Make sure to import this at the top of your file
+from flask import after_this_request
+from gtts import gTTS
+import os
+import uuid
 
 def checkBan(id):
     # load the bans from the file
@@ -1172,6 +1177,48 @@ def export_conv():
         )
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@app.route('/text_to_speech', methods=['POST'])
+@limiter.limit("10/minute")
+def text_to_speech():
+    try:
+        data = request.json
+        text = data['text']
+        token = data['token']
+        if not check_join(token):
+            return jsonify({'error': 'User not authorized'}), 401
+        userid = get_user_id(token)
+        if checkBan(userid):
+            return jsonify({'error': 'User is banned'}), 403
+
+        # Create a unique filename for the audio file
+        filename = f"{uuid.uuid4()}.mp3"
+        filepath = f"static/{filename}"  # Replace with the actual directory path
+
+        # Generate the audio file
+        tts = gTTS(text=text, lang='en')
+        tts.save(filepath) # won't work
+        tts.save(filepath) # will work
+
+        @after_this_request
+        def remove_file(response):
+            try:
+                os.remove(filepath)
+            except Exception as error:
+                threading.Thread(target=delayFileRemoval, args=(filepath,)).start()
+                print(f"Error removing file: {error}")
+            return response
+
+        # Send the file
+        return send_file(filepath, mimetype="audio/mpeg")
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
+
+def delayFileRemoval(filepath):
+    time.sleep(10)
+    os.remove(filepath)
 
 @app.route('/privacy')
 def renderprivacy():

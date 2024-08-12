@@ -587,6 +587,11 @@ function constructMessage(message, rawmsg, role, attachmentbase64=null) {
     <i class="fi fi-rr-refresh"></i>
     </div>
     `;
+    regenstring += `
+    <div class="msgcontrol tts" onclick="textToSpeech(${id})">
+    <i class="fi fi-rr-volume"></i>
+    </div>
+    `;
     contentstring = ``;
     if (attachmentbase64 !== null) {
       contentstring = `<img src="${attachmentbase64}" alt="Assistant uploaded image" class="uploaded-image">`;
@@ -631,6 +636,50 @@ function constructMessage(message, rawmsg, role, attachmentbase64=null) {
     </div>
   </div>
   `;
+}
+
+function textToSpeech(id) {
+  const message = getItem(id);
+  if (!message) return;
+
+  const ttsButton = document.querySelectorAll('.tts')[id - 1];
+  console.log('TTS buttons:', document.querySelectorAll('.tts'));
+  ttsButton.innerHTML = '<i class="fi fi-rr-spinner"></i>';
+
+  fetch('/text_to_speech', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      text: message.message,
+      token: oauth2Token,
+    }),
+  })
+  .then(response => response.blob())
+  .then(blob => {
+    const url = window.URL.createObjectURL(blob);
+    const audio = new Audio(url);
+    audio.onended = () => {
+      ttsButton.innerHTML = '<i class="fi fi-rr-volume"></i>';
+    };
+    audio.play();
+    ttsButton.innerHTML = '<i class="fi fi-rr-pause"></i>';
+    ttsButton.onclick = () => {
+      if (audio.paused) {
+        audio.play();
+        ttsButton.innerHTML = '<i class="fi fi-rr-pause"></i>';
+      } else {
+        audio.pause();
+        ttsButton.innerHTML = '<i class="fi fi-rr-play"></i>';
+      }
+    };
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    openErrorModal(errorModal, 'Error generating speech: ' + error);
+    ttsButton.innerHTML = '<i class="fi fi-rr-volume"></i>';
+  });
 }
 
 function getItem(id) {
