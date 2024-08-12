@@ -156,29 +156,6 @@ IT JUST WORKS (No, I'm not Todd Howard)
 
 +++++++++++++++++++++ OUTSIDE WEBSITE +++++++++++++++++++++
 
---------------------- STAGE 1 ---------------------
-
-- [ ] Create a normal-looking index page
-    - [ ] Add a header
-    - [ ] Add a footer
-    - [ ] Add a "Get Started" button
-    - [ ] Add a "About" button
-    - [ ] Add a "Contact" button
-
-- [ ] Create an about page (I guess)
-    - [ ] Write some random wall of text
-    - [ ] MAKE SURE THE HEADER AND FOOTER ARE THERE
-
-- [ ] Create a contact page
-    - [ ] Give options
-        - [ ] Discord
-        - [ ] Email
-        - [ ] GitHub
-    
-- [ ] Create a "Get Started" page
-    - [ ] Links to the login page
-        - [ ] Relink to the chat page if already logged in
-
 
 --------------------- STAGE 2 ---------------------
 
@@ -228,8 +205,6 @@ IT JUST WORKS (No, I'm not Todd Howard)
     - [ ] Add a summary
         - [ ] In case someone doesn't have the brain capacity to read the whole thing
     - [ ] Make sure it's GDPR-compliant
-
-- [ ] NO COOKIES
 
 --------------------- STAGE 3 ---------------------
 

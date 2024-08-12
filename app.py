@@ -18,6 +18,7 @@ import io
 import os
 import ast
 import threading
+from werkzeug.exceptions import HTTPException
 
 def checkBan(id):
     # load the bans from the file
@@ -1122,6 +1123,25 @@ def logout():
 @app.route('/help')
 def renderhelp():
     return render_template('help.html')
+
+# Add these error handling routes
+@app.errorhandler(400)
+@app.errorhandler(401)
+@app.errorhandler(403)
+@app.errorhandler(404)
+@app.errorhandler(429)
+@app.errorhandler(500)
+def handle_error(error):
+    if isinstance(error, HTTPException):
+        error_code = error.code
+        error_title = error.name
+        error_message = error.description
+    else:
+        error_code = 500
+        error_title = "Internal Server Error"
+        error_message = "An unexpected error occurred. Please try again later."
+
+    return render_template('error.html', error_code=error_code, error_title=error_title, error_message=error_message), error_code
 
 def trylaunchjprq():
     jprqpath = os.environ["PATH_TO_JPRQ"]
