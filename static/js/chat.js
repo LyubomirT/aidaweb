@@ -1475,12 +1475,24 @@ function turnIntoDropdown(element) {
   getHelp.classList.add('conv-control-child');
   getHelp.innerHTML = 'Get Help';
   getHelp.value = 'get-help';
+  var privacyPolicy = document.createElement('div');
+  privacyPolicy.classList.add('privacy-policy');
+  privacyPolicy.classList.add('conv-control-child');
+  privacyPolicy.innerHTML = 'Privacy Policy';
+  privacyPolicy.value = 'privacy-policy';
+  var termsOfService = document.createElement('div');
+  termsOfService.classList.add('terms-of-service');
+  termsOfService.classList.add('conv-control-child');
+  termsOfService.innerHTML = 'Terms of Service';
+  termsOfService.value = 'terms-of-service';
   var optionlist = [];
   optionlist.push(settingsButton);
   optionlist.push(logoutButton);
   optionlist.push(tokenAmount);
   optionlist.push(switchMode);
   optionlist.push(getHelp);
+  optionlist.push(privacyPolicy);
+  optionlist.push(termsOfService);
   element.appendChild(dropdown);
   element.addEventListener('click', function(event) {
     event.stopPropagation();
@@ -1561,6 +1573,10 @@ function turnIntoDropdown(element) {
       localStorage.setItem('darkmode', darkmodeOn);
     } else if (event.target.getAttribute('value') === 'get-help') {
       window.location.href = '/help';
+    } else if (event.target.getAttribute('value') === 'privacy-policy') {
+      window.location.href = '/privacy';
+    } else if (event.target.getAttribute('value') === 'terms-of-service') {
+      window.location.href = '/terms';
     }
   });
   for (var i = 0; i < optionlist.length; i++) {

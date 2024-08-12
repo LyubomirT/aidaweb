@@ -1,3 +1,5 @@
+# TODO
+
 --------------------- STAGE 1 ---------------------
 
 - [x] Chat Message Redesign
@@ -44,7 +46,7 @@ BONUS:
        - [x] Figure out what AI will be used for this
            - [x] Use the AI
            - [x] Make sure we don't pay for this
-        - [x] If failed, use a "Conversation #" format
+        - [x] If failed, use a "Conversation {ID}" format
     
 
 --------------------- STAGE 5 ---------------------
@@ -139,11 +141,6 @@ IT JUST WORKS (No, I'm not Todd Howard)
         - [x] They disappear if the user sends a message (or clicks on a sample)
 
 
-<-> CURRENT: WORKING ON IMAGE GENERATION <->
-<-> IT'S A PAIN IN ONE PLACE <->
-<-> BUT IT WORKS NOW <->
-<-> I'M HAPPY <->
-
 
 +++++++++++++++++++++ BETA OPEN +++++++++++++++++++++
 
@@ -157,9 +154,9 @@ IT JUST WORKS (No, I'm not Todd Howard)
 +++++++++++++++++++++ OUTSIDE WEBSITE +++++++++++++++++++++
 
 
---------------------- STAGE 2 ---------------------
+==================== STAGE 2 ====================
 
-
+- [x] Need some proper pages for error handling
     - [x] 404
     - [x] 500
     - [x] 403
@@ -182,11 +179,11 @@ IT JUST WORKS (No, I'm not Todd Howard)
 
 
 
-- [ ] Put "Made with ❤️ by The Orange Squad" somewhere
-    - [ ] Make sure it's visible
-    - [ ] Make sure it's not too big
-    - [ ] Make sure it's not too small
-    - [ ] Don't make it too cringe
+- [x] Put "Made with ❤️ by The Orange Squad" somewhere
+    - [x] Make sure it's visible
+    - [x] Make sure it's not too big
+    - [x] Make sure it's not too small
+    - [x] Don't make it too cringe
 
 - [ ] Add a "Privacy Policy" page
     - [ ] Write a privacy policy

@@ -1143,6 +1143,14 @@ def handle_error(error):
 
     return render_template('error.html', error_code=error_code, error_title=error_title, error_message=error_message), error_code
 
+@app.route('/privacy')
+def renderprivacy():
+    return render_template('privacy-policy.html')
+
+@app.route('/terms')
+def renderterms():
+    return render_template('terms-of-service.html')
+
 def trylaunchjprq():
     jprqpath = os.environ["PATH_TO_JPRQ"]
     if jprqpath is None:
