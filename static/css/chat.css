@@ -1067,3 +1067,18 @@ br {
 #chat-box pre button.darkmode:hover {
   background-color: #434343;
 }
+
+footer {
+  bottom: 0;
+  width: 100%;
+  background-color: #f0f0f0;
+  padding: 10px;
+  padding-bottom: 5px;
+  text-align: center;
+  font-family: inherit;
+  border-top: 1.5px solid #c6c6c6;
+  padding-top: 15px;
+  font-size: small;
+  color: gray;
+  margin-top: 20px;
+}
