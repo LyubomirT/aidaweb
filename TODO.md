@@ -159,13 +159,13 @@ IT JUST WORKS (No, I'm not Todd Howard)
 
 --------------------- STAGE 2 ---------------------
 
-- [ ] Need some proper pages for error handling
-    - [ ] 404
-    - [ ] 500
-    - [ ] 403
-    - [ ] 401
-    - [ ] 400
-    - [ ] 429
+
+    - [x] 404
+    - [x] 500
+    - [x] 403
+    - [x] 401
+    - [x] 400
+    - [x] 429
 
 - [x] Add a proper favicon
     - [x] Add a favicon to the website
