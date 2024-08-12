@@ -1196,7 +1196,7 @@ def text_to_speech():
         filepath = f"static/{filename}"  # Replace with the actual directory path
 
         # Generate the audio file
-        tts = gTTS(text=text, lang='en')
+        tts = gTTS(text=text)
         tts.save(filepath) # won't work
         tts.save(filepath) # will work
 
