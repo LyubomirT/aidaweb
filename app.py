@@ -1215,6 +1215,40 @@ def text_to_speech():
         import traceback
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500
+    
+@app.route('/duplicate_conv', methods=['POST'])
+@limiter.limit("5/minute")
+def duplicate_conv():
+    try:
+        data = request.json
+        conv_id = data['conv_id']
+        token = data['token']
+        if not check_join(token):
+            return jsonify({'error': 'User not authorized'}), 401
+        userid = get_user_id(token)
+        if checkBan(userid):
+            return jsonify({'error': 'User is banned'}), 403
+        
+        # Get the original conversation
+        original_conv = conversations[userid][conv_id]
+        original_name = convnames[userid][conv_id]
+        
+        # Generate a new conversation ID
+        new_conv_id = random.randint(100000, 999999)
+        
+        # Create a deep copy of the conversation
+        conversations[userid][new_conv_id] = copy.deepcopy(original_conv)
+        
+        # Create a new name for the duplicated conversation
+        new_name = f"Copy of {original_name}"
+        convnames[userid][new_conv_id] = new_name
+        
+        return jsonify({
+            'new_conv_id': new_conv_id,
+            'new_name': new_name
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 def delayFileRemoval(filepath):
     time.sleep(10)

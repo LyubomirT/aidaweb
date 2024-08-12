@@ -1372,10 +1372,16 @@ function createDropdown(conversation) {
   exportButton.classList.add('conv-control-child');
   exportButton.innerHTML = 'Export';
   exportButton.value = 'export';
+  var duplicateButton = document.createElement('div');
+  duplicateButton.classList.add('duplicate');
+  duplicateButton.classList.add('conv-control-child');
+  duplicateButton.innerHTML = 'Duplicate';
+  duplicateButton.value = 'duplicate';
   var optionlist = [];
   optionlist.push(deleteButton);
   optionlist.push(editButton);
   optionlist.push(exportButton);
+  optionlist.push(duplicateButton);
 
   // add event listeners
   moreButton.addEventListener('click', function(event) {
@@ -1469,6 +1475,9 @@ function createDropdown(conversation) {
     } else if (event.target.getAttribute('value') === 'export') {
       // Export the conversation
       exportConversation(conversation.conv_id);
+    } else if (event.target.getAttribute('value') === 'duplicate') {
+      // Duplicate the conversation
+      duplicateConversation(conversation.conv_id);
     }
   });
 
@@ -1681,6 +1690,48 @@ function turnIntoDropdown(element) {
     });
     dropdown.appendChild(optionlist[i]);
   }
+}
+
+function duplicateConversation(convId) {
+  lockChats();
+  fetch('/duplicate_conv', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      conv_id: convId,
+      token: oauth2Token,
+    }),
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.error) {
+      openErrorModal(errorModal, 'Error: ' + data.error);
+      unlockChats();
+      return;
+    }
+    
+    // Create a new conversation element for the duplicated conversation
+    const convElement = document.createElement('button');
+    convElement.classList.add('conversation');
+    const p = document.createElement('p');
+    p.id = 'name';
+    convElement.appendChild(p);
+    convElement.querySelector('#name').innerHTML = fixName(data.new_name);
+    convElement.conv_id = data.new_conv_id;
+    createDropdown(convElement);
+    conversationsList.prepend(convElement);
+    constructConversation(convElement, data.new_name);
+    applyRemainingMode();
+
+    unlockChats();
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    openErrorModal(errorModal, 'Error duplicating conversation: ' + error);
+    unlockChats();
+  });
 }
 
 function loadDarkMode() {
