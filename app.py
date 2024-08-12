@@ -19,6 +19,7 @@ import os
 import ast
 import threading
 from werkzeug.exceptions import HTTPException
+from flask import Response
 
 def checkBan(id):
     # load the bans from the file
@@ -1142,6 +1143,35 @@ def handle_error(error):
         error_message = "An unexpected error occurred. Please try again later."
 
     return render_template('error.html', error_code=error_code, error_title=error_title, error_message=error_message), error_code
+
+@app.route('/export_conv', methods=['POST'])
+@limiter.limit("10/minute")
+def export_conv():
+    try:
+        data = request.json
+        conv_id = data['conv_id']
+        token = data['token']
+        if not check_join(token):
+            return jsonify({'error': 'User not authorized'}), 401
+        userid = get_user_id(token)
+        if checkBan(userid):
+            return jsonify({'error': 'User is banned'}), 403
+        
+        chat_history = conversations[userid][conv_id]
+        
+        export_text = f"Conversation ID: {conv_id}\n\n"
+        for message in chat_history:
+            role = message['role']
+            content = message['message']
+            export_text += f"{role}: {content}\n\n"
+        
+        return Response(
+            export_text,
+            mimetype="text/plain",
+            headers={"Content-disposition": f"attachment; filename=conversation_{conv_id}.txt"}
+        )
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/privacy')
 def renderprivacy():

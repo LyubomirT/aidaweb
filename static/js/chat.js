@@ -1318,9 +1318,15 @@ function createDropdown(conversation) {
   editButton.classList.add('conv-control-child');
   editButton.innerHTML = 'Rename';
   editButton.value = 'edit-conv';
+  var exportButton = document.createElement('div');
+  exportButton.classList.add('export');
+  exportButton.classList.add('conv-control-child');
+  exportButton.innerHTML = 'Export';
+  exportButton.value = 'export';
   var optionlist = [];
   optionlist.push(deleteButton);
   optionlist.push(editButton);
+  optionlist.push(exportButton);
 
   // add event listeners
   moreButton.addEventListener('click', function(event) {
@@ -1411,6 +1417,9 @@ function createDropdown(conversation) {
         unlockChats();
       })
       .catch(error => console.error('Error:', error));
+    } else if (event.target.getAttribute('value') === 'export') {
+      // Export the conversation
+      exportConversation(conversation.conv_id);
     }
   });
 
@@ -1431,6 +1440,37 @@ function createDropdown(conversation) {
 
   moreButton.appendChild(dropdown);
   conversation.appendChild(moreButton);
+}
+
+function exportConversation(convId) {
+  lockChats();
+  fetch('/export_conv', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      conv_id: convId,
+      token: oauth2Token,
+    }),
+  })
+  .then(response => response.blob())
+  .then(blob => {
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.style.display = 'none';
+    a.href = url;
+    a.download = `conversation_${convId}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(url);
+    unlockChats();
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    openErrorModal(errorModal, 'Error exporting conversation: ' + error);
+    unlockChats();
+  });
 }
 
 function openSettings() {
