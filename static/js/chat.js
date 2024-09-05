@@ -15,6 +15,7 @@ const maxTokensValue = document.getElementById('max-tokens-value');
 const customInstructions = document.getElementById('preamble-override');
 const useMyName = document.getElementById('use-my-name');
 const imageGen = document.getElementById('image-gen');
+const imageGenModel = document.getElementById('image-gen-model');
 const topP = document.getElementById('top-p');
 const topPValue = document.getElementById('top-p-value');
 const saveSettingsButton = document.getElementById('save-settings');
@@ -164,6 +165,9 @@ function loadConfig() {
       if (data.top_p !== undefined && data.top_p !== null) {
         topP.value = data.top_p;
       }
+      if (data.image_gen_model !== undefined && data.image_gen_model !== null) {
+        imageGenModel.value = data.image_gen_model;
+      }
     })
     .catch(error => console.error('Error:', error));
   }
@@ -185,6 +189,7 @@ function saveConfig() {
         websearch: websearch.value,
         usemyname: useMyName.value,
         imagegen: imageGen.value,
+        image_gen_model: imageGenModel.value,
         top_p: topP.value,
       }),
     }),
@@ -218,6 +223,7 @@ function resetConfig() {
   useMyName.value = 'false';
   imageGen.value = 'false';
   topP.value = 0.9;
+  imageGenModel.value = 'dreamshaper';
 }
 
 resetSettingsButton.addEventListener('click', function() {
@@ -439,13 +445,30 @@ document.getElementById('edit-modal-close').addEventListener('click', function()
 });
 
 function edit(id) {
-  // Get the message from the chat history and open the edit modal
+  console.log('Editing message:', id);
+  // Ensure we're editing a user message (odd-numbered id)
+  if (id % 2 === 1) {
+    console.error("Attempted to edit an assistant message");
+    console.warn("Getting the last user message instead");
+    id -= 1;
+  }
+
+  // Find the correct message in the chat history
+  // The ID is the key to finding the message
   const item = getItem(id);
-  console.log(item);
-  if (item === undefined) {
+
+  console.log('Scanned chat history:', chatHistory);
+
+  if (!item) {
+    console.error("User message not found for editing");
     return;
   }
-  openEditModal(editModal, item.message);
+
+  // Get the raw message content
+  const messageToEdit = item.message;
+
+  // Open the edit modal with the correct message
+  openEditModal(document.getElementById('editModal'), messageToEdit);
 }
 
 function constructCopyCodeButton() {

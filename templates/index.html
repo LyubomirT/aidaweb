@@ -82,9 +82,17 @@
         <label for="model">Model</label>
         <br>
         <select id="model">
+          <!-- ['command', 'command-r', 'command-r-plus', 'command-r-plus-08-2024', 'command-r-plus-04-2024', 'command-r-08-2024', 'command-r-03-2024', 'command-nightly', 'command-light', 'command-light-nightly'] -->
           <option value="command">Command</option>
+          <option value="command-nightly">Command Nightly</option>
+          <option value="command-light">Command Light</option>
+          <option value="command-light-nightly">Command Light Nightly</option>
           <option value="command-r">Command-R</option>
+          <option value="command-r-08-2024">Command-R 08-2024</option>
+          <option value="command-r-03-2024">Command-R 03-2024</option>
           <option value="command-r-plus">Command-R+</option>
+          <option value="command-r-plus-08-2024">Command-R+ 08-2024</option>
+          <option value="command-r-plus-04-2024">Command-R+ 04-2024</option>
         </select>
       </div>
       <div class="settings-item">
@@ -109,6 +117,13 @@
         <select id="image-gen">
           <option value="true">Enabled</option>
           <option value="false">Disabled</option>
+        </select>
+      </div>
+      <div class="settings-item">
+        <label for="image-gen-model">Image Generation Model</label>
+        <select id="image-gen-model">
+          <option value="dreamshaper">Dreamshaper v7</option>
+          <option value="flux">Flux v1 Dev</option>
         </select>
       </div>
     </div>

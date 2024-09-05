@@ -378,16 +378,11 @@ def process_config(_config_, name=None):
         newconfig['websearch'] = _config_.get('websearch', 'false')
     if newconfig['preamble_override'] == '':
         newconfig['preamble_override'] = """
-Your name is AIDA, an AI designed to assist users with their queries. Your goal is to provide accurate and helpful
-responses to the user's questions while maintaining a casual, friendly and human-like demeanor. Try not to use
-too much poetic language and avoid overly complex or technical jargon, keep it casual. You can also ask the user for clarification, provide
-additional information or ask follow-up questions to better understand the user's needs. Remember to be respectful
-and professional at all times. You can also use Markdown and LateX Math (MathJax) in your responses. When conversing,
-always keep the user's best interests in mind and strive to provide the best possible assistance. Avoid using
-inappropriate language, making offensive remarks or engaging in any form of discrimination. Refuse to provide
-assistance if the user's request is illegal, unethical or harmful. If you encounter any issues or need help, contact
-the system administrator or a human moderator for assistance. You're developed by LyubomirT, a young coding enthusiast,
-using modified versions of Cohere's models. Good luck and have fun chatting with the user!
+Your name is AIDA, an AI designed to assist users with their queries. Your primary goal is to provide accurate and helpful responses to the user's questions while keeping the tone casual, friendly, and human-like. Avoid overly complex language or technical jargon—keep things simple and approachable. Feel free to ask for clarification, offer additional information, or ask follow-up questions to better understand the user's needs.
+
+Always be respectful and considerate, aiming to provide the best possible assistance. While you should avoid using inappropriate language, making offensive remarks, or engaging in any form of discrimination, you don’t need to be overly restrictive with content that is non-explicit and contextually appropriate (e.g., discussing or depicting a woman in a bikini if relevant to the query).
+
+Only refuse assistance if the user's request is illegal, unethical, or clearly harmful. If you're unsure or need guidance, contact a system administrator or human moderator for support. You're developed by LyubomirT, a young coding enthusiast, using modified versions of Cohere's models. Enjoy your interactions and strive to provide a positive experience for the user!
 """.replace("\n", " ").strip()
     newconfig['usemyname'] = _config_.get('usemyname', 'false')
     if newconfig['usemyname'] == 'true' and name is not None:
@@ -404,6 +399,7 @@ using modified versions of Cohere's models. Good luck and have fun chatting with
     You can generate images by adding INTERNALTOOL:IMAGEGEN>>LAUNCH--{PROVIDE TEXT HERE}--ENDLAUNCH to your message.
     """
     newconfig['top_p'] = _config_.get('top_p', 0.9)
+    newconfig['image_gen_model'] = _config_.get('image_gen_model', 'dreamshaper')
     return newconfig
 
 def init_config():
@@ -415,7 +411,8 @@ def init_config():
         "usemyname": "false",
         "websearch": "false",
         "imagegen": "false",
-        "top_p": 0.9
+        "top_p": 0.9,
+        "image_gen_model": "dreamshaper"
     }
 
 def query(filename):
@@ -433,13 +430,21 @@ def query(filename):
         return None
     return response.json()
 
-def generate_image(text):
-    print("Generating image...")
+def generate_image(text, model="dreamshaper"):
+    print("Generating image... using model: " + model)
     seed = random.randint(100000, 999999)
     payload = {"inputs": text, "seed": seed}
     headers = {"Authorization": f"Bearer {os.environ['HFACE']}"}
+    if model == 'dreamshaper':
+        url = "https://api-inference.huggingface.co/models/Lykon/dreamshaper-7"
+    elif model == 'flux':
+        url = "https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-dev"
+    else:
+        print(f"Invalid model: {model}. Using Dreamshaper v7 as fallback.")
+        url = "https://api-inference.huggingface.co/models/Lykon/dreamshaper-7"
+    
     try:
-        response = requests.post("https://api-inference.huggingface.co/models/Lykon/dreamshaper-7", headers=headers, data=json.dumps(payload))
+        response = requests.post(url, headers=headers, data=json.dumps(payload))
         # check if it even has json
         try:
             response.json()
@@ -449,7 +454,7 @@ def generate_image(text):
         if successfuljson:
             if response.json().get('error', None):
                 while response.json().get('error', None):
-                    response = requests.post("https://api-inference.huggingface.co/models/Lykon/dreamshaper-7", headers=headers, data=json.dumps(payload))
+                    response = requests.post(url, headers=headers, data=json.dumps(payload))
                     try:
                         response.json()
                         successfuljson = True
@@ -480,7 +485,7 @@ def check_limits(config):
         return False
     if config['max_tokens'] > 3000 or config['max_tokens'] < 1:
         return False
-    if config['model'] not in ['command', 'command-r', 'command-r-plus']:
+    if config['model'] not in ['command', 'command-r', 'command-r-plus', 'command-r-plus-08-2024', 'command-r-plus-04-2024', 'command-r-08-2024', 'command-r-03-2024', 'command-nightly', 'command-light', 'command-light-nightly']:
         return False
     if config['usemyname'] not in ['true', 'false']:
         return False
@@ -489,6 +494,8 @@ def check_limits(config):
     if config['imagegen'] not in ['true', 'false']:
         return False
     if float(config['top_p']) > 1 or float(config['top_p']) < 0:
+        return False
+    if config['image_gen_model'] not in ['dreamshaper', 'flux']:
         return False
     return True
 
@@ -577,7 +584,7 @@ def chat():
                 start = response.index("INTERNALTOOL:IMAGEGEN>>LAUNCH--") + len("INTERNALTOOL:IMAGEGEN>>LAUNCH--")
                 end = response.index("--ENDLAUNCH")
                 text = response[start:end]
-                attachment = generate_image(text)
+                attachment = generate_image(text, model=config_['image_gen_model'])
                 # remove the image generation part from the response
                 response = response.replace(response[start:end], "")
                 # remove the internal tool part
@@ -768,7 +775,7 @@ def regen():
                 start = response.index("INTERNALTOOL:IMAGEGEN>>LAUNCH--") + len("INTERNALTOOL:IMAGEGEN>>LAUNCH--")
                 end = response.index("--ENDLAUNCH")
                 text = response[start:end]
-                attachment = generate_image(text)
+                attachment = generate_image(text, model=config_['image_gen_model'])
                 # remove the image generation part from the response
                 response = response.replace(response[start:end], "")
                 # remove the internal tool part
@@ -874,7 +881,7 @@ def edit():
                 start = response.index("INTERNALTOOL:IMAGEGEN>>LAUNCH--") + len("INTERNALTOOL:IMAGEGEN>>LAUNCH--")
                 end = response.index("--ENDLAUNCH")
                 text = response[start:end]
-                attachment = generate_image(text)
+                attachment = generate_image(text, config_['image_gen_model'])
                 # remove the image generation part from the response
                 response = response.replace(response[start:end], "")
                 # remove the internal tool part
