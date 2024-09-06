@@ -1070,10 +1070,9 @@ br {
 
 footer {
   bottom: 0;
-  width: 100%;
+  width: 90%;
   background-color: #f0f0f0;
   padding: 10px;
-  padding-bottom: 5px;
   text-align: center;
   font-family: inherit;
   border-top: 1.5px solid #c6c6c6;
@@ -1081,4 +1080,11 @@ footer {
   font-size: small;
   color: gray;
   margin-top: 20px;
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+
+footer.darkmode {
+  background-color: #1a1a1a;
+  color: #a0a0a0;
+  border-top-color: #444444;
 }
