@@ -33,6 +33,7 @@ banned.txt
 
 # ignore this
 psychologistnotes.md
+psychologistsraw.md
 
 .env
 virtual_env/
